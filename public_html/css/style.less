@@ -1,0 +1,46 @@
+@import "light";
+
+@blueHeader: #000099;
+@whiteHeader: #E8E8E8;
+
+body {
+    font-family: "Fira Sans";
+}
+
+input {
+    font-family: "Fira Sans";
+}
+
+#header {
+    background-color: @blueHeader;
+    color: @whiteHeader !important;
+}
+
+.mainContent {
+    background-color: @background;
+    color: @foreground;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    
+    a {
+        color: @links !important;
+    }
+    
+    /* RAE classes */
+    .b {
+        color: @foreground !important;
+    }
+}
+
+.leftIcons {
+    float: left !important;
+}
+
+.dialogHidden {
+    display: none;
+}
+
+.uniqueButton {
+    width: 100% !important;
+}

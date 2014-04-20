@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>RAEFox</title>
+        <meta charset="UTF-8">
+        <meta content="width=device-width, user-scalable=no" name="viewport">
+        <link href="css/BB/style/headers.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/style/drawer.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/style/input_areas.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/style/toolbars.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/style/confirm.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/util.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/transitions.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/icons/styles/action_icons.css" rel="stylesheet" type="text/css">
+        <link href="css/style.less" rel="stylesheet/less" type="text/css">
+        <script type="text/javascript">less = { env: 'production' };</script>
+        <script src="js/less-1.7.0.min.js"></script>
+        <link rel="resource" type="application/l10n" href="locales/locales.ini" />
+        <script type="application/javascript" src="js/l10n.js"></script>
+        <script type="text/javascript" src="js/localize_placeholder.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+    </head>
+    <body>
+        <section data-type="sidebar">
+            <header><h1 data-l10n-id="options">Options</h1></header>
+            <nav>
+                <ul>
+                    <li><a href="#content" id="showAbout" data-l10n-id="about">About RAEfox</a></li>
+                </ul>
+            </nav>
+        </section>
+        <section id="drawer" role="region">
+            <header id="header">
+              <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
+              <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
+              <h1>RAEfox</h1>
+            </header>
+            <div role="main" id="main" class="mainContent">
+                <form role="search" id="searchForm">
+                    <button type="submit" disabled="disabled" data-l10n-id="search" id="searchButton">Search</button>
+                        <p>
+                          <input type="text" id="inputSearch" data-l10n-id="searchPlace" placeholder="Search..." required>
+                        </p>
+                </form>
+                <iframe id="iframe" src="" frameborder="0" width="100%" height="100%" class="mainContent"></iframe>
+                <div role="toolbar" id="iframeNavigation">
+                    <ul class="leftIcons">
+                        <li><button disabled="disabled" id="iframeBack" data-l10n-id="back" class="action-icon browser-back">Back</button></li>
+                        <li><button disabled="disabled" id="iframeForward" data-l10n-id="forward" class="action-icon browser-forward">Forward</button></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- About -->
+            <form id="about" class="dialogHidden" role="dialog" data-type="confirm">
+                <section>
+                    <h1 data-l10n-id="about">About RAEfox</h1>
+                    <p data-l10n-id="about_content"></p>
+                </section>
+                <menu>
+                    <button class="uniqueButton" id="closeAbout" data-l10n-id="close">Close</button>
+                </menu>
+            </form>
+            
+        </section>
+    </body>
+</html>
