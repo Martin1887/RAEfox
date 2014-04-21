@@ -26,11 +26,6 @@ input {
     a {
         color: @links !important;
     }
-    
-    /* RAE classes */
-    .b {
-        color: @foreground !important;
-    }
 }
 
 .leftIcons {
@@ -43,4 +38,15 @@ input {
 
 .uniqueButton {
     width: 100% !important;
+}
+
+#about p {
+    font-size: 70%;
+}
+
+/* RAE iframe specific CSS */
+@-moz-document domain("lema.rae.es") {
+    .b, .o {
+        color: @foreground !important;
+    }
 }
