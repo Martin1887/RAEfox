@@ -4,14 +4,17 @@
         <title>RAEFox</title>
         <meta charset="UTF-8">
         <meta content="width=device-width, user-scalable=no" name="viewport">
+        <link href="css/font-awesome-4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/headers.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/drawer.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/input_areas.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/toolbars.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/confirm.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/style/tabs.css" rel="stylesheet" type="text/css">
         <link href="css/BB/util.css" rel="stylesheet" type="text/css">
         <link href="css/BB/transitions.css" rel="stylesheet" type="text/css">
         <link href="css/BB/icons/styles/action_icons.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/style/icons.css" rel="stylesheet" type="text/css">
         <link href="css/style.less" rel="stylesheet/less" type="text/css">
         <script type="text/javascript">less = { env: 'production' };</script>
         <script src="js/less-1.7.0.min.js"></script>
@@ -19,38 +22,64 @@
         <script type="application/javascript" src="js/l10n.js"></script>
         <script type="text/javascript" src="js/localize_placeholder.js"></script>
         <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/wordsList.js"></script>
     </head>
     <body>
-        <section data-type="sidebar">
+        <section id="opts" data-type="sidebar">
             <header><h1 data-l10n-id="options">Options</h1></header>
             <nav>
                 <ul>
-                    <li><a href="#content" id="showAbout" data-l10n-id="about">About RAEfox</a></li>
+                    <li><a href="#panel1" id="showAbout" data-l10n-id="about">About RAEfox</a></li>
                 </ul>
             </nav>
         </section>
-        <section id="drawer" role="region">
+        <section id="drawer" class="raeDrawer" role="region">
             <header id="header">
-              <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
+              <a href="#panel1" onclick="return back();"><span class="icon icon-menu">hide sidebar</span></a>
               <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
               <h1>RAEfox</h1>
             </header>
-            <div role="main" id="main" class="mainContent">
-                <form role="search" id="searchForm">
-                    <button type="submit" disabled="disabled" data-l10n-id="search" id="searchButton">Search</button>
-                        <p>
-                          <input type="text" id="inputSearch" data-l10n-id="searchPlace" placeholder="Search..." required>
-                        </p>
-                </form>
-                <iframe id="iframe" src="" frameborder="0" width="100%" height="100%" class="mainContent"></iframe>
-                <div role="toolbar" id="iframeNavigation">
-                    <ul class="leftIcons">
-                        <li><button disabled="disabled" id="iframeBack" data-l10n-id="back" class="action-icon browser-back">Back</button></li>
-                        <li><button disabled="disabled" id="iframeForward" data-l10n-id="forward" class="action-icon browser-forward">Forward</button></li>
-                    </ul>
-                </div>
-            </div>
             
+            <!-- Tabs -->
+            <ul id="tabs" role="tablist" data-items="3" class="bb-tablist bottom">
+                <li id="panel1" role="presentation" class="darkTabList">
+                    <a id="tab1" href="#panel1" onclick="changeDrawerClass('raeDrawer');" class="tabIcon" role="tab" aria-controls="main1"><i class="fa fa-search"></i></a>
+                    <div id="main1" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab1">
+                        <div class="raeContent">
+                            <form role="search" id="searchForm">
+                                <button type="submit" disabled="disabled" data-l10n-id="search" id="searchButton">Search</button>
+                                <p>
+                                    <input type="text" id="inputSearch" data-l10n-id="searchPlace" placeholder="Search..." required>
+                                </p>
+                            </form>
+                            <iframe id="iframe" src="" frameborder="0" width="100%" height="66%"></iframe>
+                            <div role="toolbar" id="iframeNavigation">
+                                <ul class="leftIcons">
+                                    <li><button disabled="disabled" id="iframeBack" data-l10n-id="back" class="action-icon browser-back">Back</button></li>
+                                    <li><button disabled="disabled" id="iframeForward" data-l10n-id="forward" class="action-icon browser-forward">Forward</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li id="panel2" role="presentation" class="darkTabList">
+                    <a id="tab2" href="#panel2" onclick="changeDrawerClass('mainDrawer');" class="tabIcon" role="tab" aria-controls="main2"><i class="fa fa-clock-o fa-rotate-90"></i></a>
+                    <div id="main2" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab2">
+                        <div class="mainContent">
+                            
+                        </div>
+                    </div>
+                </li>
+                <li id="panel3" role="presentation" class="darkTabList">
+                    <a id="tab3" href="#panel3" onclick="changeDrawerClass('mainDrawer');" class="tabIcon" role="tab" aria-controls="main3"><i class="fa fa-bars"></i></a>
+                    <div id="main3" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab3">
+                        <div class="mainContent">
+                            
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
             <!-- About -->
             <form id="about" class="dialogHidden" role="dialog" data-type="confirm">
                 <section>

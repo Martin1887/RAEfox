@@ -3,18 +3,16 @@ var searches = [];
 searches.push('');
 var indexSearches = 0;
 
+// Arrays of words lists
+var allWords = [];
+var searchedWords = [];
+
 
 document.addEventListener('DOMContentLoaded', function() {
     // Enable/disable search button
     var inputSearch = document.getElementById('inputSearch');
-    inputSearch.onkeyup = function() {
-        var searchButton = document.getElementById('searchButton');
-        if (inputSearch.value.length > 0) {
-            searchButton.disabled = false;
-        } else {
-            searchButton.disabled = true;
-        }
-    };
+    inputSearch.onkeyup = enableOrDisableSearchButton;
+    inputSearch.oninput = enableOrDisableSearchButton;
 
     // Search a term when form is submited
     var form = document.getElementById('searchForm');
@@ -70,37 +68,39 @@ document.addEventListener('DOMContentLoaded', function() {
     closeAboutButton.onclick = function() {
         var aboutDialog = document.getElementById('about');
         aboutDialog.className = 'dialogHidden';
+        // 2 backs to go to the panel instead the drawer
+        back();
+        back();
     };
+    
 });
+
+function enableOrDisableSearchButton() {
+    var searchButton = document.getElementById('searchButton');
+    if (inputSearch.value.length > 0) {
+        searchButton.disabled = false;
+    } else {
+        searchButton.disabled = true;
+    }
+}
 
 // Return URL of a RAE search
 function getURLRAE(word) {
     // escape is used because RAE uses ISO-8859-1 encoding instead UTF-8
     if (word.length > 0) {
-        return "http://lema.rae.es/drae/srv/search?val=" + escape(word);
+        return "http://lema.rae.es/drae/srv/search?val=" + escape(word) + '&origen=APP';
     } else {
         return '';
     }
 }
-//
-//// Load RAE content and load it in div rae
-//function loadXMLDoc(url) {
-//    var xmlhttp;
-//
-//    if (window.XMLHttpRequest) {
-//        // code for IE7+, Firefox, Chrome, Opera, Safari
-//        xmlhttp = new XMLHttpRequest();
-//    } else {
-//        // code for IE6, IE5
-//        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-//    }
-//
-//    xmlhttp.onreadystatechange = function() {
-//        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-//            document.getElementById("rae").innerHTML = xmlhttp.responseText;
-//        }
-//    };
-//
-//    xmlhttp.open("GET", url, true);
-//    xmlhttp.send();
-//}
+
+function changeDrawerClass(className) {
+    document.getElementById('drawer').className = className;
+}
+
+function back() {
+    history.go(-1);
+    // false is returned to don't go to the link
+    return false;
+}
+
