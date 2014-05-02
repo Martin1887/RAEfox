@@ -3,9 +3,6 @@ var searches = [];
 searches.push('');
 var indexSearches = 0;
 
-// Arrays of words lists
-var allWords = [];
-var searchedWords = [];
 
 
 document.addEventListener('DOMContentLoaded', function() {

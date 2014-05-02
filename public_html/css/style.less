@@ -36,11 +36,43 @@ input {
     background-color: @background;
     color: @foreground;
     width: 100%;
-    height: 100%;
+    height: auto;
     position: absolute;
-    
+    top: 4.65rem;
     a {
         color: @links !important;
+    }
+    /* scroll */
+    nav[data-type="scrollbar"] {
+        position: fixed;
+        top: 4.65rem;
+        bottom: 4.05rem;
+        
+        ol li a {
+            color: @foreground !important;
+        }
+    }
+    
+    section[data-type="list"] {
+        width: 90%;
+        header {
+            color: @listsHeader;
+            border-bottom-color: @listsHeader;
+        }
+        ul li {
+            height: auto;
+            a {
+                height: auto;
+                padding-bottom: 0;
+                margin-bottom: 0;
+                border-bottom: 0;
+                cursor: pointer;
+            }
+        }
+    }
+    .active[data-type="list"] li:active:after, .active[data-type="list"] li:hover:after,
+    [data-type="list"] li > a:active:after, [data-type="list"] li > a:hover:after {
+        background-color: @linksBackground;
     }
 }
 
@@ -77,7 +109,9 @@ input {
 .tabIcon i {
     font-size: 120%;
 }
-
+.bb-tablist > li > a, .bb-tablist > li > button {
+    color: @whiteHeader;
+}
 
 .dialogHidden {
     display: none;
