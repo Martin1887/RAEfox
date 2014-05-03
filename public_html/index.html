@@ -13,6 +13,7 @@
         <link href="css/BB/style/tabs.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/scrolling.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/lists.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/style/buttons.css" rel="stylesheet" type="text/css">
         <link href="css/BB/util.css" rel="stylesheet" type="text/css">
         <link href="css/BB/transitions.css" rel="stylesheet" type="text/css">
         <link href="css/BB/icons/styles/action_icons.css" rel="stylesheet" type="text/css">
@@ -54,7 +55,7 @@
                                     <input type="text" id="inputSearch" data-l10n-id="searchPlace" placeholder="Search..." required>
                                 </p>
                             </form>
-                            <iframe id="iframe" src="" frameborder="0" width="100%" height="66%"></iframe>
+                            <iframe id="iframe" src="" frameborder="0" width="100%" height="82%"></iframe>
                             <div role="toolbar" id="iframeNavigation">
                                 <ul class="leftIcons">
                                     <li><button disabled="disabled" id="iframeBack" data-l10n-id="back" class="action-icon browser-back">Back</button></li>
@@ -76,10 +77,27 @@
                     <a id="tab3" href="#panel3" onclick="changeDrawerClass('mainDrawer');" class="tabIcon" role="tab" aria-controls="main3"><i class="fa fa-bars"></i></a>
                     <div id="main3" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab3">
                         <div class="mainContent">
+                            <!-- Search form, hidden by default -->
+                            <form class="formHidden" id="searchInWordsListForm">
+                                <p>
+                                    <label data-l10n-id="begin" for="beginSearch">Begin with</label><input type="text" id="beginSearch" placeholder="es" required>
+                                </p>
+                                <p>
+                                    <label data-l10n-id="contain" for="containSearch">Contain (chunks in order separated by spaces)</label><input type="text" id="containSearch" placeholder="clei mas" required>
+                                </p>
+                                <p>
+                                    <label data-l10n-id="end" for="endSearch">End with</label><input type="text" id="endSearch" placeholder="deo" required>
+                                </p>
+                                <p>
+                                <button class="recommend" role="button" type="submit" disabled="disabled" data-l10n-id="search" id="searchInWordsListButton">Search</button>
+                                <button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">Clear Search</button>
+                                </p>
+                            </form>
+                            <div class="hidden" id="searchedPanel"></div>
                             <section id="wordsList" data-type="list"></section>
-                            <nav data-type="scrollbar">
+                            <nav id="scrollWordsList" data-type="scrollbar">
                                 <ol>
-                                  <li style="margin-bottom: 0.87rem;"><a href="#"><span class="pack-icon-search">Search</span></a></li>  
+                                  <li style="margin-bottom: 0.87rem;"><a href="#" onclick="return showOrHideSearchBars();"><span class="pack-icon-search">Search</span></a></li>  
                                   <li><a href="#letA" onclick="return focusLetter('A');">A</a></li>
                                   <li><a href="#letB" onclick="return focusLetter('B');">B</a></li>
                                   <li><a href="#letC" onclick="return focusLetter('C');">C</a></li>
@@ -115,7 +133,7 @@
             </ul>
 
             <!-- About -->
-            <form id="about" class="dialogHidden" role="dialog" data-type="confirm">
+            <form id="about" class="hidden" role="dialog" data-type="confirm">
                 <section>
                     <h1 data-l10n-id="about">About RAEfox</h1>
                     <p id="about_content" data-l10n-id="about_content"></p>

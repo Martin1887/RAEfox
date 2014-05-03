@@ -25,6 +25,11 @@ input {
     background-color: @background !important;
 }
 
+/* tabs content have to be below header */
+.bb-tablist .bb-tabpanel {
+    top: 4.7rem;
+}
+
 .raeContent {
     background-color: @background_rae;
     width: 100%;
@@ -38,7 +43,6 @@ input {
     width: 100%;
     height: auto;
     position: absolute;
-    top: 4.65rem;
     a {
         color: @links !important;
     }
@@ -53,11 +57,21 @@ input {
         }
     }
     
-    section[data-type="list"] {
+    /* onlywords list (not history list) */
+    #wordsList {
         width: 90%;
+    }
+    
+    /* list */
+    section[data-type="list"] {
         header {
             color: @listsHeader;
             border-bottom-color: @listsHeader;
+        }
+        a {
+            color: @listsHeader !important;
+            border-bottom-color: @listsHeader;
+            text-decoration: none;
         }
         ul li {
             height: auto;
@@ -67,6 +81,7 @@ input {
                 margin-bottom: 0;
                 border-bottom: 0;
                 cursor: pointer;
+                color: @links !important;
             }
         }
     }
@@ -78,6 +93,9 @@ input {
 
 .leftIcons {
     float: left !important;
+    button:disabled {
+        background: inherit !important;
+    }
 }
 
 /* Toolbar is upper because they are tabs and tabs cannot be at top because there is search */
@@ -87,7 +105,7 @@ input {
 }
 
 #iframe {
-    top: 8.5rem;
+    top: 3rem;
     position: absolute;
 }
 
@@ -113,7 +131,7 @@ input {
     color: @whiteHeader;
 }
 
-.dialogHidden {
+.hidden {
     display: none;
 }
 
@@ -123,4 +141,60 @@ input {
 
 #about p {
     font-size: 70%;
+}
+
+.letterHidden {
+    display: none;
+    height: 0;
+}
+.letterShown {
+    animation-duration: 2s;
+    animation-name: showDown;
+}
+
+.formHidden {
+    display: none;
+}
+
+.formSearchInWordsList {
+    z-index: 1887;
+    position: fixed;
+    width: 90%;
+    height: 100%;
+    background-color: @background;
+    color: @foreground;
+    label {
+        font-size: 60%;
+    }
+}
+
+.searchedPanel {
+    position: static;
+    height: 100%;
+    
+    a {
+        height: auto;
+        width: 100%;
+        position: absolute;
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-bottom: 0;
+        cursor: pointer;
+        color: @links !important;
+    }
+    a:hover {
+        background-color: @linksBackground;
+    }
+}
+
+@keyframes showDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        /* After transition height is set to 100% */
+        max-height: 1000px;
+    }
 }

@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var closeAboutButton = document.getElementById('closeAbout');
     closeAboutButton.onclick = function() {
         var aboutDialog = document.getElementById('about');
-        aboutDialog.className = 'dialogHidden';
+        aboutDialog.className = 'hidden';
         // 2 backs to go to the panel instead the drawer
         back();
         back();
