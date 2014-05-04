@@ -3,6 +3,15 @@ var allWords = [];
 var searchedWords = [];
 var wordsCharged = false;
 
+// Dynamic localize
+var searchResults = '';
+var clear = '';
+navigator.mozL10n.ready ( function () {
+    var _ = navigator.mozL10n.get;
+    searchResults = _('searchResults');
+    clear = _('clear');
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     // Enable/disable search button
     var beginSearch = document.getElementById('beginSearch');
@@ -174,13 +183,13 @@ function searchInWordsList() {
     }
     
     // Format words
-    var wordsList = '<h1 data-l10n-id="searchResults">Search results</h1>';
+    var wordsList = '<h1 data-l10n-id="searchResults">' + searchResults + '</h1>';
     for (var i = 0; i < searchedWords.length; i++) {
         word = searchedWords[i];
         
         wordsList += '<a href="#panel1" onclick="searchInRae(\'' + word + '\');">' + word + '</a><br/>';
     }
-    wordsList += '<br/><button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">Clear Search</button>';
+    wordsList += '<br/><button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">' + clear + '</button>';
 
     // Charge values in panel and show it
     var panel = document.getElementById('searchedPanel');
