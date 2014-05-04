@@ -3,9 +3,12 @@ var searches = [];
 searches.push('');
 var indexSearches = 0;
 
-
+var searchType = 3;
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Change searchType on select selection
+    document.getElementById('typeSelect').onchange = changeSearchType;
+    
     // Enable/disable search button
     var inputSearch = document.getElementById('inputSearch');
     inputSearch.onkeyup = enableOrDisableSearchButton;
@@ -72,6 +75,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
+function changeSearchType() {
+    var newValue = document.getElementById('typeSelect').value;
+    searchType = newValue;
+}
+
 function enableOrDisableSearchButton() {
     var searchButton = document.getElementById('searchButton');
     if (inputSearch.value.length > 0) {
@@ -85,7 +93,7 @@ function enableOrDisableSearchButton() {
 function getURLRAE(word) {
     // escape is used because RAE uses ISO-8859-1 encoding instead UTF-8
     if (word.length > 0) {
-        return "http://lema.rae.es/drae/srv/search?val=" + escape(word) + '&origen=APP';
+        return "http://lema.rae.es/drae/srv/search?val=" + escape(word) + '&origen=APP&type=' + searchType;
     } else {
         return '';
     }
