@@ -25,6 +25,31 @@ input {
     background-color: @background !important;
 }
 
+/* This 3 selectors and their rules show select in options properly */
+#opts li {
+    overflow: hidden !important;
+}
+
+.spanSelectOptions {
+    width: 95% !important;
+}
+
+.selectOptions {
+    width: 130% !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    border: none !important;
+    background-color: transparent;
+    background-image: none;
+    text-indent: 0.01px;
+    text-overflow: '' !important;
+    overflow: hidden !important;
+}
+
+.labelOptions {
+    font-size: 87% !important;
+}
+
 /* tabs content have to be below header */
 .bb-tablist .bb-tabpanel {
     top: 4.7rem;
