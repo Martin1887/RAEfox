@@ -166,15 +166,21 @@ function searchInWordsList() {
     
     var begin = beginSearch.value;
     var searchInBegin = begin.length > 0;
+    if (searchInBegin) {
+        begin = begin.toLowerCase();
+    }
     var contain = containSearch.value.split(' ');
-    var searchInContain = contain.length > 0;
+    var searchInContain = contain.length > 0 && contain[0].length > 0;
     var end = endSearch.value;
     var searchInEnd = end.length > 0;
+    if (searchInEnd) {
+        end = end.toLowerCase();
+    }
     
     // words are searched in allWords array and inserted in searchedWords array
     searchedWords = [];
     for (var i = 0; i < allWords.length; i++) {
-        var word = allWords[i];
+        var word = allWords[i].toLowerCase();;
         if ((!searchInBegin || word.startsWith(begin))
                 && (!searchInContain || exactlyContains(contain, word))
                 && (!searchInEnd || word.endsWith(end))) {
@@ -205,8 +211,9 @@ function searchInWordsList() {
 // Search if word contains array words in same order
 function exactlyContains(array, word) {
     var indexes = [];
+    var lower = word.toLowerCase();
     for (var i = 0; i < array.length; i++) {
-        var index = word.indexOf(array[i]);
+        var index = lower.indexOf(array[i].toLowerCase());
         if (index > -1) {
             indexes.push(index);
         } else {
