@@ -6,9 +6,11 @@ var wordsCharged = false;
 // Dynamic localize
 var searchResults = '';
 var clear = '';
+var forWord = '';
 navigator.mozL10n.ready ( function () {
     var _ = navigator.mozL10n.get;
     searchResults = _('searchResults');
+    forWord = _('for');
     clear = _('clear');
 });
 
@@ -189,7 +191,9 @@ function searchInWordsList() {
     }
     
     // Format words
-    var wordsList = '<h1 data-l10n-id="searchResults">' + searchResults + '</h1>';
+    var wordsList = '<h1 data-l10n-id="searchResults">' + searchResults + ' '
+            + forWord + ' \'' + (searchInBegin ? begin + '-' : '') 
+            + (searchInContain ? contain.join(' ') : '') + (searchInEnd ? '-' + end : '') + '\'</h1>';
     for (var i = 0; i < searchedWords.length; i++) {
         word = searchedWords[i];
         
