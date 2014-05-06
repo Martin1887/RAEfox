@@ -78,6 +78,15 @@ document.addEventListener('DOMContentLoaded', function() {
 function changeSearchType() {
     var newValue = document.getElementById('typeSelect').value;
     searchType = newValue;
+    
+    // Store value in database
+    var objectStore = db.transaction(['searchType'], 'readwrite').objectStore('searchType');
+    objectStore.get('searchType').onsuccess = function(event) {
+        var data = event.target.result;
+        data.type = searchType;
+        
+        objectStore.put(data);
+    };
 }
 
 function enableOrDisableSearchButton() {
