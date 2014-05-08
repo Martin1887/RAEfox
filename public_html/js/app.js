@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
         searches.push(search);
         indexSearches++;
         backButton.disabled = false;
+        
+        // Add word to history
+        addWordToHistory(search);
     };
 
     // Back and forward buttons events

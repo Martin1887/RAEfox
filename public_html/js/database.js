@@ -1,5 +1,5 @@
 var db;
-var openRequest = indexedDB.open('searchType', 1);
+var openRequest = indexedDB.open('RAEfox', 1);
 
 openRequest.onsuccess = function(event) {
     db = openRequest.result;
@@ -20,4 +20,8 @@ openRequest.onupgradeneeded = function(event) {
     var searchTypeStore = db.createObjectStore("searchType", {keyPath: 'varName'});
     // Default searchType is 3
     searchTypeStore.add({varName: 'searchType', type: 3});
+    
+    // history: autoincrement with date index and word
+    var historyStore = db.createObjectStore('history', {autoIncrement: true});
+    historyStore.createIndex('date', 'date', {unique: false});
 };
