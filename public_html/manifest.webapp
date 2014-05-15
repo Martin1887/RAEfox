@@ -2,7 +2,7 @@
   "version": "0.1",
   "name": "RAEfox",
   "launch_path": "/index.html#panel1",
-  "description": "RAEfox is an open source application licensed under GPLv3 that facilitates to search words in RAE dictionary in Firefox OS and Firefox for Desktop and Android. This application only facilitates to search in RAE web, it's not a official RAE application and all RAE trademarks and contents are proprety of RAE.",
+  "description": "RAEfox is an open source application licensed under GPLv3 that facilitates to search words in RAE dictionary in Firefox OS and Firefox for Desktop and Android. This application only facilitates to search in RAE web, it's not a official RAE application and all RAE trademarks and contents are property of RAE.",
   "icons": {
     "60": "/images/icon_60x60.png",
     "64": "/images/icon_64x64.png",
@@ -21,7 +21,7 @@
   "locales": {
    "en": {
       "name": "RAEfox",
-      "description": "RAEfox is an open source application licensed under GPLv3 that facilitates to search words in RAE dictionary in Firefox OS and Firefox for Desktop and Android. This application only facilitates to search in RAE web, it's not a official RAE application and all RAE trademarks and contents are proprety of RAE."
+      "description": "RAEfox is an open source application licensed under GPLv3 that facilitates to search words in RAE dictionary in Firefox OS and Firefox for Desktop and Android. This application only facilitates to search in RAE web, it's not a official RAE application and all RAE trademarks and contents are property of RAE."
     },
     "es": {
       "name": "RAEfox",

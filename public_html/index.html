@@ -14,6 +14,7 @@
         <link href="css/BB/style/scrolling.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/lists.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/buttons.css" rel="stylesheet" type="text/css">
+        <link href="css/BB/style/switches.css" rel="stylesheet" type="text/css">
         <link href="css/BB/util.css" rel="stylesheet" type="text/css">
         <link href="css/BB/transitions.css" rel="stylesheet" type="text/css">
         <link href="css/BB/icons/styles/action_icons.css" rel="stylesheet" type="text/css">
@@ -35,6 +36,14 @@
         <section id="opts" data-type="sidebar">
             <header><h1 data-l10n-id="options">Options</h1></header>
             <nav>
+                <ul>
+                    <li class="switchInOptions">
+                        <label id="autosaveLabel" class="pack-switch">
+                            <input id="autosaveInput" type="checkbox">
+                            <span class="labelOptions" data-l10n-id="autosaveHistory">Autosave history</span>
+                        </label>
+                    </li>
+                </ul>
                 <ul>
                     <li>
                         <label for="typeSelect" class="labelOptions" data-l10n-id="searchType">Search type</label>
@@ -78,6 +87,10 @@
                                     <li><button disabled="disabled" id="iframeBack" data-l10n-id="back" class="action-icon browser-back">Back</button></li>
                                     <li><button disabled="disabled" id="iframeForward" data-l10n-id="forward" class="action-icon browser-forward">Forward</button></li>
                                 </ul>
+                                <div>
+                                    <button onclick="removeWordFromHistory(document.getElementById('inputSearch').value);" role="button" id="removeWordFromHistory" data-l10n-id="removeWordFromHistory" class="danger hidden historyButton">Remove word from history</button>
+                                    <button onclick="addWordToHistory(document.getElementById('inputSearch').value);" role="button" id="addWordToHistory" data-l10n-id="addWordToHistory" class="recommend hidden historyButton">Add word to history</button>
+                                </div>
                             </div>
                         </div>
                     </div>

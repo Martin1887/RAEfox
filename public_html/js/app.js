@@ -4,10 +4,15 @@ searches.push('');
 var indexSearches = 0;
 
 var searchType = 3;
+var autosaveHistory = false;
+var wordSaved = false;
 
 document.addEventListener('DOMContentLoaded', function() {
     // Change searchType on select selection
     document.getElementById('typeSelect').onchange = changeSearchType;
+    // Autosave history on/off
+    document.getElementById('autosaveInput').onchange = changeAutosave;
+    
     
     // Enable/disable search button
     var inputSearch = document.getElementById('inputSearch');
@@ -29,7 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
         backButton.disabled = false;
         
         // Add word to history
-        addWordToHistory(search);
+        wordSaved = false;
+        if (autosaveHistory) {
+            addWordToHistory(search);
+        } else {
+            updateWordSaved();
+        }
     };
 
     // Back and forward buttons events
@@ -44,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (indexSearches === 0) {
             backButton.disabled = true;
         }
+        updateWordSaved();
     };
     var forwardButton = document.getElementById('iframeForward');
     forwardButton.onclick = function() {
@@ -57,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (indexSearches === searches.length - 1) {
             forwardButton.disabled = true;
         }
+        updateWordSaved();
     };
     
     // About show
@@ -90,6 +102,71 @@ function changeSearchType() {
         
         objectStore.put(data);
     };
+}
+
+function changeAutosave() {
+    var newValue = document.getElementById('autosaveInput').checked;
+    autosaveHistory = newValue;
+    
+    // Store value in database
+    var objectStore = db.transaction(['autosaveHistory'], 'readwrite').objectStore('autosaveHistory');
+    objectStore.get('autosave').onsuccess = function(event) {
+        var data = event.target.result;
+        data.val = autosaveHistory;
+        
+        objectStore.put(data);
+    };
+    
+    // show/hide save/remove button
+    saveOrRemoveButton();
+}
+
+// Show correct history button
+function saveOrRemoveButton() {
+    var removeButton = document.getElementById('removeWordFromHistory');
+    var addButton = document.getElementById('addWordToHistory');
+    var word = document.getElementById('inputSearch').value;
+    if (autosaveHistory || !word) {
+        // Hide 2 buttons if there isn't word of it is autosaved
+        if (removeButton.className.indexOf('hidden') === -1) {
+            removeButton.className += ' hidden';
+        }
+        if (addButton.className.indexOf('hidden') === -1) {
+            addButton.className += ' hidden';
+        }
+    } else {
+        if (wordSaved) {
+            if (removeButton.className.indexOf('hidden') > -1) {
+                removeButton.className = removeButton.className.replace('hidden', '');
+            }
+            if (addButton.className.indexOf('hidden') === -1) {
+                addButton.className += ' hidden';
+            }
+        } else {
+            if (addButton.className.indexOf('hidden') > -1) {
+                addButton.className = addButton.className.replace('hidden', '');
+            }
+            if (removeButton.className.indexOf('hidden') === -1) {
+                removeButton.className += ' hidden';
+            }
+        }
+    }
+}
+
+// Update correct value of wordSaved searching in history tab and call saveOrRemoveButton
+function updateWordSaved() {
+    var word = document.getElementById('inputSearch').value;
+    var now = new Date();
+    var nowString = now.getFullYear() + '-' + (now.getMonth() + 1 > 9 ? (now.getMonth() + 1) : '0' + (now.getMonth() + 1))
+            + '-' + (now.getDate() > 9 ? now.getDate() : '0' + now.getDate());
+    var words = document.querySelectorAll('.word-' + word + '-date-' + nowString);
+    if (words.length > 0) {
+        wordSaved = true;
+    } else {
+        wordSaved = false;
+    }
+    
+    saveOrRemoveButton();
 }
 
 function enableOrDisableSearchButton() {
