@@ -90,6 +90,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
 });
 
+function changeTab(tab) {
+    if (tab === 1) {
+        changeDrawerClass('raeDrawer');
+        document.getElementById('menuEdit').className = 'hidden';
+    } else if (tab === 2) {
+        changeDrawerClass('mainDrawer');
+        document.getElementById('menuEdit').className = '';
+    } else if (tab === 3) {
+        changeDrawerClass('mainDrawer');
+        document.getElementById('menuEdit').className = 'hidden';
+    }
+}
+
 function changeSearchType() {
     var newValue = document.getElementById('typeSelect').value;
     searchType = newValue;

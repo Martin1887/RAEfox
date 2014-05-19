@@ -16,6 +16,9 @@ input {
 #header {
     background-color: @blueHeader;
     color: @whiteHeader !important;
+    button {
+        color: @whiteHeader !important;
+    }
 }
 
 .raeDrawer {
@@ -175,6 +178,21 @@ input {
     background-clip: inherit !important;
     background-origin: inherit !important;
     background-size: inherit !important;
+}
+
+.ulHistory {
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+.checkHistory {
+    height: 2.5rem !important;
+    width: 4rem !important;
+}
+
+.hiddenCheckHistory {
+    left: -2.5rem !important;;
+    width: 1.5rem !important;
 }
 
 /* Toolbar is upper because they are tabs and tabs cannot be at top because there is search */

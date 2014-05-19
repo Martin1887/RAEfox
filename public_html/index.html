@@ -34,7 +34,9 @@
     </head>
     <body>
         <section id="opts" data-type="sidebar">
-            <header><h1 data-l10n-id="options">Options</h1></header>
+            <header>
+                <h1 data-l10n-id="options">Options</h1>
+            </header>
             <nav>
                 <ul>
                     <li class="switchInOptions">
@@ -64,15 +66,19 @@
         </section>
         <section id="drawer" class="raeDrawer" role="region">
             <header id="header">
-              <a href="#panel1" onclick="return back();"><span class="icon icon-menu">hide sidebar</span></a>
-              <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
-              <h1>RAEfox</h1>
+                <a href="#panel1" onclick="return back();"><span class="icon icon-menu">hide sidebar</span></a>
+                <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
+                <menu id="menuEdit" type="toolbar" class="hidden">
+                    <a id="editHistoryButton" href="#" onclick="return changeHistoryEditMode(true);"><span class="icon icon-edit">edit</span></a>
+                    <button id="noEditHistoryButton" type="button" onclick="return changeHistoryEditMode(false);" class="hidden" data-l10n-id="done">Done</button>
+                </menu>
+                <h1>RAEfox</h1>
             </header>
             
             <!-- Tabs -->
             <ul id="tabs" role="tablist" data-items="3" class="bb-tablist bottom">
                 <li id="panel1" role="presentation" class="darkTabList">
-                    <a id="tab1" href="#panel1" onclick="changeDrawerClass('raeDrawer');" class="tabIcon" role="tab" aria-controls="main1"><i class="fa fa-search"></i></a>
+                    <a id="tab1" href="#panel1" onclick="changeTab(1);" class="tabIcon" role="tab" aria-controls="main1"><i class="fa fa-search"></i></a>
                     <div id="main1" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab1">
                         <div class="raeContent">
                             <form role="search" id="searchForm">
@@ -96,15 +102,17 @@
                     </div>
                 </li>
                 <li id="panel2" role="presentation" class="darkTabList">
-                    <a id="tab2" href="#panel2" onclick="changeDrawerClass('mainDrawer');" class="tabIcon" role="tab" aria-controls="main2"><i class="fa fa-clock-o fa-rotate-90"></i></a>
+                    <a id="tab2" href="#panel2" onclick="changeTab(2);" class="tabIcon" role="tab" aria-controls="main2"><i class="fa fa-clock-o fa-rotate-90"></i></a>
                     <div id="main2" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab2">
                         <div class="mainContent">
+                            <button onclick="confirmRemoveHistorySelected();" role="button" style="text-align: center !important;" id="removeSelectedFromHistory" data-l10n-id="removeSelected" class="danger hidden">Remove selected</button>
+                            <button onclick="confirmRemoveAllHistoryElements();" role="button" style="text-align: center !important;" id="removeAllFromHistory" data-l10n-id="removeAll" class="danger hidden">Remove all</button>
                             <section id="historyList" data-type="list"></section>
                         </div>
                     </div>
                 </li>
                 <li id="panel3" role="presentation" class="darkTabList">
-                    <a id="tab3" href="#panel3" onclick="changeDrawerClass('mainDrawer');" class="tabIcon" role="tab" aria-controls="main3"><i class="fa fa-bars"></i></a>
+                    <a id="tab3" href="#panel3" onclick="changeTab(3);" class="tabIcon" role="tab" aria-controls="main3"><i class="fa fa-bars"></i></a>
                     <div id="main3" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab3">
                         <div class="mainContent">
                             <!-- Search form, hidden by default -->
@@ -172,6 +180,30 @@
                 </section>
                 <menu>
                     <button class="uniqueButton" id="closeAbout" data-l10n-id="close">Close</button>
+                </menu>
+            </form>
+            
+            <!-- Confirm remove selected -->
+            <form id="removeSelectedConfirm" class="hidden" role="dialog" data-type="confirm">
+                <section>
+                    <h1 data-l10n-id="confirmation">Confirmation</h1>
+                    <p data-l10n-id="confirmRemoveSelected">Are you sure you want to remove selected entries?</p>
+                </section>
+                <menu>
+                    <button onclick="document.getElementById('removeSelectedConfirm').className = 'hidden';" type="button" data-l10n-id="cancel">Cancel</button>
+                    <button onclick="removeHistorySelected();" type="button" data-l10n-id="remove" class="danger">Remove</button>
+                </menu>
+            </form>
+
+            <!-- Confirm remove all -->
+            <form id="removeAllConfirm" role="dialog" class="hidden" data-type="confirm">
+                <section>
+                    <h1 data-l10n-id="confirmation">Confirmation</h1>
+                    <p data-l10n-id="confirmRemoveAll">Are you sure you want to remove ALL entries?</p>
+                </section>
+                <menu>
+                    <button onclick="document.getElementById('removeAllConfirm').className = 'hidden';" type="button" data-l10n-id="cancel">Cancel</button>
+                    <button onclick="removeAllHistoryElements();" type="button" data-l10n-id="remove" class="danger">Remove</button>
                 </menu>
             </form>
             

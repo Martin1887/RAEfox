@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Charge words list
     document.getElementById('tab3').onclick = function () {
-        changeDrawerClass('mainDrawer');
+        changeTab(3);
         
         // Words list is charged if not has been charged yet
         if (!wordsCharged) {
@@ -119,6 +119,8 @@ function searchInRae(word) {
     document.getElementById('inputSearch').value = word;
     document.getElementById('searchButton').disabled = false;
     document.getElementById('searchButton').click();
+    changeTab(1);
+    return true;
 }
 
 function enableOrDisableSearchWordsListButton() {
