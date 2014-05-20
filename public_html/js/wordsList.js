@@ -76,6 +76,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // A letter is selected
                         document.getElementById('hLetA').click();
+                        
+                        // Spinner is removed
+                        var spinner = document.getElementById('progressWordsList');
+                        spinner.parentNode.removeChild(spinner);
                     } else {
                         dump("Error loading page\n");
                     }
