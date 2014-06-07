@@ -173,7 +173,7 @@ function changeHistoryEditMode(newEditMode) {
         // Show checkboxes
         for (var i = 0; i < checks.length; i++) {
             // Without hiddenCheckHistory
-            checks[i].className = 'pack-checkbox checkHistory';
+            checks[i].className = 'pack-checkbox danger checkHistory';
         }
     } else {
         // Permit links go to tab1
@@ -192,7 +192,7 @@ function changeHistoryEditMode(newEditMode) {
         // Hide checkboxes
         for (var i = 0; i < checks.length; i++) {
             // With hiddenCheckHistory
-            checks[i].className = 'pack-checkbox checkHistory  hiddenCheckHistory';
+            checks[i].className = 'pack-checkbox danger checkHistory hiddenCheckHistory';
         }
     }
     // false is returned in order to not go to link
