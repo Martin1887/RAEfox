@@ -1,0 +1,51 @@
+/* To dark backgrounds, like Firefox OS dialogs */
+
+.camaLessForm label {
+    color: #ddd !important;
+    font-size: 70% !important;
+    margin-right: 1rem !important;
+}
+.camaLessForm .themeName {
+    min-width: 10rem !important;
+    max-width: 10rem !important;
+}
+.camaLessForm .themeColors {
+    max-width: 15rem !important;
+}
+.camaLessForm .themeColors input {
+    width: 100% !important;
+    margin-bottom: 0.5em !important;
+}
+.camaLessForm .themeAdd {
+    text-align: center !important;
+}
+.camaLessForm table {
+    width: 100%;
+}
+
+
+.camaLessForm li {
+    border-style: none !important;
+    height: auto !important;
+    padding-bottom: 0 !important;
+}
+.camaLessForm ul {
+    border-width: 0 !important;
+}
+
+
+/* Remove node with fade out effect */
+.removingNode {
+    animation-duration: 2s;
+    animation-name: fadeOut;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+

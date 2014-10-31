@@ -7,6 +7,9 @@ var searchType = 3;
 var autosaveHistory = false;
 var wordSaved = false;
 
+
+var callbackThemesClose;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Change searchType on select selection
     document.getElementById('typeSelect').onchange = changeSearchType;
@@ -88,6 +91,21 @@ document.addEventListener('DOMContentLoaded', function() {
         back();
     };
     
+    // Themes show
+    var openThemes = document.getElementById('showThemes');
+    openThemes.onclick = function() {
+        var themesDialog = document.getElementById('themes');
+        themesDialog.className = themesDialog.className.replace('hidden', '');
+    };
+    
+    // Themes close
+    callbackThemesClose = function() {
+        var themesDialog = document.getElementById('themes');
+        themesDialog.className += ' hidden';
+        // 2 backs to go to the panel instead the drawer
+        back();
+        back();
+    };
 });
 
 function changeTab(tab) {

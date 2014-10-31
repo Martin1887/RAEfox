@@ -4,6 +4,8 @@
         <title>RAEFox</title>
         <meta charset="UTF-8">
         <meta content="width=device-width, user-scalable=no" name="viewport">
+        <link href="js/camaLESS/colorPicker/index.css" rel="stylesheet" type="text/css">
+        <link href="js/camaLESS/colorPicker/javascript_implementation/jsColor.css" rel="stylesheet" type="text/css">
         <link href="css/font-awesome-4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/headers.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/drawer.css" rel="stylesheet" type="text/css">
@@ -32,6 +34,11 @@
         <script type="text/javascript" src="js/wordsList.js"></script>
         <script type="text/javascript" src="js/database.js"></script>
         <script type="text/javascript" src="js/history.js"></script>
+        <script type="text/javascript" src="js/camaLESS/camaLESS.js"></script>
+        <script type="text/javascript" src="js/color_themes.js"></script>
+        <link href="js/camaLESS/camaLESS_dark.css" rel="stylesheet" type="text/css">
+        
+        
     </head>
     <body>
         <section id="opts" data-type="sidebar">
@@ -59,6 +66,9 @@
                             </select>
                         </span>
                     </li>
+                </ul>
+                <ul>
+                    <li><a href="#panel1" id="showThemes" data-l10n-id="themes">Color themes</a></li>
                 </ul>
                 <ul>
                     <li><a href="#panel1" id="showAbout" data-l10n-id="about">About RAEfox</a></li>
@@ -128,8 +138,8 @@
                                     <label data-l10n-id="end" for="endSearch">End with</label><input type="text" id="endSearch" placeholder="deo" required>
                                 </p>
                                 <p>
-                                <button class="recommend" role="button" type="submit" disabled="disabled" data-l10n-id="search" id="searchInWordsListButton">Search</button>
-                                <button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">Clear Search</button>
+                                    <button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">Clear Search</button>
+                                    <button class="recommend" role="button" type="submit" disabled="disabled" data-l10n-id="search" id="searchInWordsListButton">Search</button>
                                 </p>
                             </form>
                             <div class="hidden" id="searchedPanel"></div>
@@ -185,6 +195,9 @@
                 </menu>
             </form>
             
+            <!-- Themes -->
+            <form id="themes" class="hidden" role="dialog" data-type="confirm"></form>
+            
             <!-- Confirm remove selected -->
             <form id="removeSelectedConfirm" class="hidden" role="dialog" data-type="confirm">
                 <section>
@@ -210,5 +223,7 @@
             </form>
             
         </section>
+        
+        <script type="text/javascript" src="js/camaLESS/colorPicker/javascript_implementation/jsColorPicker.min.js"></script>
     </body>
 </html>
