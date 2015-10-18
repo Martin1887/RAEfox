@@ -125,7 +125,7 @@
                 <li id="panel3" role="presentation" class="darkTabList">
                     <a id="tab3" href="#panel3" onclick="changeTab(3);" class="tabIcon" role="tab" aria-controls="main3"><i class="fa fa-bars"></i></a>
                     <div id="main3" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab3">
-                        <div class="mainContent">
+                        <div id="main3Content" class="mainContent">
                             <!-- Search form, hidden by default -->
                             <form class="formHidden" id="searchInWordsListForm">
                                 <p>
@@ -143,7 +143,6 @@
                                 </p>
                             </form>
                             <div class="hidden" id="searchedPanel"></div>
-                            <progress id="progressWordsList"></progress>
                             <section id="wordsList" data-type="list"></section>
                             <nav id="scrollWordsList" data-type="scrollbar">
                                 <ol>
