@@ -121,7 +121,7 @@ function removeWordFromHistory(word, id) {
     }
     
     // Word is removed from day list
-    var elements = [idElement] || document.querySelectorAll('.word-' + word + '-date-' + nowString);
+    var elements = idElement ? [idElement] : document.querySelectorAll('.word-' + word + '-date-' + nowString);
     var parentLi;
     for (var i = 0; i < elements.length; i++) {
         if (i === 0) {
