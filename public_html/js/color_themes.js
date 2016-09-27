@@ -29,9 +29,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         '@listsHeader': '#FF4E00'}}]});
     themes.push({name: 'RAESearch', values: [
             {name: 'sepia', shownName: 'sepia',
-                values: {'@background': '#CCA'}},
+                values: {'@background_rae': '#CCA'}},
             {name: 'light', shownName: 'light',
-                values: {'@background': '#E8E8E8'}}]});
+                values: {'@background_rae': '#E8E8E8'}}]});
 
     var form = [document.getElementById('themes')];
     var callbacks = [callbackThemesClose];
