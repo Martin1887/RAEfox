@@ -29,22 +29,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     word = allHistoryWords[i].value.word;
                     // If the initial letter has changed put header and ul
                     if (allHistoryWords[i].value.date !== currentDate) {
-                        // If not is first letter before letter is closed
+                        // If it is not the first letter, before letter is closed
                         if (historyList) {
                             historyList += '</li></ul>';
                         }
 
                         currentDate = allHistoryWords[i].value.date;
                         var f = new navigator.mozL10n.DateTimeFormat();
-                        // With more than 3 days return formatted date and difference is forced to days
+                        // With more than 3 days return formatted date, and difference is forced to days
                         var date = f.fromNow(new Date(allHistoryWords[i].value.date), false, 86400 * 3, 'days');
                         historyList += '<header>' + date + '</header>';
                         historyList += '<ul class="ulHistory" id="historyDate' + date + '"><li>';
                     }
 
                     // Class is used to search to remove from search tab button
-                    historyList += '<a id="' + allHistoryWords[i].key + '" class="word-' + word + '-date-' + allHistoryWords[i].value.date +'" href="#panel1" onclick="return searchInRaeFromHistory(\'' + word + '\');">\n\
-                        <label onclick="checkRemoveButtonsDisabled();" class="pack-checkbox checkHistory hiddenCheckHistory"><input type="checkbox" name="' + allHistoryWords[i].key + '"><span></span></label>';
+                    historyList += '<a id="' + allHistoryWords[i].key + '" class="word-' + word + '-date-'
+                            + allHistoryWords[i].value.date
+                            + '" href="#panel1" onclick="return searchInRaeFromHistory(\'' + word + '\');">'
+                            + '<label onclick="checkRemoveButtonsDisabled();"'
+                            + 'class="pack-checkbox checkHistory hiddenCheckHistory">'
+                            + '<input type="checkbox" name="' + allHistoryWords[i].key
+                            + '"><span></span></label>';
                     historyList += word + '</a>';
                 }
                 document.getElementById('historyList').innerHTML = historyList;
@@ -72,16 +77,20 @@ function addWordToHistory(word) {
         // With more than 3 days return formatted date and difference is forced to days
         var todayList = document.getElementById('historyDate' + f.fromNow(nowDate, false, 86400 * 3, 'days'));
         // Class is used to search to remove
-        var link = '<a id="' + key + '" class="word-' + word + '-date-' + nowString +'" href="#panel1" onclick="return searchInRaeFromHistory(\'' + word + '\');">\n\
-                <label onclick="checkRemoveButtonsDisabled();" class="pack-checkbox checkHistory hiddenCheckHistory"><input type="checkbox" name="' + key + '"><span></span></label>' + word + '</a>';
+        var link = '<a id="' + key + '" class="word-' + word + '-date-' + nowString
+                + '" href="#panel1" onclick="return searchInRaeFromHistory(\'' + word + '\');">'
+                + '<label onclick="checkRemoveButtonsDisabled();" class="pack-checkbox checkHistory hiddenCheckHistory">'
+                + '<input type="checkbox" name="' + key + '"><span></span></label>' + word + '</a>';
         if (todayList) {
             var liParent = todayList.firstChild;
             liParent.innerHTML = link + liParent.innerHTML;
         } else {
             var historyList = document.getElementById('historyList');
             // With more than 3 days return formatted date and difference is forced to days
-            var newList = '<header>' + f.fromNow(nowDate, false, 86400 * 3, 'days') + '</header><ul class="ulHistory" id="historyDate' + f.fromNow(nowDate, false, 86400 * 3, 'days') + '"><li>'
-                    + link + '</li></ul>';
+            var newList = '<header>' + f.fromNow(nowDate, false, 86400 * 3, 'days')
+                    + '</header><ul class="ulHistory" id="historyDate'
+                    + f.fromNow(nowDate, false, 86400 * 3, 'days')
+                    + '"><li>' + link + '</li></ul>';
             historyList.innerHTML = newList + historyList.innerHTML;
         }
         
@@ -156,7 +165,7 @@ function changeHistoryEditMode(newEditMode) {
     var removeSelected = document.getElementById('removeSelectedFromHistory');
     var removeAll = document.getElementById('removeAllFromHistory');
     if (newEditMode) {
-        // Elude links go to tab1
+        // Forbid links go to tab1
         for (var i = 0; i < links.length; i++) {
             links[i].href = '#panel2';
         }
@@ -176,7 +185,7 @@ function changeHistoryEditMode(newEditMode) {
             checks[i].className = 'pack-checkbox danger checkHistory';
         }
     } else {
-        // Permit links go to tab1
+        // Allow links go to tab1
         for (var i = 0; i < links.length; i++) {
             links[i].href = '#panel1';
         }

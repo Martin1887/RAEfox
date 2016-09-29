@@ -1,7 +1,6 @@
-/* To light backgrounds, like simple web pages */
+/* To dark backgrounds, like Firefox OS dialogs */
 
 .camaLessForm label {
-    color: #000 !important;
     font-size: 70% !important;
     margin-right: 1rem !important;
 }
@@ -48,3 +47,4 @@
         opacity: 0;
     }
 }
+

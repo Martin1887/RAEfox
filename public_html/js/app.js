@@ -11,6 +11,8 @@ var wordSaved = false;
 var callbackThemesClose;
 
 document.addEventListener('DOMContentLoaded', function() {
+    enableOrDisableSearchButton();
+    
     // Change searchType on select selection
     document.getElementById('typeSelect').onchange = changeSearchType;
     // Autosave history on/off
@@ -108,6 +110,11 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 
+function clearInput(input) {
+    input.value = '';
+    enableOrDisableSearchButton();
+}
+
 function changeTab(tab) {
     if (tab === 1) {
         changeDrawerClass('raeDrawer');
@@ -156,7 +163,7 @@ function changeAutosave() {
 function saveOrRemoveButton() {
     var removeButton = document.getElementById('removeWordFromHistory');
     var addButton = document.getElementById('addWordToHistory');
-    var word = document.getElementById('inputSearch').value;
+    var word = searches[indexSearches];
     if (autosaveHistory || !word) {
         // Hide 2 buttons if there isn't word of it is autosaved
         if (removeButton.className.indexOf('hidden') === -1) {
@@ -186,7 +193,7 @@ function saveOrRemoveButton() {
 
 // Update correct value of wordSaved searching in history tab and call saveOrRemoveButton
 function updateWordSaved() {
-    var word = document.getElementById('inputSearch').value;
+    var word = searches[indexSearches];
     var now = new Date();
     var nowString = now.getFullYear() + '-' + (now.getMonth() + 1 > 9 ? (now.getMonth() + 1) : '0' + (now.getMonth() + 1))
             + '-' + (now.getDate() > 9 ? now.getDate() : '0' + now.getDate());
@@ -202,10 +209,14 @@ function updateWordSaved() {
 
 function enableOrDisableSearchButton() {
     var searchButton = document.getElementById('searchButton');
+    var resetSearchButton = document.getElementById('resetSearch');
     if (inputSearch.value.length > 0) {
         searchButton.disabled = false;
+        resetSearchButton.style.opacity = 1;
     } else {
         searchButton.disabled = true;
+        resetSearchButton.style.opacity = 0;
+        
     }
 }
 

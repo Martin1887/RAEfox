@@ -6,7 +6,8 @@
 
 /**
  * IndexedDB database. Structure is as follows:
- * an array of stores (types of themes) which one with:
+ * an array of stores (types of themes) which one with name and values with
+ * this structure:
  * name: database internal name
  * shownName: shown name in interface (customizable using l10n)
  * selected: boolean that says which theme is selected (1 or 0)
@@ -351,7 +352,7 @@ function selectColorTheme(name, store) {
  * @param {string} store Type of color theme.
  * @param {string} form Form object in which enter fields.
  * @param {string} clas CSS class. Default is camaLessForm.
- * @param {string} dataType List of themes HTML data-type attribute.
+ * @param {string} dataType List of themes HTML data-type attribute. Default is list.
  * @param {function} callback Function to execute after submit.
  * @returns true
  */
@@ -394,7 +395,7 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
             
             // Write form only when previous stores have finished
             var interForm = setInterval(function() {
-                if (finished === stores.indexOf(currentStore)) {
+                if (finished === formStores.indexOf(currentStore)) {
                     window.clearInterval(interForm);
                     // Themes sort in function of 'order' field
                     themes[currentStore].sort(function(a, b) { return a.order - b.order; });

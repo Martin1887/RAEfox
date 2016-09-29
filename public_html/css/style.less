@@ -13,11 +13,20 @@ input {
     font-family: "Fira Sans";
 }
 
+label {
+    color: @foreground !important;
+}
+
 #header {
     background-color: @blueHeader;
     color: @whiteHeader !important;
     button {
         color: @whiteHeader !important;
+    }
+    h1 {
+        text-align: center;
+        font-weight: 200 !important;
+        font-style: italic;
     }
 }
 
@@ -26,6 +35,10 @@ input {
 }
 .mainDrawer {
     background-color: @background !important;
+}
+
+form p button[type="reset"] {
+    pointer-events: all !important;
 }
 
 /* This 3 selectors and their rules show select in options properly */
@@ -251,8 +264,8 @@ input {
 
 #progressWordsList {
     position: relative;
-    left: 45%;
-    margin-top: 50%;
+    left: 46%;
+    margin-top: 60%;
     display: inline-block;
     visibility: visible;
 }
@@ -318,6 +331,16 @@ input {
     }
     a:hover {
         background-color: @linksBackground;
+    }
+}
+
+.searchButtonScrollbar {
+    height: 3rem !important;
+
+    span {
+        width: 2.8rem !important;
+        height: 2.8rem !important;
+        background-size: 3.5rem auto !important;
     }
 }
 

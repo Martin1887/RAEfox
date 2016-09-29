@@ -36,7 +36,7 @@
         <script type="text/javascript" src="js/history.js"></script>
         <script type="text/javascript" src="js/camaLESS/camaLESS.js"></script>
         <script type="text/javascript" src="js/color_themes.js"></script>
-        <link href="js/camaLESS/camaLESS_dark.css" rel="stylesheet" type="text/css">
+        <link href="js/camaLESS/camaLESS.css" rel="stylesheet" type="text/css">
         
         
     </head>
@@ -96,6 +96,7 @@
                                 <button type="submit" disabled="disabled" data-l10n-id="search" id="searchButton">Search</button>
                                 <p>
                                     <input type="text" id="inputSearch" data-l10n-id="searchPlace" placeholder="Search..." required>
+                                    <button id="resetSearch" onclick="clearInput(document.getElementById('inputSearch'));" type="reset">Clear</button>
                                 </p>
                             </form>
                             <iframe id="iframe" src="" frameborder="0" width="100%" height="82%"></iframe>
@@ -105,8 +106,8 @@
                                     <li><button disabled="disabled" id="iframeForward" data-l10n-id="forward" class="action-icon browser-forward">Forward</button></li>
                                 </ul>
                                 <div>
-                                    <button onclick="removeWordFromHistory(document.getElementById('inputSearch').value);" role="button" id="removeWordFromHistory" data-l10n-id="removeWordFromHistory" class="danger hidden historyButton">Remove word from history</button>
-                                    <button onclick="addWordToHistory(document.getElementById('inputSearch').value);" role="button" id="addWordToHistory" data-l10n-id="addWordToHistory" class="recommend hidden historyButton">Add word to history</button>
+                                    <button onclick="removeWordFromHistory(searches[indexSearches]);" role="button" id="removeWordFromHistory" data-l10n-id="removeWordFromHistory" class="danger hidden historyButton">Remove word from history</button>
+                                    <button onclick="addWordToHistory(searches[indexSearches]);" role="button" id="addWordToHistory" data-l10n-id="addWordToHistory" class="recommend hidden historyButton">Add word to history</button>
                                 </div>
                             </div>
                         </div>
@@ -123,7 +124,7 @@
                     </div>
                 </li>
                 <li id="panel3" role="presentation" class="darkTabList">
-                    <a id="tab3" href="#panel3" onclick="changeTab(3);" class="tabIcon" role="tab" aria-controls="main3"><i class="fa fa-bars"></i></a>
+                    <a id="tab3" href="#panel3" onclick="changeTab(3);" class="tabIcon" role="tab" aria-controls="main3"><i class="fa fa-sort-alpha-asc"></i></a>
                     <div id="main3" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab3">
                         <div id="main3Content" class="mainContent">
                             <!-- Search form, hidden by default -->
@@ -146,7 +147,11 @@
                             <section id="wordsList" data-type="list"></section>
                             <nav id="scrollWordsList" data-type="scrollbar">
                                 <ol>
-                                  <li style="margin-bottom: 0.87rem;"><a href="#" onclick="return showOrHideSearchBars();"><span class="pack-icon-search">Search</span></a></li>  
+                                  <li class="searchButtonScrollbar">
+                                      <a href="#" onclick="return showOrHideSearchBars();">
+                                          <span class="pack-icon-search">Search</span>
+                                      </a>
+                                  </li>  
                                   <li><a href="#letA" onclick="return focusLetter('A');">A</a></li>
                                   <li><a href="#letB" onclick="return focusLetter('B');">B</a></li>
                                   <li><a href="#letC" onclick="return focusLetter('C');">C</a></li>
