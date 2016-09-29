@@ -53,11 +53,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     historyList += word + '</a>';
                 }
                 document.getElementById('historyList').innerHTML = historyList;
-                };
-            
+				updateHistoryCount();
+            };
         }
     };
 });
+
+function updateHistoryCount() {
+	var count = document.querySelectorAll('.checkHistory').length;
+	document.getElementById('historyCount').innerHTML = '(' + count + ')';
+}
 
 
 // Add searched word to database and history list
@@ -96,6 +101,7 @@ function addWordToHistory(word) {
         
         checkRemoveButtonsDisabled();
         changeHistoryEditMode(editMode);
+		updateHistoryCount();
     };
     wordSaved = true;
     saveOrRemoveButton();
@@ -152,6 +158,7 @@ function removeWordFromHistory(word, id) {
     wordSaved = false;
     saveOrRemoveButton();
     checkRemoveButtonsDisabled();
+	updateHistoryCount();
 }
 
 

@@ -128,9 +128,12 @@
                     <a id="tab2" href="#panel2" onclick="changeTab(2);" class="tabIcon" role="tab" aria-controls="main2"><i class="fa fa-clock-o fa-rotate-90"></i></a>
                     <div id="main2" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab2">
                         <div class="mainContent">
-                            <button onclick="confirmRemoveHistorySelected();" role="button" style="text-align: center !important;" id="removeSelectedFromHistory" data-l10n-id="removeSelected" class="danger hidden">Remove selected</button>
+                            <div class="historyHeader">
+								<h1 data-l10n-id="history">History <span id="historyCount">(0)</span></h1>
+							</div>
+							<button onclick="confirmRemoveHistorySelected();" role="button" style="text-align: center !important;" id="removeSelectedFromHistory" data-l10n-id="removeSelected" class="danger hidden">Remove selected</button>
                             <button onclick="confirmRemoveAllHistoryElements();" role="button" style="text-align: center !important;" id="removeAllFromHistory" data-l10n-id="removeAll" class="danger hidden">Remove all</button>
-                            <section id="historyList" data-type="list"></section>
+							<section id="historyList" data-type="list"></section>
                         </div>
                     </div>
                 </li>
