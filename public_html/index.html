@@ -23,8 +23,21 @@
         <link href="css/BB/icons/styles/action_icons.css" rel="stylesheet" type="text/css">
         <link href="css/BB/style/icons.css" rel="stylesheet" type="text/css">
         <link href="css/style.less" rel="stylesheet/less" type="text/css">
-        <script type="text/javascript">less = { env: 'production' };</script>
-        <script src="js/less-1.7.0.min.js"></script>
+        <script type="text/javascript">
+			less = {
+				env: 'production',
+				async: false,
+				globalVars: {
+					background: '#151515',
+					foreground: '#BBB',
+					links: '#8AF',
+					linksBackground: 'rgba(87, 187, 255, 0.2)',
+					listsHeader: '#FFAA15',
+					background_rae: '#CCA'
+				}
+			};
+		</script>
+        <script src="js/less-2.7.1.min.js"></script>
         <link rel="resource" type="application/l10n" href="locales/locales.ini" />
         <script type="application/javascript" src="js/l10n.js"></script>
         <link rel="resource" type="application/l10n" href="locales/date.ini" />
@@ -37,8 +50,6 @@
         <script type="text/javascript" src="js/camaLESS/camaLESS.js"></script>
         <script type="text/javascript" src="js/color_themes.js"></script>
         <link href="js/camaLESS/camaLESS.css" rel="stylesheet" type="text/css">
-        
-        
     </head>
     <body>
         <section id="opts" data-type="sidebar">

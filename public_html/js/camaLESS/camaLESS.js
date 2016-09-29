@@ -172,8 +172,8 @@ function openCamaLessDb(name, types, defaults, forms, callbacks, formsStores,
  */
 function applyThemesAndCreateForms(forms, callbacks, formsStores, formsClasses, formsDataTypes) {
     applyCamaLessColorTheme();
-
-    for (var i = 0; i < forms.length; i++) {
+	
+	for (var i = 0; i < forms.length; i++) {
         var stores = null;
         var clas = null;
         var dataType = null;
@@ -193,6 +193,7 @@ function applyThemesAndCreateForms(forms, callbacks, formsStores, formsClasses, 
         // Create form of all types of themes
         createCamaLessForm(stores, forms[i], clas, dataType, callback);
     }
+	
     return true;
 }
 
@@ -841,23 +842,30 @@ function submitCamaLessForm(form, callback) {
  * are changed.
  * @returns true
  */
-function applyCamaLessColorTheme(store) {
-    
-    if (store) {
-        var objectStore = camaLessDb.transaction([store], 'readonly').objectStore(store);
-        var index = objectStore.index('selected');
-        index.get(1).onsuccess = function(event) {
-            if (event.target.result && event.target.result.values) {
-                less.modifyVars(
-                    event.target.result.values
-                );
-            }
-        };
-    } else {
-        for (var i = 0; i < stores.length; i++) {
-            applyCamaLessColorTheme(stores[i]);
-        }
-    }
+function applyCamaLessColorTheme() {
+	
+	var allVars = {};
+	var added = 0;
+	stores.forEach(function(store) {
+		var objectStore = camaLessDb.transaction([store], 'readonly').objectStore(store);
+		var index = objectStore.index('selected');
+		index.get(1).onsuccess = function(event) {
+			if (event.target.result && event.target.result.values) {
+				for (var attr in event.target.result.values) {
+					allVars[attr] = event.target.result.values[attr];
+				}
+				added++;
+			}
+		};
+	});
+	
+	// modifyVars when all variables of all themes are in allVars
+	var inter = setInterval(function() {
+		if (added === stores.length) {
+			clearInterval(inter);
+			less.modifyVars(allVars);
+		}
+	}, 50);
     
     
     return true;
