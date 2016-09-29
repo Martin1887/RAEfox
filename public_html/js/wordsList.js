@@ -60,129 +60,81 @@ function loadHeaders() {
                 + currentLetter + '</a></header>';
         wordsList += '<ul class="letterHidden" id="let' + currentLetter + '"></ul>';
     }
+    
+    // Add whitespace in the end in order to better links focus
+    for (var i = 0; i < 20; i++) {
+        wordsList += '<br/>';
+    }
     document.getElementById('wordsList').innerHTML = wordsList;
 }
 
-// Compare two letters in downcase and without tildes
-function sameLetter(first, second) {
-    first = first.toLowerCase();
-    second = second.toLowerCase();
-    
-    // Tildes are removed
-    first = first.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u');
-    second = second.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u');
-    
-    return first === second;
-}
 
-/**
- * Get list of all listapalabras.com words
- * @deprecated because load all words use many RAM
- */
-function getAllWords() {
-    var progress = document.createElement('progress');
-    progress.id = 'progressWordsList';
-    progress.style.position = 'fixed';
-    document.getElementById('main3Content').insertBefore(progress, document.getElementById('wordsList'));
-    
-    var reqWordsList = new XMLHttpRequest();
-    reqWordsList.open('GET', './resources/words_UTF8.txt', true);
-    reqWordsList.setRequestHeader('Content-Type', 'text/plain');
-    reqWordsList.responseType = 'text';
-    reqWordsList.onreadystatechange = function (aEvt) {
-        if (reqWordsList.readyState === 4) {
-            if (reqWordsList.status === 200 || (reqWordsList.status === 0 && reqWordsList.responseText)) {
-                // Event is removed because response is already set
-                reqWordsList.onreadystatechange = null;
-
-                // Each line contains a word, and they are saved as array 
-                allWords = reqWordsList.responseText.split('\n');
-                // Put content in words list section but not visible because performance
-                var wordsList = '';
-                var currentLetter = '0';
-                var word = '';
-                for (var i = 0; i < allWords.length; i++) {
-                    word = allWords[i];
-                    // If the initial letter has changed put header and ul
-                    if (!sameLetter(word.charAt(0), currentLetter)) {
-                        // If not is first letter before letter is closed
-                        if (wordsList) {
-                            wordsList += '</li></ul>';
-                        }
-
-                        currentLetter = word.charAt(0);
-                        wordsList += '<header ><a id="hLet' + currentLetter.toUpperCase()
-                                + '" href="#letA" onclick="return focusLetter(\''
-                                + currentLetter.toUpperCase() + '\');">'
-                                + currentLetter.toUpperCase() + '</a></header>';
-                        wordsList += '<ul class="letterHidden" id="let' + currentLetter.toUpperCase() + '"><li>';
-                    }
-
-                    wordsList += '<a href="#panel1" onclick="searchInRae(\'' + word + '\');">' + word + '</a>';
-                }
-                document.getElementById('wordsList').innerHTML = wordsList;
-
-                // A letter is selected
-                document.getElementById('hLetA').click();
-
-                // Spinner is removed
-                var spinner = document.getElementById('progressWordsList');
-                if (spinner) {
-                    spinner.parentNode.removeChild(spinner);
-                }
-            } else {
-                dump("Error loading page\n");
-            }
-        }
-    };
-    reqWordsList.send();
-}
-
-// get words that begin by the specified letter
+// get words that begin by the specified letter, words are loaded by letter because
+// loading all words uses too much RAM
 function getWordsOfLetter(letter) {
+    if (!allWords || allWords.length === 0) {
+        var reqWordsList = new XMLHttpRequest();
+        reqWordsList.open('GET', './resources/words_UTF8.txt', true);
+        reqWordsList.setRequestHeader('Content-Type', 'text/plain');
+        reqWordsList.responseType = 'text';
+        reqWordsList.onreadystatechange = function (aEvt) {
+            if (reqWordsList.readyState === 4) {
+                if (reqWordsList.status === 200 || (reqWordsList.status === 0 && reqWordsList.responseText)) {
+                    // Event is removed because response is already set
+                    reqWordsList.onreadystatechange = null;
+
+                    // Each line contains a word, and they are saved as array 
+                    allWords = reqWordsList.responseText.split('\n');
+                    writeHTMLWordsOfLetter(letter);
+                } else {
+                    dump("Error loading page\n");
+                }
+            }
+        };
+        reqWordsList.send();
+    } else {
+        writeHTMLWordsOfLetter(letter);
+    }
+}
+
+// Write HTML with words
+function writeHTMLWordsOfLetter(letter) {
     var progress = document.createElement('progress');
     progress.id = 'progressWordsList';
     progress.style.position = 'fixed';
     document.getElementById('main3Content').insertBefore(progress, document.getElementById('wordsList'));
     
-    var reqWordsList = new XMLHttpRequest();
-    reqWordsList.open('GET', './resources/words_UTF8.txt', true);
-    reqWordsList.setRequestHeader('Content-Type', 'text/plain');
-    reqWordsList.responseType = 'text';
-    reqWordsList.onreadystatechange = function (aEvt) {
-        if (reqWordsList.readyState === 4) {
-            if (reqWordsList.status === 200 || (reqWordsList.status === 0 && reqWordsList.responseText)) {
-                // Event is removed because response is already set
-                reqWordsList.onreadystatechange = null;
-
-                // Each line contains a word, and they are saved as array 
-                allWords = reqWordsList.responseText.split('\n');
-                // Put content in words list section but not visible because performance
-                var wordsList = '<li>';
-                var currentLetter = '0';
-                var word = '';
-                for (var i = 0; i < allWords.length; i++) {
-                    word = allWords[i];
-                    currentLetter = word.charAt(0);
-                    // If the initial letter is the letter to 
-                    if (sameLetter(currentLetter, letter)) {
-                        wordsList += '<a href="#panel1" onclick="searchInRae(\'' + word + '\');">' + word + '</a>';
-                    }
-                }
-                wordsList += '</li>';
-                document.getElementById('let' + letter.toUpperCase()).innerHTML = wordsList;
+    // Put content in words list section
+    var letterDOM = document.getElementById('let' + letter);
+    letterDOM.innerHTML = '<li></li>';
+    var listDOM = letterDOM.querySelector('li');
+    
+    var worker = new Worker('js/workerHTMLWordsList.js');
+    worker.onmessage = function(e) {
+        var wordsList = e.data.wordsList;
+        
+        if (e.data.end) {
+            // add the rest of HTML when transitions are finished
+            setTimeout(function() {
+                listDOM.innerHTML += wordsList;
+            }, 2000);
+        } else {
+            listDOM.innerHTML += wordsList;
+            
+            if (letterDOM.className !== 'letterShown') {
+                letterDOM.className = 'letterShown';
+                window.location = window.location.pathname + '#let' + letter;
+                window.location.href = window.location.pathname + '#panel3';
 
                 // Spinner is removed
                 var spinner = document.getElementById('progressWordsList');
                 if (spinner) {
                     spinner.parentNode.removeChild(spinner);
                 }
-            } else {
-                dump("Error loading page\n");
             }
         }
     };
-    reqWordsList.send();
+    worker.postMessage({allWords: allWords, letter: letter});
 }
 
 // Go to letter link and return to panel3 link to avoid loosing tab3 selection.
@@ -196,10 +148,7 @@ function focusLetter(letter) {
         old.removeChild(old.firstChild);
     }
     getWordsOfLetter(letter);
-    document.getElementById('let' + letter).className = 'letterShown';
     
-    window.location = window.location.pathname + '#let' + letter;
-    window.location.href = window.location.pathname + '#panel3';
     return false;
 }
 
