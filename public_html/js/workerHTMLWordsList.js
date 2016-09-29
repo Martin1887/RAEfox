@@ -17,8 +17,8 @@ onmessage = function(e) {
             return true;
         }
         
-        // add firstly only 50 words (20 for W because it only has 22)
-        if (writtenWords === 20 || writtenWords === 200) {
+        // add firstly only 200 words (22, 50 or 100 for letters with a fewer words)
+        if (writtenWords === 22 || writtenWords === 50 || writtenWords === 100 || writtenWords === 200) {
             postMessage({wordsList: wordsList, end: false});
             wordsList = '';
         }
