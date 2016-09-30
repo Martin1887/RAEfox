@@ -858,7 +858,6 @@ function applyCamaLessColorTheme() {
 				
 				// modifyVars when all variables of all themes are in allVars
 				if (added === stores.length) {
-					clearInterval(inter);
 					less.modifyVars(allVars);
 				}
 			}
