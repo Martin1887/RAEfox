@@ -332,12 +332,15 @@ form p button[type="reset"] {
 .searchedPanel {
     position: static;
     height: 100%;
-    width: 100%;
+	padding: 0px 1.5rem;
+	animation-duration: 0.5s;
+    animation-name: showDown;	
     
     a {
         height: auto;
-        width: 100%;
-        position: absolute;
+		width: 100%;
+		display: inline-block;
+        position: relative;
         text-decoration: none;
         padding-bottom: 0;
         margin-bottom: 0;
@@ -348,6 +351,10 @@ form p button[type="reset"] {
     a:hover {
         background-color: @linksBackground;
     }
+	
+	button {
+		text-align: center;
+	}
 }
 
 .searchButtonScrollbar {
@@ -358,6 +365,16 @@ form p button[type="reset"] {
         height: 2.8rem !important;
         background-size: 3.5rem auto !important;
     }
+}
+
+.searchIconRemarked {
+	span {
+		background-color: @blueHeader !important;
+	}
+}
+
+.lettersNotVisible li:not(.searchButtonScrollbar) {
+	opacity: 0 !important;
 }
 
 @keyframes showDown {

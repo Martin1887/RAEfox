@@ -1,6 +1,5 @@
 // Arrays of words lists
 var allWords = [];
-var searchedWords = [];
 var wordsCharged = false;
 
 // Dynamic localize
@@ -26,8 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
     endSearch.onkeyup = enableOrDisableSearchWordsListButton;
     endSearch.oninput = enableOrDisableSearchWordsListButton;
     
-    // Search
-    document.getElementById('searchInWordsListButton').onclick = searchInWordsList;
     
     // Charge words list
     document.getElementById('tab3').onclick = function () {
@@ -157,6 +154,7 @@ function searchInRae(word) {
     document.getElementById('inputSearch').value = word;
     document.getElementById('searchButton').disabled = false;
     document.getElementById('searchButton').click();
+	enableOrDisableSearchButton();
     changeTab(1);
     return true;
 }
@@ -177,11 +175,16 @@ function enableOrDisableSearchWordsListButton() {
 }
 
 function showOrHideSearchBars() {
-    var form = document.getElementById('searchInWordsListForm');
+    var searchIconLink = document.getElementById('searchIconLink');
+	var form = document.getElementById('searchInWordsListForm');
     if (form.className === 'formHidden') {
         form.className = 'formSearchInWordsList';
+		searchIconLink.className = 'searchIconRemarked';
+		document.getElementById('scrollWordsList').className = 'lettersNotVisible';
     } else {
         form.className = 'formHidden';
+		searchIconLink.className = '';
+		document.getElementById('scrollWordsList').className = '';
     }
     enableOrDisableSearchWordsListButton();
     
@@ -192,84 +195,72 @@ function showOrHideSearchBars() {
 // Go to A letter (cleaning search) and hide search form
 function clearSearchInWordsList() {
     // Clean search
-    searchedWords = [];
     document.getElementById('searchedPanel').className = 'hidden';
     document.getElementById('searchedPanel').innerHTML = '';
-    document.getElementById('wordsList').className = '';
+	document.getElementById('wordsList').className = '';
     document.getElementById('scrollWordsList').className = '';
-    document.getElementById('searchInWordsListForm').className = 'hidden';
+	document.getElementById('beginSearch').value = '';
+    document.getElementById('containSearch').value = '';
+    document.getElementById('endSearch').value = '';
+	showOrHideSearchBars();
     focusLetter('A');
 }
 
 function searchInWordsList() {
-    var beginSearch = document.getElementById('beginSearch');
+    var progress = document.createElement('progress');
+    progress.id = 'progressWordsList';
+    progress.style.position = 'fixed';
+    document.getElementById('main3Content').insertBefore(progress, document.getElementById('searchInWordsListForm'));
+	
+	var beginSearch = document.getElementById('beginSearch');
     var containSearch = document.getElementById('containSearch');
     var endSearch = document.getElementById('endSearch');
     
     var begin = beginSearch.value;
-    var searchInBegin = begin.length > 0;
-    if (searchInBegin) {
-        begin = begin.toLowerCase();
-    }
+	var searchInBegin = begin.length > 0;
     var contain = containSearch.value.split(' ');
-    var searchInContain = contain.length > 0 && contain[0].length > 0;
+	var searchInContain = contain.length > 0 && contain[0].length > 0;
     var end = endSearch.value;
-    var searchInEnd = end.length > 0;
-    if (searchInEnd) {
-        end = end.toLowerCase();
-    }
-    
-    // words are searched in allWords array and inserted in searchedWords array
-    searchedWords = [];
-    for (var i = 0; i < allWords.length; i++) {
-        var word = allWords[i].toLowerCase();;
-        if ((!searchInBegin || word.startsWith(begin))
-                && (!searchInContain || exactlyContains(contain, word))
-                && (!searchInEnd || word.endsWith(end))) {
-            searchedWords.push(word);
+	var searchInEnd = end.length > 0;
+	
+    var panel = document.getElementById('searchedPanel');
+	
+	var worker = new Worker('js/workerSearchWordsList.js');
+    worker.onmessage = function(e) {
+        var wordsList = e.data.wordsList;
+        
+        if (e.data.end) {
+            document.getElementById('searchResultsHeader').innerHTML += ' (' + e.data.count + ')';
+			// add the rest of HTML when transitions are finished
+            setTimeout(function() {
+                panel.innerHTML += wordsList;
+				
+				// Spinner is removed
+				var spinner = document.getElementById('progressWordsList');
+				if (spinner) {
+					spinner.parentNode.removeChild(spinner);
+				}
+            }, 500);
+        } else {
+            panel.innerHTML += wordsList;
         }
-    }
+		
+		if (panel.className !== 'searchedPanel') {
+			panel.className = 'searchedPanel';
+		}
+    };
+    worker.postMessage({allWords: allWords, begin: begin, contain: contain, end: end});
     
     // Format words
-    var wordsList = '<h1 data-l10n-id="searchResults">' + searchResults + ' '
+    var wordsList = '<h1 id="searchResultsHeader" data-l10n-id="searchResults">' + searchResults + ' '
             + forWord + ' \'' + (searchInBegin ? begin + '-' : '') 
             + (searchInContain ? contain.join(' ') : '') + (searchInEnd ? '-' + end : '') + '\'</h1>';
-    for (var i = 0; i < searchedWords.length; i++) {
-        word = searchedWords[i];
-        
-        wordsList += '<a href="#panel1" onclick="searchInRae(\'' + word + '\');">' + word + '</a><br/>';
-    }
-    wordsList += '<br/><button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">' + clear + '</button>';
+	wordsList += '<button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">' + clear + '</button><br/>';
 
-    // Charge values in panel and show it
-    var panel = document.getElementById('searchedPanel');
-    panel.innerHTML = wordsList;
-    panel.className = 'searchedPanel';
+	panel.innerHTML += wordsList;
     
     // Hide form and wordsList panel
-    document.getElementById('wordsList').className = 'hidden';
-    document.getElementById('scrollWordsList').className = 'hidden';
     showOrHideSearchBars();
-}
-
-// Search if word contains array words in same order
-function exactlyContains(array, word) {
-    var indexes = [];
-    var lower = word.toLowerCase();
-    for (var i = 0; i < array.length; i++) {
-        var index = lower.indexOf(array[i].toLowerCase());
-        if (index > -1) {
-            indexes.push(index);
-        } else {
-            return false;
-        }
-    }
-    var previous = indexes[0];
-    for (var i = 1; i < indexes.length; i++) {
-        if (indexes[i] < previous) {
-            return false;
-        }
-    }
-    
-    return true;
+	document.getElementById('wordsList').className = 'hidden';
+    document.getElementById('scrollWordsList').className = 'hidden';
 }

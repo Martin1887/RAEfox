@@ -154,7 +154,7 @@
                                 </p>
                                 <p>
                                     <button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">Clear Search</button>
-                                    <button class="recommend" role="button" type="submit" disabled="disabled" data-l10n-id="search" id="searchInWordsListButton">Search</button>
+                                    <button class="recommend" role="button" type="submit" disabled="disabled" onclick="searchInWordsList();" data-l10n-id="search" id="searchInWordsListButton">Search</button>
                                 </p>
                             </form>
                             <div class="hidden" id="searchedPanel"></div>
@@ -162,7 +162,7 @@
                             <nav id="scrollWordsList" data-type="scrollbar">
                                 <ol>
                                   <li class="searchButtonScrollbar">
-                                      <a href="#" onclick="return showOrHideSearchBars();">
+                                      <a id="searchIconLink" href="#" onclick="return showOrHideSearchBars();">
                                           <span class="pack-icon-search">Search</span>
                                       </a>
                                   </li>  
