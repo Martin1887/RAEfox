@@ -855,18 +855,16 @@ function applyCamaLessColorTheme() {
 					allVars[attr] = event.target.result.values[attr];
 				}
 				added++;
+				
+				// modifyVars when all variables of all themes are in allVars
+				if (added === stores.length) {
+					clearInterval(inter);
+					less.modifyVars(allVars);
+				}
 			}
 		};
 	});
 	
-	// modifyVars when all variables of all themes are in allVars
-	var inter = setInterval(function() {
-		if (added === stores.length) {
-			clearInterval(inter);
-			less.modifyVars(allVars);
-		}
-	}, 50);
-    
     
     return true;
 }
