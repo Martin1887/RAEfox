@@ -230,7 +230,7 @@ function searchInWordsList() {
         var wordsList = e.data.wordsList;
         
         if (e.data.end) {
-            document.getElementById('searchResultsHeader').innerHTML += ' (' + e.data.count + ')';
+            document.getElementById('searchResultsHeaderKeys').innerHTML += '<span> (' + e.data.count + ')</span>';
 			// add the rest of HTML when transitions are finished
             setTimeout(function() {
                 panel.innerHTML += wordsList;
@@ -252,10 +252,12 @@ function searchInWordsList() {
     worker.postMessage({allWords: allWords, begin: begin, contain: contain, end: end});
     
     // Format words
-    var wordsList = '<h1 id="searchResultsHeader" data-l10n-id="searchResults">' + searchResults + ' '
-            + forWord + ' \'' + (searchInBegin ? begin + '-' : '') 
-            + (searchInContain ? contain.join(' ') : '') + (searchInEnd ? '-' + end : '') + '\'</h1>';
-	wordsList += '<button class="danger" role="button" type="reset" data-l10n-id="clear" onclick="clearSearchInWordsList();">' + clear + '</button><br/>';
+    var wordsList = '<h1 id="searchResultsHeader" data-l10n-id="searchResults">' + searchResults
+			+ '</h1><h2 id="searchResultsHeaderKeys">'
+            + ' ' + (searchInBegin ? begin + '-' : '') + (searchInContain ? contain.join(' ') : '')
+			+ (searchInEnd ? '-' + end : '') + '</h2>';
+	wordsList += '<button class="danger" role="button" type="reset" data-l10n-id="clear" '
+					+ 'onclick="clearSearchInWordsList();">' + clear + '</button><br/>';
 
 	panel.innerHTML += wordsList;
     
