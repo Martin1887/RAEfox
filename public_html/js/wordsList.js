@@ -144,7 +144,10 @@ function focusLetter(letter) {
         old.className = 'letterHidden';
         old.removeChild(old.firstChild);
     }
-    getWordsOfLetter(letter);
+	// only charge if the clicked letter is different to shown letter
+	if (old !== document.getElementById('let' + letter)) {
+		getWordsOfLetter(letter);
+	}
     
     return false;
 }
