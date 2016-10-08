@@ -30,22 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Back and forward buttons
     var backButton = document.getElementById('iframeBack');
     var forwardButton = document.getElementById('iframeForward');
-    form.onsubmit = function() {
-        var search = document.getElementById('inputSearch').value;
-        iFrame.setAttribute('src', getURLRAE(search));
-        // Search is stored in array
-        searches.push(search);
-        indexSearches++;
-        backButton.disabled = false;
-        
-        // Add word to history
-        wordSaved = false;
-        if (autosaveHistory) {
-            addWordToHistory(search);
-        } else {
-            updateWordSaved();
-        }
-    };
+    
+	form.onsubmit = searchDefinition;
 
     // Back and forward buttons events
     backButton.onclick = function() {
@@ -221,14 +207,56 @@ function enableOrDisableSearchButton() {
 }
 
 // Return URL of a RAE search
-function getURLRAE(word) {
+function getSearchURL(word) {
     // escape is used because RAE uses ISO-8859-1 encoding instead UTF-8
     if (word.length > 0) {
-        return "http://lema.rae.es/drae/srv/search?val=" + escape(word) + '&origen=APP&type=' + searchType;
+        //return "http://lema.rae.es/drae/srv/search?val=" + escape(word) + '&origen=APP&type=' + searchType;
+		//return "http://dle.rae.es/srv/search?w=" + escape(word) + "&m=form";
+		//return "http://es.thefreedictionary.com/" + escape(word);
+		return "https://od-api.oxforddictionaries.com:443/api/v1/entries/es/" + word + "/definitions";
     } else {
         return '';
     }
 }
+
+function searchDefinition() {
+        var search = document.getElementById('inputSearch').value;
+		var reqSearch = new XMLHttpRequest();
+        reqSearch.open('GET', getSearchURL(search), true);
+        //reqSearch.setRequestHeader('Content-Type', 'application/json');
+		reqSearch.setRequestHeader('Accept', 'application/json');
+		reqSearch.setRequestHeader('app_id', '07ac571b');
+		reqSearch.setRequestHeader('app_key', '308c3137db8439c888a729cda81b6d02');
+        //reqSearch.responseType = 'application/json';
+        reqSearch.onreadystatechange = function (aEvt) {
+            if (reqSearch.readyState === 4) {
+                if (reqSearch.status === 200 || (reqSearch.status === 0 && reqSearch.responseText)) {
+                    // Event is removed because response is already set
+                    reqSearch.onreadystatechange = null;
+
+                    // Each line contains a word, and they are saved as array 
+                    console.log(reqSearch.responseText);
+                } else {
+                    dump("Error loading page\n");
+                }
+            }
+        };
+        reqSearch.send();
+		//iFrame.setAttribute('src', getSearchURL(search));
+        // Search is stored in array
+        searches.push(search);
+        indexSearches++;
+		var backButton = document.getElementById('iframeBack');
+        backButton.disabled = false;
+        
+        // Add word to history
+        wordSaved = false;
+        if (autosaveHistory) {
+            addWordToHistory(search);
+        } else {
+            updateWordSaved();
+        }
+    }
 
 function changeDrawerClass(className) {
     document.getElementById('drawer').className = className;
