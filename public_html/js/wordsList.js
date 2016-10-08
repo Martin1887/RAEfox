@@ -58,10 +58,6 @@ function loadHeaders() {
         wordsList += '<ul class="letterHidden" id="let' + currentLetter + '"></ul>';
     }
     
-    // Add whitespace in the end in order to better links focus
-    for (var i = 0; i < 20; i++) {
-        wordsList += '<br/>';
-    }
     document.getElementById('wordsList').innerHTML = wordsList;
 }
 
@@ -105,6 +101,13 @@ function writeHTMLWordsOfLetter(letter) {
     var letterDOM = document.getElementById('let' + letter);
     letterDOM.innerHTML = '<li></li>';
     var listDOM = letterDOM.querySelector('li');
+	
+	// Increase height to better link focus
+	var wordsListDOM = document.getElementById('wordsList');
+	var gap = document.createElement('div');
+    gap.id = 'gap';
+    gap.style.height = window.innerHeight + 'px';
+	wordsListDOM.appendChild(gap);
     
     var worker = new Worker('js/workerHTMLWordsList.js');
     worker.onmessage = function(e) {
@@ -114,6 +117,9 @@ function writeHTMLWordsOfLetter(letter) {
             // add the rest of HTML when transitions are finished
             setTimeout(function() {
                 listDOM.innerHTML += wordsList;
+				if (gap) {
+					gap.parentElement.removeChild(gap);
+				}
             }, 2000);
         } else {
             listDOM.innerHTML += wordsList;
