@@ -7,6 +7,8 @@ var searchType = 3;
 var autosaveHistory = false;
 var wordSaved = false;
 
+var prevWindowWidth = 0;
+
 
 var callbackThemesClose;
 
@@ -14,13 +16,18 @@ window.addEventListener('resize', function(e) {
 	if (e.currentTarget.innerWidth >= 900) {
 		chargeHistory();
 		chargeWordsList();
-	} else {
+	} else if (prevWindowWidth >= 900) {
+		// change tab only if the three tabs were visible
 		document.getElementById('tab1').click();
 	}
+	
+	prevWindowWidth = e.currentTarget.innerWidth;
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    enableOrDisableSearchButton();
+    prevWindowWidth = window.innerWidth;
+	
+	enableOrDisableSearchButton();
     
     // Change searchType on select selection
     document.getElementById('typeSelect').onchange = changeSearchType;
