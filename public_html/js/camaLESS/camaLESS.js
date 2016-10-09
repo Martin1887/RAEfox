@@ -23,6 +23,19 @@ var camaLessDb;
  */
 var stores;
 
+/**
+ * Form without themes error callback
+ * @type function
+ */
+var almostOneThemeCallback;
+
+/**
+ * Form with a number of themes with the same name error callback
+ * @type function
+ * @param name The name of the themes
+ */
+var sameNameThemesCallback;
+
 /*
  * Localized text variables
  */
@@ -62,13 +75,28 @@ if (navigator.mozL10n) {
  * @param {array} formsStores Themes types for every form. Can be null.
  * @param {array} formsClasses CSS class for every form. Can be null.
  * @param {array} formsDataTypes DataType for every form list. Can be null.
+ * @param {function} almostOneThemeCB Optional callback for form without themes error.
+ * @param {function} sameNameThemesCB Optional callback for form with a number of themes with the same name.
  * @returns true
  */
 function openCamaLessDb(name, types, defaults, forms, callbacks, formsStores,
-                            formsClasses, formsDataTypes) {
-    var openRequest = indexedDB.open(name, 2);
+                            formsClasses, formsDataTypes, almostOneThemeCB, sameNameThemesCB) {
+    var openRequest = indexedDB.open(name, 1);
     stores = types;
     var newDatabase = false;
+	
+	if (almostOneThemeCB) {
+		almostOneThemeCallback = almostOneThemeCB;
+	} else {
+		almostOneThemeCallback = function() {alert(almostOneTheme + '.');};
+	}
+	if (sameNameThemesCB) {
+		sameNameThemesCallback = sameNameThemesCB;
+	} else {
+		sameNameThemesCallback = function(name) {
+			alert(themeName + ' ' + name + ' ' + themesDifferentName + '.');
+		};
+	}
     
     openRequest.onsuccess = function(event) {
         camaLessDb = openRequest.result;
@@ -125,21 +153,18 @@ function openCamaLessDb(name, types, defaults, forms, callbacks, formsStores,
                                     };
                                 }
                             }
-                            var interLoop = setInterval(function() {
-                                if (finished === defaults.length) {
-                                    window.clearInterval(interLoop);
-                                    if (success) {
-                                        window.clearInterval(inter);
-                                        // In order to not execute twice doubt to
-                                        // inter fires before interLoop has finished
-                                        if (!applied) {
-                                            applied = true;
-                                            applyThemesAndCreateForms(forms, callbacks,
-                                                formsStores, formsClasses, formsDataTypes);
-                                        }
-                                    }
-                                }
-                            }, 50);
+							if (finished === defaults.length) {
+								if (success) {
+									window.clearInterval(inter);
+									// In order to not execute twice doubt to
+									// inter fires before interLoop has finished
+									if (!applied) {
+										applied = true;
+										applyThemesAndCreateForms(forms, callbacks,
+											formsStores, formsClasses, formsDataTypes);
+									}
+								}
+							}
                         }
                     };
                 }
@@ -353,7 +378,7 @@ function selectColorTheme(name, store) {
  * Create a camaLESS form with store color themes. If store is undefined all
  * types of color themes are entered in the form.
  * @param {string} store Type of color theme.
- * @param {string} form Form object in which enter fields.
+ * @param {form} form Form object in which enter fields.
  * @param {string} clas CSS class. Default is camaLessForm.
  * @param {string} dataType List of themes HTML data-type attribute. Default is list.
  * @param {function} callback Function to execute after submit.
@@ -453,95 +478,93 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
                     listThemes += '</table>';
 
                     finished++;
+					
+					
+					// This final part of the form is written when all request are completed:
+					// Each 200 ms this is checked and when it happens the interval is cleaned
+					// to not execute more times and final part of form is written
+					if (finished === formStores.length) {
+
+						form.innerHTML += formInnerHTML + listThemes + '</section>';
+
+						var cancel = document.createElement('button');
+						cancel.attributes['data-l10n-id'] = 'cancel';
+						cancel.type = 'button';
+						cancel.dataset['l10nId'] = 'cancel';
+						cancel.onclick = cancelCamaLessForm(store, form, clas, dataType, callback);
+						form.innerHTML += '<menu>'
+										  + '<button class="recommend" type="submit" '
+										  + 'data-l10n-id="save"></button></menu>';
+						form.lastChild.insertBefore(cancel, form.lastChild.lastChild);
+
+						addToCamaLessForms(store, form, clas, dataType, callback);
+
+						// l10n strings updated
+						if (navigator.mozL10n) {
+							navigator.mozL10n.ready ( function () {
+								// grab l10n object
+								var _ = navigator.mozL10n.get;
+								// Themes title
+								var toTranslate = document.querySelectorAll('#' + form.id + ' input[type="text"]');
+								for (var i = 0; i < toTranslate.length; i++) {
+									var l10nId = toTranslate[i].getAttribute('data-l10n-id');
+									if (l10nId) {
+										toTranslate[i].value = _(l10nId);
+									}
+								}
+								// Color variables
+								toTranslate = document.querySelectorAll('#' + form.id + ' label');
+								for (var i = 0; i < toTranslate.length; i++) {
+									var l10nId = toTranslate[i].getAttribute('data-l10n-id');
+									if (l10nId) {
+										toTranslate[i].value = _(l10nId) + ':';
+										toTranslate[i].innerHTML = _(l10nId) + ':';
+									}
+								}
+
+								// Buttons
+								toTranslate = document.querySelectorAll('#' + form.id + ' button');
+								for (var i = 0; i < toTranslate.length; i++) {
+									var l10nId = toTranslate[i].getAttribute('data-l10n-id');
+									if (l10nId) {
+										toTranslate[i].value  = _(l10nId);
+										toTranslate[i].innerHTML = _(l10nId);
+									}
+								}
+								// Headers
+								toTranslate = document.querySelectorAll('#' + form.id + ' header');
+								for (var i = 0; i < toTranslate.length; i++) {
+									var l10nId = toTranslate[i].getAttribute('data-l10n-id');
+									if (l10nId) {
+										toTranslate[i].innerHTML = _(l10nId);
+									}
+								}
+							});
+
+							// colorPicker in all inputs
+							jsColorPicker('input.color', {
+								customBG: '#222',
+								readOnly: false,
+								init: function (elm, colors) {
+									elm.style.backgroundColor = elm.value;
+									elm.style.color = colors.rgbaMixCustom.luminance > 0.22 ? '#222' : '#ddd';
+								}
+							});
+							// When write to change background color
+							var inputs = document.querySelectorAll('input.color');
+							for (var i = 0; i < inputs.length; i++) {
+								inputs[i].onkeyup = function() {
+									this.style.backgroundColor = this.value;
+								};
+							}
+						}
+					}
                 }
             }, 100);
         };
     }
     
-    // This final part of the form is written when all request are completed:
-    // Each 200 ms this is checked and when it happens the interval is cleaned
-    // to not execute more times and final part of form is written
-    var interv = setInterval(function() {
-        if (finished === formStores.length) {
-            window.clearInterval(interv);
-            
-            form.innerHTML += formInnerHTML + listThemes + '</section>';
-            
-            var cancel = document.createElement('button');
-            cancel.attributes['data-l10n-id'] = 'cancel';
-            cancel.type = 'button';
-            cancel.dataset['l10nId'] = 'cancel';
-            cancel.onclick = cancelCamaLessForm(store, form, clas, dataType, callback);
-            form.innerHTML += '<menu>'
-                              + '<button class="recommend" type="submit" '
-                              + 'data-l10n-id="save"></button></menu>';
-            form.lastChild.insertBefore(cancel, form.lastChild.lastChild);
-                      
-            addToCamaLessForms(store, form, clas, dataType, callback);
 
-            // l10n strings updated
-			if (navigator.mozL10n) {
-				navigator.mozL10n.ready ( function () {
-					// grab l10n object
-					var _ = navigator.mozL10n.get;
-					// Themes title
-					var inputs = document.querySelectorAll('#' + form.id + ' input[type="text"]');
-					for (var i = 0; i < inputs.length; i++) {
-						var l10nId = inputs[i].getAttribute('data-l10n-id');
-						if (l10nId) {
-							inputs[i].value = _(l10nId);
-						}
-					}
-					// Color variables
-					inputs = document.querySelectorAll('#' + form.id + ' label');
-					for (var i = 0; i < inputs.length; i++) {
-						var l10nId = inputs[i].getAttribute('data-l10n-id');
-						if (l10nId) {
-							inputs[i].value = _(l10nId) + ':';
-							inputs[i].innerHTML = _(l10nId) + ':';
-						}
-					}
-
-					// Buttons
-					inputs = document.querySelectorAll('#' + form.id + ' button');
-					for (var i = 0; i < inputs.length; i++) {
-						var l10nId = inputs[i].getAttribute('data-l10n-id');
-						if (l10nId) {
-							inputs[i].value  = _(l10nId);
-							inputs[i].innerHTML = _(l10nId);
-						}
-					}
-					// Headers
-					inputs = document.querySelectorAll('#' + form.id + ' header');
-					for (var i = 0; i < inputs.length; i++) {
-						var l10nId = inputs[i].getAttribute('data-l10n-id');
-						if (l10nId) {
-							inputs[i].innerHTML = _(l10nId);
-						}
-					}
-				});
-
-				// colorPicker in all inputs
-				var colors = jsColorPicker('input.color', {
-					customBG: '#222',
-					readOnly: false,
-					init: function (elm, colors) {
-						elm.style.backgroundColor = elm.value;
-						elm.style.color = colors.rgbaMixCustom.luminance > 0.22 ? '#222' : '#ddd';
-					}
-				});
-				// When write to change background color
-				var inputs = document.querySelectorAll('input.color');
-				for (var i = 0; i < inputs.length; i++) {
-					inputs[i].onkeyup = function() {
-						this.style.backgroundColor = this.value;
-					};
-				}
-			}
-        }
-    }, 200);
-    
-    
     return true;
 }
 
@@ -639,7 +662,7 @@ function addTheme(themeTypeTable, store) {
 			}
             
             // colorPicker in all inputs
-            var colors = jsColorPicker('input.color', {
+            jsColorPicker('input.color', {
                 customBG: '#222',
                 readOnly: false,
                 init: function (elm, colors) {
@@ -733,7 +756,7 @@ function submitCamaLessForm(form, callback) {
         var selected = document.querySelectorAll('#' + tables[i].id + ' input:checked');
         
         if (inputs.length === 0 || selected.length === 0) {
-            alert(almostOneTheme + '.');
+            almostOneThemeCallback();
             return false;
         }
         
@@ -756,12 +779,13 @@ function submitCamaLessForm(form, callback) {
                 }
                 values += '}';
                 values = JSON.parse(values);
-                // ShownName now values '' to not overwrite new name
-                formThemes[i].push({name: inputs[j].value,
-                    shownName: inputs[j].value.shownName, values: values,
+                
+				// shownName '' in order to not change user's choice
+                formThemes[i].push({name: name,
+                    shownName: '', values: values,
                     selected: inputs[j].parentNode.previousSibling.childNodes[0].checked ? 1 : 0});
             } else {
-                alert(themeName + ' ' + name + ' ' + themesDifferentName + '.');
+                sameNameThemesCallback(name);
                 return false;
             }
         }
@@ -770,68 +794,66 @@ function submitCamaLessForm(form, callback) {
     var completed = 0;
     var transactions = [];
     for (var i = 0; i < formStores.length; i++) {
-        camaLessDbThemes.push([]);
-        transactions[i] = camaLessDb.transaction([formStores[i]], 'readonly');
+        var theme = [];
+		camaLessDbThemes.push(theme);
+		transactions.push(camaLessDb.transaction([formStores[i]], 'readonly'));
         // Get camaLessDb themes
         var objectStore = transactions[i].objectStore(formStores[i]);
         var cursor = objectStore.openCursor();
         cursor.onsuccess = function(event) {
             var cursor = event.target.result;
             if (cursor) {
-                camaLessDbThemes[completed].push({name: cursor.value.name, shownName: cursor.value.shownName,
+                theme.push({name: cursor.value.name, shownName: cursor.value.shownName,
                             values: cursor.value.values, selected: cursor.value.selected});
                 cursor.continue();
             } else {
                 completed++;
             }
+			
+			if (completed === formStores.length) {
+				// Check color themes
+				for (var j = 0; j < formThemes.length; j++) {
+					for (var k = 0; k < formThemes[j].length; k++) {
+						var ind = camaLessDbThemes[j].indexOf(formThemes[j][k]);
+						if (ind > -1) {
+							// Update color theme (shownName is '' to not overwrite new name)
+							editColorTheme(formThemes[j][k].name, '',
+								formThemes[j][k].values, formStores[j]);
+						} else {
+							// Add new color theme (shownName is '' to not overwrite new name)
+							newColorTheme(formThemes[j][k].name, '',
+								formThemes[j][k].values, formThemes.length, formStores[j]);
+						}
+
+						// Select selected color theme
+						if (formThemes[j][k].selected) {
+							selectColorTheme(formThemes[j][k].name, formStores[j]);
+						}
+					}
+				}
+
+				for (var j = 0; j < camaLessDbThemes.length; j++) {
+					for (var k = 0; k < camaLessDbThemes[j].length; k++) {
+						var ind = formThemes[j].indexOf(camaLessDbThemes[j][k]);
+						if (ind < 0) {
+							// Remove removed color themes
+							removeColorTheme(camaLessDbThemes[j][k].name, formStores[j]);
+						}
+					}
+				}
+
+				// Apply themes in every store
+				applyCamaLessColorTheme();
+
+				// Form is recreated in order to apply changes
+				createCamaLessForm(form.store, form, form.clas, form.dataType, callback);
+
+				if (callback) {
+					callback();
+				}
+			}
         };
     }
-    
-    var inter = setInterval(function() {
-        if (completed === formStores.length) {
-            window.clearInterval(inter);
-            // Check color themes
-            for (var j = 0; j < formThemes.length; j++) {
-                for (var k = 0; k < formThemes[j].length; k++) {
-                    var ind = camaLessDbThemes[j].indexOf(formThemes[j][k]);
-                    if (ind > -1) {
-                        // Update color theme (shownName is '' to not overwrite new name)
-                        editColorTheme(formThemes[j][k].name, '',
-                            formThemes[j][k].values, formStores[j]);
-                    } else {
-                        // Add new color theme (shownName is '' to not overwrite new name)
-                        newColorTheme(formThemes[j][k].name, '',
-                            formThemes[j][k].values, formThemes.length, formStores[j]);
-                    }
-
-                    // Select selected color theme
-                    if (formThemes[j][k].selected) {
-                        selectColorTheme(formThemes[j][k].name, formStores[j]);
-                    }
-                }
-            }
-
-            for (var j = 0; j < camaLessDbThemes.length; j++) {
-                for (var k = 0; k < camaLessDbThemes[j].length; k++) {
-                    var ind = formThemes[j].indexOf(camaLessDbThemes[j][k]);
-                    if (ind < 0) {
-                        // Remove removed color themes
-                        removeColorTheme(camaLessDbThemes[j][k].name, formStores[j]);
-                    }
-                }
-            }
-
-            // Apply themes in every store
-            applyCamaLessColorTheme();
-
-            // Form is recreated in order to apply changes
-            createCamaLessForm(form.store, form, form.clas, form.dataType, callback);
-
-            if (callback) {
-                callback();
-            }
-        }
-    }, 200);
     
     
     return true;
