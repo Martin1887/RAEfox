@@ -1,39 +1,43 @@
 var db;
 var openRequest = indexedDB.open('RAEfox', 5);
 
-openRequest.onsuccess = function(event) {
-    db = openRequest.result;
-    
-    // Set value of searchType variable and change value of searchType select
-    db.transaction(['searchType']).objectStore('searchType').get('searchType').onsuccess = function(event) {
-        searchType = event.target.result.type;
-        document.getElementById('typeSelect').value = searchType;
-    };
-    
-    // Set value of autosaveHistory variable and change value of switch
-    db.transaction(['autosaveHistory']).objectStore('autosaveHistory').get('autosave').onsuccess = function(event) {
-        autosaveHistory = event.target.result.val;
-        document.getElementById('autosaveInput').checked = autosaveHistory;
-        changeAutosave();
-    };
-    
-};
+document.addEventListener('DOMContentLoaded', function() {
 
-// Creation of database
-openRequest.onupgradeneeded = function(event) {
-    db = event.target.result;
-    
-    // searchType: a field whose value is always 'searchType' is used to access
-    var searchTypeStore = db.createObjectStore("searchType", {keyPath: 'varName'});
-    // Default searchType is 3
-    searchTypeStore.add({varName: 'searchType', type: 3});
+	openRequest.onsuccess = function(event) {
+		db = openRequest.result;
 
-    // history: autoincrement with date index and word
-    var historyStore = db.createObjectStore('history', {autoIncrement: true});
-    historyStore.createIndex('date', 'date', {unique: false});
+		// Set value of searchType variable and change value of searchType select
+		db.transaction(['searchType']).objectStore('searchType').get('searchType').onsuccess = function(event) {
+			searchType = event.target.result.type;
+			document.getElementById('typeSelect').value = searchType;
+		};
 
-    // autosave history: a field whose value is always 'autoSave' is used to access
-    var autosaveHistoryStore = db.createObjectStore('autosaveHistory', {keyPath: 'varName'});
-    autosaveHistoryStore.add({varName: 'autosave', val: false});
+		// Set value of autosaveHistory variable and change value of switch
+		db.transaction(['autosaveHistory']).objectStore('autosaveHistory').get('autosave').onsuccess = function(event) {
+			autosaveHistory = event.target.result.val;
+			document.getElementById('autosaveInput').checked = autosaveHistory;
+			changeAutosave();
+		};
 
-};
+	};
+
+	// Creation of database
+	openRequest.onupgradeneeded = function(event) {
+		db = event.target.result;
+
+		// searchType: a field whose value is always 'searchType' is used to access
+		var searchTypeStore = db.createObjectStore("searchType", {keyPath: 'varName'});
+		// Default searchType is 3
+		searchTypeStore.add({varName: 'searchType', type: 3});
+
+		// history: autoincrement with date index and word
+		var historyStore = db.createObjectStore('history', {autoIncrement: true});
+		historyStore.createIndex('date', 'date', {unique: false});
+
+		// autosave history: a field whose value is always 'autoSave' is used to access
+		var autosaveHistoryStore = db.createObjectStore('autosaveHistory', {keyPath: 'varName'});
+		autosaveHistoryStore.add({varName: 'autosave', val: false});
+
+	};
+
+});

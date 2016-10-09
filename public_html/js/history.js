@@ -23,49 +23,56 @@ function chargeHistory() {
 		historyCharged = true;
 		var allHistoryWords = [];
 
-		var objectStore = db.transaction(['history']).objectStore('history');
-		// All objects are iterated from last to first
-		objectStore.openCursor(null, 'prev').onsuccess = function(event) {
-			var cursor = event.target.result;
-			if (cursor) {
-				allHistoryWords.push({key: cursor.key, value: cursor.value});
-				cursor.continue();
-			}
-
-			var historyList = '';
-			var currentDate = '';
-			var word = '';
-
-			for (var i = 0; i < allHistoryWords.length; i++) {
-				word = allHistoryWords[i].value.word;
-				// If the initial letter has changed put header and ul
-				if (allHistoryWords[i].value.date !== currentDate) {
-					// If it is not the first letter, before letter is closed
-					if (historyList) {
-						historyList += '</li></ul>';
+		// wait until db is loaded
+		var inter = setInterval(function() {
+			if (db) {
+				clearInterval(inter);
+				
+				var objectStore = db.transaction(['history']).objectStore('history');
+				// All objects are iterated from last to first
+				objectStore.openCursor(null, 'prev').onsuccess = function(event) {
+					var cursor = event.target.result;
+					if (cursor) {
+						allHistoryWords.push({key: cursor.key, value: cursor.value});
+						cursor.continue();
 					}
 
-					currentDate = allHistoryWords[i].value.date;
-					var f = new navigator.mozL10n.DateTimeFormat();
-					// With more than 3 days return formatted date, and difference is forced to days
-					var date = f.fromNow(new Date(allHistoryWords[i].value.date), false, 86400 * 3, 'days');
-					historyList += '<header>' + date + '</header>';
-					historyList += '<ul class="ulHistory" id="historyDate' + date + '"><li>';
-				}
+					var historyList = '';
+					var currentDate = '';
+					var word = '';
 
-				// Class is used to search to remove from search tab button
-				historyList += '<a id="' + allHistoryWords[i].key + '" class="word-' + word + '-date-'
-						+ allHistoryWords[i].value.date
-						+ '" href="#panel1" onclick="return searchInRaeFromHistory(\'' + word + '\');">'
-						+ '<label onclick="checkRemoveButtonsDisabled();"'
-						+ 'class="pack-checkbox checkHistory hiddenCheckHistory">'
-						+ '<input type="checkbox" name="' + allHistoryWords[i].key
-						+ '"><span></span></label>';
-				historyList += word + '</a>';
+					for (var i = 0; i < allHistoryWords.length; i++) {
+						word = allHistoryWords[i].value.word;
+						// If the initial letter has changed put header and ul
+						if (allHistoryWords[i].value.date !== currentDate) {
+							// If it is not the first letter, before letter is closed
+							if (historyList) {
+								historyList += '</li></ul>';
+							}
+
+							currentDate = allHistoryWords[i].value.date;
+							var f = new navigator.mozL10n.DateTimeFormat();
+							// With more than 3 days return formatted date, and difference is forced to days
+							var date = f.fromNow(new Date(allHistoryWords[i].value.date), false, 86400 * 3, 'days');
+							historyList += '<header>' + date + '</header>';
+							historyList += '<ul class="ulHistory" id="historyDate' + date + '"><li>';
+						}
+
+						// Class is used to search to remove from search tab button
+						historyList += '<a id="' + allHistoryWords[i].key + '" class="word-' + word + '-date-'
+								+ allHistoryWords[i].value.date
+								+ '" href="#panel1" onclick="return searchInRaeFromHistory(\'' + word + '\');">'
+								+ '<label onclick="checkRemoveButtonsDisabled();"'
+								+ 'class="pack-checkbox checkHistory hiddenCheckHistory">'
+								+ '<input type="checkbox" name="' + allHistoryWords[i].key
+								+ '"><span></span></label>';
+						historyList += word + '</a>';
+					}
+					document.getElementById('historyList').innerHTML = historyList;
+					updateHistoryCount();
+				};
 			}
-			document.getElementById('historyList').innerHTML = historyList;
-			updateHistoryCount();
-		};
+		}, 100);
 	}
 }
 
