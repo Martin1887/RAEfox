@@ -31,14 +31,16 @@ var themesDifferentName = '';
 var almostOneTheme = '';
 
 
-navigator.mozL10n.ready(function() {
-    // grab l10n object
-    var _ = navigator.mozL10n.get;
-    // Themes title
-    themeName = _('themeName');
-    themesDifferentName = _('themesDifferentName');
-    almostOneTheme = _('almostOneTheme');
-});
+if (navigator.mozL10n) {
+	navigator.mozL10n.ready(function() {
+		// grab l10n object
+		var _ = navigator.mozL10n.get;
+		// Themes title
+		themeName = _('themeName');
+		themesDifferentName = _('themesDifferentName');
+		almostOneTheme = _('almostOneTheme');
+	});
+}
 
 /*
  * Functions to manipulate database
@@ -478,62 +480,64 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
             addToCamaLessForms(store, form, clas, dataType, callback);
 
             // l10n strings updated
-            navigator.mozL10n.ready ( function () {
-                // grab l10n object
-                var _ = navigator.mozL10n.get;
-                // Themes title
-                var inputs = document.querySelectorAll('#' + form.id + ' input[type="text"]');
-                for (var i = 0; i < inputs.length; i++) {
-                    var l10nId = inputs[i].getAttribute('data-l10n-id');
-                    if (l10nId) {
-                        inputs[i].value = _(l10nId);
-                    }
-                }
-                // Color variables
-                inputs = document.querySelectorAll('#' + form.id + ' label');
-                for (var i = 0; i < inputs.length; i++) {
-                    var l10nId = inputs[i].getAttribute('data-l10n-id');
-                    if (l10nId) {
-                        inputs[i].value = _(l10nId) + ':';
-                        inputs[i].innerHTML = _(l10nId) + ':';
-                    }
-                }
-                
-                // Buttons
-                inputs = document.querySelectorAll('#' + form.id + ' button');
-                for (var i = 0; i < inputs.length; i++) {
-                    var l10nId = inputs[i].getAttribute('data-l10n-id');
-                    if (l10nId) {
-                        inputs[i].value  = _(l10nId);
-                        inputs[i].innerHTML = _(l10nId);
-                    }
-                }
-                // Headers
-                inputs = document.querySelectorAll('#' + form.id + ' header');
-                for (var i = 0; i < inputs.length; i++) {
-                    var l10nId = inputs[i].getAttribute('data-l10n-id');
-                    if (l10nId) {
-                        inputs[i].innerHTML = _(l10nId);
-                    }
-                }
-            });
-            
-            // colorPicker in all inputs
-            var colors = jsColorPicker('input.color', {
-                customBG: '#222',
-                readOnly: false,
-                init: function (elm, colors) {
-                    elm.style.backgroundColor = elm.value;
-                    elm.style.color = colors.rgbaMixCustom.luminance > 0.22 ? '#222' : '#ddd';
-                }
-            });
-            // When write to change background color
-            var inputs = document.querySelectorAll('input.color');
-            for (var i = 0; i < inputs.length; i++) {
-                inputs[i].onkeyup = function() {
-                    this.style.backgroundColor = this.value;
-                };
-            }
+			if (navigator.mozL10n) {
+				navigator.mozL10n.ready ( function () {
+					// grab l10n object
+					var _ = navigator.mozL10n.get;
+					// Themes title
+					var inputs = document.querySelectorAll('#' + form.id + ' input[type="text"]');
+					for (var i = 0; i < inputs.length; i++) {
+						var l10nId = inputs[i].getAttribute('data-l10n-id');
+						if (l10nId) {
+							inputs[i].value = _(l10nId);
+						}
+					}
+					// Color variables
+					inputs = document.querySelectorAll('#' + form.id + ' label');
+					for (var i = 0; i < inputs.length; i++) {
+						var l10nId = inputs[i].getAttribute('data-l10n-id');
+						if (l10nId) {
+							inputs[i].value = _(l10nId) + ':';
+							inputs[i].innerHTML = _(l10nId) + ':';
+						}
+					}
+
+					// Buttons
+					inputs = document.querySelectorAll('#' + form.id + ' button');
+					for (var i = 0; i < inputs.length; i++) {
+						var l10nId = inputs[i].getAttribute('data-l10n-id');
+						if (l10nId) {
+							inputs[i].value  = _(l10nId);
+							inputs[i].innerHTML = _(l10nId);
+						}
+					}
+					// Headers
+					inputs = document.querySelectorAll('#' + form.id + ' header');
+					for (var i = 0; i < inputs.length; i++) {
+						var l10nId = inputs[i].getAttribute('data-l10n-id');
+						if (l10nId) {
+							inputs[i].innerHTML = _(l10nId);
+						}
+					}
+				});
+
+				// colorPicker in all inputs
+				var colors = jsColorPicker('input.color', {
+					customBG: '#222',
+					readOnly: false,
+					init: function (elm, colors) {
+						elm.style.backgroundColor = elm.value;
+						elm.style.color = colors.rgbaMixCustom.luminance > 0.22 ? '#222' : '#ddd';
+					}
+				});
+				// When write to change background color
+				var inputs = document.querySelectorAll('input.color');
+				for (var i = 0; i < inputs.length; i++) {
+					inputs[i].onkeyup = function() {
+						this.style.backgroundColor = this.value;
+					};
+				}
+			}
         }
     }, 200);
     
@@ -609,28 +613,30 @@ function addTheme(themeTypeTable, store) {
 
 
             // l10n strings updated
-            navigator.mozL10n.ready(function() {
-                // grab l10n object
-                var _ = navigator.mozL10n.get;
-                
-                // Themes title
-                var input = tr.childNodes[1].childNodes[0];
-                var l10nId = input.getAttribute('data-l10n-id');
-                if (l10nId) {
-                    input.value = _(l10nId);
-                }
+			if (navigator.mozL10n) {
+				navigator.mozL10n.ready(function() {
+					// grab l10n object
+					var _ = navigator.mozL10n.get;
 
-                // Color variables localization
-                var lis = tr.childNodes[2].childNodes[0].childNodes;
-                for (var i = 0; i < lis.length; i++) {
-                    // The first child is the label
-                    var l10nId = lis[i].childNodes[0].getAttribute('data-l10n-id');
-                    if (l10nId) {
-                        lis[i].childNodes[0].value = _(l10nId) + ':';
-                        lis[i].childNodes[0].innerHTML = _(l10nId) + ':';
-                    }
-                }
-            });
+					// Themes title
+					var input = tr.childNodes[1].childNodes[0];
+					var l10nId = input.getAttribute('data-l10n-id');
+					if (l10nId) {
+						input.value = _(l10nId);
+					}
+
+					// Color variables localization
+					var lis = tr.childNodes[2].childNodes[0].childNodes;
+					for (var i = 0; i < lis.length; i++) {
+						// The first child is the label
+						var l10nId = lis[i].childNodes[0].getAttribute('data-l10n-id');
+						if (l10nId) {
+							lis[i].childNodes[0].value = _(l10nId) + ':';
+							lis[i].childNodes[0].innerHTML = _(l10nId) + ':';
+						}
+					}
+				});
+			}
             
             // colorPicker in all inputs
             var colors = jsColorPicker('input.color', {
@@ -838,8 +844,6 @@ function submitCamaLessForm(form, callback) {
 
 /**
  * Apply selected color theme in store applying its colors to variables.
- * @param {string} store Type of color theme to select. If undefined all stores
- * are changed.
  * @returns true
  */
 function applyCamaLessColorTheme() {
