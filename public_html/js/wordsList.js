@@ -25,22 +25,30 @@ document.addEventListener('DOMContentLoaded', function() {
     endSearch.onkeyup = enableOrDisableSearchWordsListButton;
     endSearch.oninput = enableOrDisableSearchWordsListButton;
     
+	
+	if (window.innerWidth >= 900) {
+		chargeWordsList();
+	}
     
     // Charge words list
     document.getElementById('tab3').onclick = function () {
         changeTab(3);
         
-        // Words list is charged if not has been charged yet
-        if (!wordsCharged) {
-            wordsCharged = true;
-            // Load headers
-            loadHeaders();
-            
-            // First letter is opened
-            focusLetter('A');
-        }
+        chargeWordsList();
     };
 });
+
+function chargeWordsList() {
+	// Words list is charged if not has been charged yet
+    if (!wordsCharged) {
+		wordsCharged = true;
+		// Load headers
+		loadHeaders();
+
+		// First letter is opened
+		focusLetter('A');
+	}
+}
 
 // Load HTML Headers of all letters
 function loadHeaders() {
@@ -212,7 +220,6 @@ function clearSearchInWordsList() {
     document.getElementById('containSearch').value = '';
     document.getElementById('endSearch').value = '';
 	showOrHideSearchBars();
-    focusLetter('A');
 }
 
 function searchInWordsList() {

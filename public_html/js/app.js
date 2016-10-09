@@ -10,6 +10,15 @@ var wordSaved = false;
 
 var callbackThemesClose;
 
+window.addEventListener('resize', function(e) {
+	if (e.currentTarget.innerWidth >= 900) {
+		chargeHistory();
+		chargeWordsList();
+	} else {
+		document.getElementById('tab1').click();
+	}
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     enableOrDisableSearchButton();
     
@@ -104,13 +113,17 @@ function clearInput(input) {
 function changeTab(tab) {
     if (tab === 1) {
         changeDrawerClass('raeDrawer');
-        document.getElementById('menuEdit').className = 'hidden';
+		if (window.innerWidth < 900) {
+			document.getElementById('menuEdit').className = 'hidden';
+		}
     } else if (tab === 2) {
         changeDrawerClass('mainDrawer');
         document.getElementById('menuEdit').className = '';
     } else if (tab === 3) {
         changeDrawerClass('mainDrawer');
-        document.getElementById('menuEdit').className = 'hidden';
+        if (window.innerWidth < 900) {
+			document.getElementById('menuEdit').className = 'hidden';
+		}
     }
 }
 

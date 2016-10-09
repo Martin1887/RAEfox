@@ -31,10 +31,12 @@ label {
     background-color: @blueHeader;
     color: @whiteHeader !important;
 	margin: 0;
+	height: 3.7rem;
 	
     h1 {
         margin: 0;
 		text-align: center;
+		line-height: 3.7rem;
         font-weight: 500 !important;
 		font-size: 95%;
 		
@@ -46,10 +48,10 @@ label {
     }
 }
 
-.raeDrawer {
+.raeDrawer .bb-tabpanel {
     background-color: @background_rae !important;
 }
-.mainDrawer {
+.mainDrawer .bb-tabpanel {
     background-color: @background !important;
 }
 
@@ -296,7 +298,9 @@ form p button[type="reset"] {
     z-index: 1887;
     position: fixed;
     overflow: hidden;
-    width: 90%;
+	padding-top: 1.5rem;
+	padding-left: 1.5rem;
+    width: calc(100% - 6rem);
     height: 100%;
     background-color: @background;
     color: @foreground;
@@ -329,6 +333,10 @@ form p button[type="reset"] {
     p + p {
         margin-top: 0;
     }
+	
+	.buttonsSearchInWordsListForm {
+		margin-top: 20px;
+	}
 }
 
 .searchedPanel {
@@ -407,4 +415,41 @@ form p button[type="reset"] {
         /* After transition height is set to 100% */
         max-height: 1000px;
     }
+}
+
+
+@media (min-width: 900px) {
+	#main1 {
+		visibility: visible !important;
+		width: 33.3%;
+	}
+	#searchForm {
+		width: 33.3%;
+	}
+	#iframeNavigation {
+		width: 33.3%;
+	}
+	
+	#main2 {
+		left: 33.3%;
+		width: 33.3%;
+		visibility: visible !important;
+	}
+	#main3 {
+		left: 66.6%;
+		width: 33.3%;
+		visibility: visible !important;
+	}
+	.formSearchInWordsList {
+		width: calc(33.3% - 6rem) !important;
+	}
+	
+	.bb-tablist > li > a {
+		color: @foreground !important;
+		font-weight: 500 !important;
+		background-position: 50% 100% !important;
+	}
+	.bb-tablist > li > a:after {
+		display: none !important;
+	}
 }
