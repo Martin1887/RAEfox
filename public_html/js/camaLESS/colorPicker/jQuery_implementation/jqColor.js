@@ -9,34 +9,34 @@
 						HSL = colors.RND.hsl,
 						AHEX = options.isIE8 ? (colors.alpha < 0.16 ? '0' : '') +
 							(Math.round(colors.alpha * 100)).toString(16).toUpperCase() + colors.HEX : '',
-						RGBInnerText = RGB.r + ', ' + RGB.g + ', ' + RGB.b,
-						RGBAText = 'rgba(' + RGBInnerText + ', ' + colors.alpha + ')',
 						isAlpha = colors.alpha !== 1 && !options.isIE8,
 						colorMode = $input.data('colorMode');
 
+					if (!options._instance) return;
+
 					$patch.css({
 						'color': (colors.rgbaMixCustom.luminance > 0.22 ? '#222' : '#ddd'), // Black...???
-						'background-color': RGBAText,
+						'background-color': options._instance.toString(),
 						'filter' : (options.isIE8 ? 'progid:DXImageTransform.Microsoft.gradient(' + // IE<9
 							'startColorstr=#' + AHEX + ',' + 'endColorstr=#' + AHEX + ')' : '')
 					});
 
 					$input.val(colorMode === 'HEX' && !isAlpha ? '#' + (options.isIE8 ? AHEX : colors.HEX) :
-						colorMode === 'rgb' || (colorMode === 'HEX' && isAlpha) ?
-						(!isAlpha ? 'rgb(' + RGBInnerText + ')' : RGBAText) :
-						('hsl' + (isAlpha ? 'a(' : '(') + HSL.h + ', ' + HSL.s + '%, ' + HSL.l + '%' +
-							(isAlpha ? ', ' + colors.alpha : '') + ')')
+						options._instance.toString(colorMode, options.forceAlpha)
 					);
 
 					if (options.displayCallback) {
 						options.displayCallback(colors, mode, options);
 					}
 				},
+				extractValue = function(elm) {
+					return elm.value || elm.getAttribute('value') || elm.style.backgroundColor || '#FFFFFF';
+				},
 				actionCallback = function(event, action) {
 					var options = this,
 						colorPicker = colorPickers.current;
 
-					if (action === 'toMemery') {
+					if (action === 'toMemory') {
 						var memos = colorPicker.nodes.memos,
 							$memo,
 							backgroundColor = '',
@@ -75,30 +75,34 @@
 							customBG: '#FFFFFF',
 							// displayCallback: displayCallback,
 							/* --- regular colorPicker options from this point --- */
-							color: elm.value,
+							color: extractValue(elm),
 							initStyle: 'display: none',
 							mode: $.docCookies('colorPickerMode') || 'hsv-h',
 							// memoryColors: (function(colors, config) {
 							// 	return config.noAlpha ?
 							// 		colors.replace(/\,\d*\.*\d*\)/g, ',1)') : colors;
 							// })($.docCookies('colorPickerMemos'), config || {}),
+							// forceAlpha: true,
 							memoryColors: $.docCookies('colorPickerMemos' + ((config || {}).noAlpha ? 'NoAlpha' : '')),
 							size: $.docCookies('colorPickerSize') || 1,
 							renderCallback: renderCallback,
 							actionCallback: actionCallback
-						};
+						},
+						instance;
 
 					for (var n in config) {
 						initConfig[n] = config[n]; 
 					}
-					return new initConfig.klass(initConfig);
+					instance = new initConfig.klass(initConfig);
+					instance.color.options._instance = instance.color;
+					return instance;
 				},
 				doEventListeners = function(elm, multiple, off) {
 					var onOff = off ? 'off' : 'on';
 
 					$(elm)[onOff]('focus.colorPicker', function(e) {
 						var $input = $(this),
-							position = $input.position(),
+							position = $input.offset(),
 							index = multiple ? $(that).index(this) : 0,
 							colorPicker = colorPickers[index] ||
 								(colorPickers[index] = createInstance(this, config)),
@@ -106,72 +110,81 @@
 							$colorPicker = $.ui && options.draggable ?
 							$(colorPicker.nodes.colorPicker).draggable(
 								{cancel: '.' + options.CSSPrefix + 'app div'}
-							) : $(colorPicker.nodes.colorPicker);
+							) : $(colorPicker.nodes.colorPicker),
+							$appendTo = $(options.appendTo || document.body),
+							isStatic = /static/.test($appendTo.css('position')),
+							atrect = isStatic ? {left: 0, top: 0} : $appendTo[0].getBoundingClientRect(),
+							waitTimer = 0;
 
-						options.color = elm.value; // brings color to default on reset
+						options.color = extractValue(elm); // brings color to default on reset
 						$colorPicker.css({
 							'position': 'absolute',
-							'left': position.left + options.margin.left,
-							'top': position.top + +$input.outerHeight(true) + options.margin.top
+							'left': position.left + options.margin.left -  atrect.left,
+							'top': position.top + $input.outerHeight(true) + options.margin.top - atrect.top
 						});
 						if (!multiple) {
 							options.input = elm;
 							options.patch = elm; // check again???
-							colorPicker.setColor(elm.value, undefined, undefined, true);
+							colorPicker.setColor(extractValue(elm), undefined, undefined, true);
 							colorPicker.saveAsBackground();
 						}
 						colorPickers.current = colorPickers[index];
-						$(options.appenTo || document.body).append($colorPicker);
-						setTimeout(function() { // compensating late style on onload in colorPicker
-							$colorPicker.show(colorPicker.color.options.animationSpeed);
-						}, 0);
+						$appendTo.append($colorPicker);
+						waitTimer = setInterval(function() { // compensating late style on onload in colorPicker
+							if (colorPickers.current.cssIsReady) {
+								waitTimer = clearInterval(waitTimer);
+								$colorPicker.show(colorPicker.color.options.animationSpeed);
+							}
+						}, 10);
+						
 					});
 
-					if (!colorPickers.evt || off) {
-						colorPickers.evt = true; // prevent new eventListener for window
+					$(window)[onOff]('mousedown.colorPicker', function(e) {
+						var colorPicker = colorPickers.current,
+							$colorPicker = $(colorPicker ? colorPicker.nodes.colorPicker : undefined),
+							animationSpeed = colorPicker ? colorPicker.color.options.animationSpeed : 0,
+							isColorPicker = $(e.target).closest('.cp-app')[0],
+							inputIndex = $(that).index(e.target);
 
-						$(window)[onOff]('mousedown.colorPicker', function(e) {
-							var colorPicker = colorPickers.current,
-								$colorPicker = $(colorPicker ? colorPicker.nodes.colorPicker : undefined),
-								animationSpeed = colorPicker ? colorPicker.color.options.animationSpeed : 0,
-								isColorPicker = $(e.target).closest('.cp-app')[0],
-								inputIndex = $(that).index(e.target);
-
-							if (isColorPicker && $(colorPickers).index(isColorPicker)) {
-								if (e.target === colorPicker.nodes.exit) {
-									$colorPicker.hide(animationSpeed);
-									$(':focus').trigger('blur');
-								} else {
-									// buttons on colorPicker don't work any more
-									// $(document.body).append(isColorPicker);
-								}
-							} else if (inputIndex !== -1) {
-								// input fireld
-							} else {
+						if (isColorPicker && colorPicker && $(colorPickers).index(isColorPicker)) {
+							if (e.target === colorPicker.nodes.exit) {
 								$colorPicker.hide(animationSpeed);
+								$(':focus').trigger('blur');
+							} else {
+								// buttons on colorPicker don't work any more
+								// $(document.body).append(isColorPicker);
 							}
-						});
-					}
+						} else if (inputIndex !== -1) {
+							// input fireld
+						} else {
+							$colorPicker.hide(animationSpeed);
+						}
+					});
 				},
 				that = this,
-				colorPickers = this.colorPickers || []; // this is a way to prevent data binding on HTMLElements
+				colorPickers = $.fn.colorPicker.colorPickers || [], // this is a way to prevent data binding on HTMLElements
+				testColors = new window.Colors({
+					customBG: (config && config.customBG) || '#FFFFFF',
+					allMixDetails: true
+				});
 
-			this.colorPickers = colorPickers;
+			$.fn.colorPicker.colorPickers = colorPickers;
 
 			$(this).each(function(idx, elm) {
-				if (config === 'destroy') {
-					// doEventListeners(elm, (config && config.multipleInstances), true);
-					$(elm).off('.colorPicker');
-					$(window).off('.colorPicker');
-					if (colorPickers[idx]) {
-						colorPickers[idx].destroyAll();
-					}
-				} else {
-					var value = elm.value.split('(');
+				// doEventListeners(elm, (config && config.multipleInstances), true);
+				$(elm).off('.colorPicker');
+				$(window).off('.colorPicker');
+				if (config !== 'destroy') {
+					var color = extractValue(elm),
+						value = color.split('(');
 					$(elm).data('colorMode', value[1] ? value[0].substr(0, 3) : 'HEX');
 					doEventListeners(elm, (config && config.multipleInstances), false);
 					if (config && config.readOnly) {
 						elm.readOnly = true;
+					}
+					testColors.setColor(color);
+					if (config && config.init) {
+						config.init(elm, testColors.colors);
 					}
 				}
 			});

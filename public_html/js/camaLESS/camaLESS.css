@@ -39,6 +39,19 @@
     animation-name: fadeOut;
 }
 
+
+.camaLessForm input:focus {
+	outline: none;
+}
+.camaLessForm pre {
+	display: inline;
+	background-color: rgba(255, 255, 255, .2);
+	padding: .5em;
+}
+.cp-app {
+	z-index: 200;
+}
+
 @keyframes fadeOut {
     from {
         opacity: 1;

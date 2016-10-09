@@ -11,11 +11,10 @@
 		// 	_patchesPng: ..., // background images for square sliders in RGB mode
 		// 	_iconsPng: ..., // some icon sprite images
 		// 	_bgsPng: ..., // some more icon sprite images
-		// 	_blankPng: ... // the blank 16x16px image for the transparent cursor
 		// }
 		_devMode = !_data, // if no _data we assume that colorPicker.data.js is missing (for development)
-		_isIE = document.createStyleSheet !== undefined && document.getElementById || !!window.MSInputMethodContext,
-		_doesOpacity = typeof document.body.style.opacity !== 'undefined',
+		_isIE = false,
+		_doesOpacity = false,
 		// _isIE8 = _isIE && document.querySelectorAll,
 
 		_valueRanges = {}, // will be assigned in initInstance() by Colors instance
@@ -56,6 +55,8 @@
 		_options = {},
 		_nodes = {},
 
+		_math = Math,
+
 		animationFrame = 'AnimationFrame', // we also need this later
 		requestAnimationFrame = 'request' + animationFrame,
 		cancelAnimationFrame = 'cancel' + animationFrame,
@@ -78,12 +79,12 @@
 				// cmyOnly: false,
 				// initStyle: 'display: none',
 
-				// memoryColors: "'rgba(82,80,151,1)','rgba(100,200,10,0.5)','rgba(0,0,0,1)','rgba(0,0,0,1)'"
+				// memoryColors: "'rgba(82,80,151,1)','rgba(100,200,10,0.5)','rgba(100,0,0,1)','rgba(0,0,0,1)'"
 				// memoryColors: [{r: 100, g: 200, b: 10, a: 0.5}] //  
 
 				// opacityPositionRelative: undefined,
 				// customCSS: undefined,
-				// appenTo: document.body,
+				// appendTo: document.body,
 				// noRangeBackground: false,
 				// textRight: false, ?????
 				// noHexButton: false,
@@ -184,19 +185,36 @@
 		html = null;
 	};
 
+	ColorPicker.prototype.renderMemory = function(memory) {
+		var memos = this.nodes.memos,
+			tmp = [];
+
+		if (typeof memory === 'string') { // revisit!!!
+			memory = memory.replace(/^'|'$/g, '').replace(/\s*/, '').split('\',\'');
+		}
+		for (var n = memos.length; n--; ) { // check again how to handle alpha...
+			if (memory && typeof memory[n] === 'string') {
+				tmp = memory[n].replace('rgba(', '').replace(')', '').split(',');
+				memory[n] = {r: tmp[0], g: tmp[1], b: tmp[2], a: tmp[3]}
+			}
+			memos[n].style.cssText = 'background-color: ' + (memory && memory[n] !== undefined ?
+				color2string(memory[n]) + ';' + getOpacityCSS(memory[n]['a'] || 1) : 'rgb(0,0,0);');
+		}
+	};
+
 	// ------------------------------------------------------ //
 
 	function initInstance(THIS, options) {
 		var exporter, // do something here..
-			memory,
 			mode = '',
 			CSSPrefix = '',
-			optionButtons,
-			tmp = [];
+			optionButtons;
 
 		for (var option in options) { // deep copy ??
 			THIS.options[option] = options[option];
 		}
+		_isIE = document.createStyleSheet !== undefined && document.getElementById || !!window.MSInputMethodContext;
+		_doesOpacity = typeof document.body.style.opacity !== 'undefined';
 		_colorInstance = new Colors(THIS.options);
 		// We transfer the responsibility to the instance of Color (to save space and memory)
 		delete THIS.options;
@@ -237,18 +255,7 @@
 			_nodes.colorPicker.className += ' no-alpha'; // IE6 ??? maybe for IE6 on document.body
 		}
 
-		memory = _options.memoryColors;
-		if (typeof memory === 'string') { // revisit!!!
-			memory = memory.replace(/^'|'$/g, '').replace(/\s*/, '').split('\',\'');
-		}
-		for (var n = _nodes.memos.length; n--; ) { // check again how to handle alpha...
-			if (memory && typeof memory[n] === 'string') {
-				tmp = memory[n].replace('rgba(', '').replace(')', '').split(',');
-				memory[n] = {r: tmp[0], g: tmp[1], b: tmp[2], a: tmp[3]}
-			}
-			_nodes.memos[n].style.cssText = 'background-color: ' + (memory && memory[n] !== undefined ?
-				color2string(memory[n]) + ';' + getOpacityCSS(memory[n]['a'] || 1) : 'rgb(0,0,0);');
-		}
+		THIS.renderMemory(_options.memoryColors);
 
 		installEventListeners(THIS);
 		
@@ -325,19 +332,18 @@
 						replace(/§/g, prefix).
 						replace('_bgs.png', doesBAS64 ? urlData + _data._bgsPng : _options.imagePath + '_bgs.png').
 						replace('_icons.png', doesBAS64 ? urlData + _data._iconsPng : _options.imagePath + '_icons.png').
-						replace('_blank.png', !_isIE ? urlData + _data._blankPng : _options.imagePath + '_blank.cur').
 						// replace('"Courier New",', !_isIE ? '' : '"Courier New",').
 						replace(/opacity:(\d*\.*(\d+))/g, function($1, $2){
 							return !_doesOpacity ? '-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=' +
-							Math.round(+$2 * 100) + ')";filter: alpha(opacity=' + Math.round(+$2 * 100) + ')' :
+							_math.round(+$2 * 100) + ')";filter: alpha(opacity=' + _math.round(+$2 * 100) + ')' :
 							'-moz-opacity: ' + $2 + '; -khtml-opacity: ' + $2 + '; opacity: ' + $2;
 						});
 					// style.appendChild(document.createTextNode(_data._cssFunc));
 					addStyleSheet(_data._cssMain);
 				}
-				for (var n in _data) { // almost 25k of memory ;o)
-					_data[n] = null;
-				}
+				// for (var n in _data) { // almost 25k of memory ;o)
+				// 	_data[n] = null;
+				// }
 			},
 			test = document.createElement('img');
 
@@ -346,30 +352,40 @@
 			return THIS.color.options.devPicker;
 		}
 
-		// HTML
-		if (_previousInstance = _colorPicker) {
-			// we need to be careful with recycling HTML as slider calssNames might have been changed...
-			initSliders();
-		}
-		app.innerHTML = _colorPicker ? _colorPicker.nodes.colorPicker.outerHTML : _data._html.replace(/§/g, prefix);
-		// _html = null;
-
 		// CSS
 		if (!document.getElementById('colorPickerCSS')) { // only once needed
 			test.onload = test.onerror = function(){
 				if (_data._cssFunc) {
 					processCSS(this.width === 1 && this.height === 1);
 				}
+				THIS.cssIsReady = true;
 			};
 			test.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+		} else {
+			THIS.cssIsReady = true;
 		}
+
+		// HTML
+		if (_previousInstance = _colorPicker) {
+			// we need to be careful with recycling HTML as slider calssNames might have been changed...
+			initSliders();
+		}
+		// app.innerHTML = _colorPicker ? _colorPicker.nodes.colorPicker.outerHTML : _data._html.replace(/§/g, prefix);
+		// faster ... FF8.0 (2011) though (but IE4)
+		// outerHTML ... FF11 (2013)
+		app.insertAdjacentHTML('afterbegin',
+			_colorPicker ? _colorPicker.nodes.colorPicker.outerHTML ||
+				new XMLSerializer().serializeToString(_colorPicker.nodes.colorPicker) : // FF before F11
+				_data._html.replace(/§/g, prefix));
+			// _colorPicker ? _colorPicker.nodes.colorPicker.parentNode.innerHTML : _data._html.replace(/§/g, prefix));
+		// _data._html = null;
 
 		app = app.children[0];
 		app.style.cssText = _options.initStyle || ''; // for initial hiding...
 		// get a better addClass for this....
 		// app.className = app.className.split(' ')[0]; // cleanup for multy instances
 
-		return (_options.appenTo || document.body).appendChild(app);
+		return (_options.appendTo || document.body).appendChild(app);
 	}
 
 	function getInstanceNodes(colorPicker, THIS) { // check nodes again... are they all needed?
@@ -411,6 +427,9 @@
 			}
 		}
 
+		// Chrome bug: focuses contenteditable on mouse over while dragging
+		nodes.panelCover = nodes.panel.appendChild(document.createElement('div'));
+
 		return nodes;
 	}
 
@@ -424,9 +443,10 @@
 		onOffEvent(_nodes.colorPicker, 'mousedown', function(e) {
 			var event = e || window.event,
 				page = getPageXY(event),
-				target = event.target || event.srcElement,
+				target = (event.button || event.which) < 2 ?
+					(event.target || event.srcElement) : {},
 				className = target.className;
-			
+
 			focusInstance(THIS);
 			_mainTarget = target;
 			stopChange(undefined, 'resetEventListener');
@@ -542,6 +562,7 @@
 			changeClass(_nodes.panel, '(?:start-change|do-change)', '');
 
 			_nodes.resizer.style.cssText = '';
+			_nodes.panelCover.style.cssText = '';
 
 			_nodes.memo_store.style.cssText = 'background-color: ' +
 				color2string(_colors.RND.rgb) + '; ' + getOpacityCSS(_colors.alpha);
@@ -590,7 +611,7 @@
 			page = getPageXY(event);
 
 		_newData = true;
-		_colors.alpha = limitValue(Math.round(
+		_colors.alpha = limitValue(_math.round(
 			(page.X - _targetOrigin.left) / _targetOrigin.width * 100), 0, 100
 		) / 100;
 		convertColors('alpha');
@@ -606,7 +627,7 @@
 			isAlpha = type === 'alpha',
 			ranges;
 
-		if (_delayState || Math.abs(delta) >= delayOffset) {
+		if (_delayState || _math.abs(delta) >= delayOffset) {
 			if (!_delayState) {
 				_delayState = (delta > 0 ? -delayOffset : delayOffset) +
 					(+_mainTarget.firstChild.data) * (isAlpha ? 100 : 1);
@@ -614,7 +635,8 @@
 				delta += _delayState;
 				_delayState = 1;
 				changeClass(_nodes.panel, 'start-change', 'do-change');
-				window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
+				_nodes.panelCover.style.cssText = 'position:absolute;left:0;top:0;right:0;bottom:0';
+				// window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
 				document.activeElement.blur();
 				_renderTimer = window[requestAnimationFrame](renderAll);
 			}
@@ -661,11 +683,11 @@
 			val = origValue === '0' && !isHex ? [] : origValue.split(''); // gefixt
 
 		if (/^(?:27|13)$/.test(keyCode)) { // ENTER || ESC
-			// preventDefault(event);
+			preventDefault(event);
 			elm.blur();
 		} else if (event.type === 'keydown') { // functional keys
 			if (arrowKey) { // arrow/page keys
-				value = limitValue(Math.round((+origValue + arrowKey) * 1e+6) / 1e+6, valueRange[0], valueRange[1]);
+				value = limitValue(_math.round((+origValue + arrowKey) * 1e+6) / 1e+6, valueRange[0], valueRange[1]);
 			} else if (/^(?:8|46)$/.test(keyCode)) { // DELETE / BACKSPACE
 				if (!rangeData.range) {
 					rangeData.range++;
@@ -718,7 +740,7 @@
 			stopChange(e, event.type);
 
 			textNode.data = value; // if 
-			caret(elm, Math.min(elm.firstChild.data.length, rangeData.start < 0 ? 0 : rangeData.start));
+			caret(elm, _math.min(elm.firstChild.data.length, rangeData.start < 0 ? 0 : rangeData.start));
 		}
 	}
 
@@ -766,9 +788,9 @@
 					alphaBG === 'c' ? 'b' : 'w')));
 				target.firstChild.data = alphaBG.toUpperCase();
 				_nodes.ctrl.style.backgroundColor = _nodes.memo.style.backgroundColor =
-					alphaBG !== 'c' ? '' : 'rgb(' + Math.round(customBG.r * 255) + ', ' +
-					Math.round(customBG.g * 255) + ', ' +
-					Math.round(customBG.b * 255) + ')';
+					alphaBG !== 'c' ? '' : 'rgb(' + _math.round(customBG.r * 255) + ', ' +
+					_math.round(customBG.g * 255) + ', ' +
+					_math.round(customBG.b * 255) + ')';
 				_nodes.raster.style.cssText = _nodes.raster_bg.previousSibling.style.cssText =
 					alphaBG !== 'c' ? '' : getOpacityCSS(customBG.luminance < 0.22 ? 0.5 : 0.4);
 				buttonAction = 'alphaBackground';
@@ -847,7 +869,7 @@
 					}
 					_nodes.memos[0].style.cssText = _nodes.memo_store.style.cssText;
 				}
-				buttonAction = 'toMemery';
+				buttonAction = 'toMemory';
 			} else { // reset color from memo
 				resetBlink();
 				_colorPicker.setColor(target.style.backgroundColor, 'rgb', target.style.opacity || 1);
@@ -877,7 +899,7 @@
 			sizes = _options.sizes, // from getUISizes();
 			currentSize = isSize ? size :
 				y < sizes.XXS[1] + 25 ? 0 :
-				x < sizes.XS[0] + 25? 1 :
+				x < sizes.XS[0] + 25 ? 1 :
 				x < sizes.S[0] + 25 || y < sizes.S[1] + 25 ? 2 : 3,
 			value = values[currentSize],
 			isXXS = false,
@@ -951,18 +973,19 @@
 	}
 
 	function initSliders() { // function name...
-		var regex = /\s+(?:hue-)*(?:dark|light)/g;
+		var regex = /\s+(?:hue-)*(?:dark|light)/g,
+			className = 'className'; // minification
 
-		_nodes.curl.className = _nodes.curl.className.replace(regex, ''); // .....
-		_nodes.curr.className = _nodes.curr.className.replace(regex, ''); // .....
-		_nodes.slds.className = _nodes.slds.className.replace(regex, '');
+		_nodes.curl[className] = _nodes.curl[className].replace(regex, ''); // .....
+		_nodes.curr[className] = _nodes.curr[className].replace(regex, ''); // .....
+		_nodes.slds[className] = _nodes.slds[className].replace(regex, '');
 		// var sldrs = ['sldr_2', 'sldr_4', 'sldl_3'];
 		// for (var n = sldrs.length; n--; ) {
-		// 	_nodes[sldrs[n]].className = _options.CSSPrefix + sldrs[n].replace('_', '-');
+		// 	_nodes[sldrs[n]][className] = _options.CSSPrefix + sldrs[n].replace('_', '-');
 		// }
-		_nodes.sldr_2.className = _options.CSSPrefix + 'sldr-2';
-		_nodes.sldr_4.className = _options.CSSPrefix + 'sldr-4';
-		_nodes.sldl_3.className = _options.CSSPrefix + 'sldl-3';
+		_nodes.sldr_2[className] = _options.CSSPrefix + 'sldr-2';
+		_nodes.sldr_4[className] = _options.CSSPrefix + 'sldr-4';
+		_nodes.sldl_3[className] = _options.CSSPrefix + 'sldl-3';
 
 		for (var style in _nodes.styles) {
 			if (!style.indexOf('sld')) _nodes.styles[style].cssText = '';
@@ -997,13 +1020,14 @@
 		return (_colors);
 	}
 
-	function preRenderAll(colors) { // do we need this??? yes, only calculate if values change... but how about _newData
-		var renderVars = _renderVars,
+	function preRenderAll(colors) {
+		var _Math = _math,
+			renderVars = _renderVars,
 			bgType = _bgTypes[_options.alphaBG];
 
-		renderVars.hueDelta = Math.round(colors['rgbaMixBGMix' + bgType].hueDelta * 100);
-		// renderVars.RGBLuminanceDelta = Math.round(colors.RGBLuminanceDelta * 100);
-		renderVars.luminanceDelta = Math.round(colors['rgbaMixBGMix' + bgType].luminanceDelta * 100);
+		renderVars.hueDelta = _Math.round(colors['rgbaMixBGMix' + bgType].hueDelta * 100);
+		// renderVars.RGBLuminanceDelta = _Math.round(colors.RGBLuminanceDelta * 100);
+		renderVars.luminanceDelta = _Math.round(colors['rgbaMixBGMix' + bgType].luminanceDelta * 100);
 		renderVars.RGBLuminance = colors.RGBLuminance > 0.22 ? 'light' : 'dark';
 		renderVars.HUEContrast = colors.HUELuminance > 0.22 ? 'light' : 'dark';
 		// renderVars.contrast = renderVars.RGBLuminanceDelta > renderVars.hueDelta ? 'contrast' : '';
@@ -1023,22 +1047,41 @@
 			_newData = false;
 		}
 		// console.time('renderAll');
-		var options = _options, colors = _colors, renderVars = _renderVars, cashedVars = _cashedVars,
-			mode = options.mode, nodes = _nodes,
+		var options = _options,
+			mode = options.mode,
+			scale = options.scale,
 			prefix = options.CSSPrefix,
-			valueRanges = _valueRanges,
-			valueType = _valueType,
+			colors = _colors,
+			nodes = _nodes,
 			CSS = nodes.styles,
 			textNodes = nodes.textNodes,
-			scale = _options.scale,
-			x  = colors[mode.type][mode.x], X = Math.round(x * 255 / (scale === 4 ? 2 : scale)),
-			y_ = colors[mode.type][mode.y], y = 1 - y_, Y = Math.round(y * 255 / scale),
-			z  = 1 - colors[mode.type][mode.z], Z = Math.round(z * 255 / scale),
-			coords = (1 === 1) ? [x, y_] : [0, 0], a = 0, b = 0, // (1 === 2) button label up
-			isRGB = mode.type === 'rgb', isHue = mode.z === 'h', isHSL = mode.type === 'hsl',
+			valueRanges = _valueRanges,
+			valueType = _valueType,
+			renderVars = _renderVars,
+			cashedVars = _cashedVars,
+
+			_Math = _math,
+			_getOpacityCSS = getOpacityCSS,
+			_color2string = color2string,
+
+			a = 0,
+			b = 0,
+			x  = colors[mode.type][mode.x],
+			X = _Math.round(x * 255 / (scale === 4 ? 2 : scale)),
+			y_ = colors[mode.type][mode.y],
+			y = 1 - y_,
+			Y = _Math.round(y * 255 / scale),
+			z  = 1 - colors[mode.type][mode.z],
+			Z = _Math.round(z * 255 / scale),
+			coords = (1 === 1) ? [x, y_] : [0, 0], // (1 === 2) button label up
+
+			isRGB = mode.type === 'rgb',
+			isHue = mode.z === 'h',
+			isHSL = mode.type === 'hsl',
 			isHSL_S = isHSL && mode.z === 's',
-			display, tmp, value, slider,
-			moveXY = _mouseMoveAction === changeXYValue, moveZ  = _mouseMoveAction === changeZValue;
+			moveXY = _mouseMoveAction === changeXYValue,
+			moveZ  = _mouseMoveAction === changeZValue,
+			display, tmp, value, slider;
 
 		if (isRGB) {
 			if (coords[0] >= coords[1]) b = 1; else a = 1;
@@ -1049,11 +1092,11 @@
 		}
 		if ((isRGB && !moveZ) || (isHue && !moveXY) || (!isHue && !moveZ)) {
 			CSS[isHue ? 'sldl_2' : 'sldr_2'][isRGB ? 'cssText' : 'backgroundColor'] =
-				isRGB ? getOpacityCSS((coords[a] - coords[b]) / (1 - (coords[b]) || 0)) : color2string(colors.hueRGB);
+				isRGB ? _getOpacityCSS((coords[a] - coords[b]) / (1 - (coords[b]) || 0)) : _color2string(colors.hueRGB);
 		}
 		if (!isHue) {
-			if (!moveZ)  CSS.sldr_4.cssText = getOpacityCSS(isRGB ? coords[b] : isHSL_S ? Math.abs(1 - y * 2) : y);
-			if (!moveXY) CSS.sldl_3.cssText = getOpacityCSS(isHSL && mode.z === 'l' ? Math.abs(1 - z * 2) : z);
+			if (!moveZ)  CSS.sldr_4.cssText = _getOpacityCSS(isRGB ? coords[b] : isHSL_S ? _Math.abs(1 - y * 2) : y);
+			if (!moveXY) CSS.sldl_3.cssText = _getOpacityCSS(isHSL && mode.z === 'l' ? _Math.abs(1 - z * 2) : z);
 			if (isHSL) { // switch slider class name for black/white color half way through in HSL(S|L) mode(s)
 				slider = isHSL_S ? 'sldr_4' : 'sldl_3';
 				tmp = isHSL_S ? 'r-' : 'l-';
@@ -1076,9 +1119,9 @@
 				(colors.alpha * 100) + '%';
 		}
 
-		CSS.col1.cssText = 'background-color: ' + color2string(colors.RND.rgb) + '; ' +
-			(options.muteAlpha ? '' : getOpacityCSS(colors.alpha));
-		CSS.opacity.backgroundColor = color2string(colors.RND.rgb);
+		CSS.col1.cssText = 'background-color: ' + _color2string(colors.RND.rgb) + '; ' +
+			(options.muteAlpha ? '' : _getOpacityCSS(colors.alpha));
+		CSS.opacity.backgroundColor = _color2string(colors.RND.rgb);
 		CSS.cold.width = renderVars.hueDelta + '%';
 		CSS.cont.width = renderVars.luminanceDelta + '%';
 
@@ -1098,7 +1141,7 @@
 						value = (value - valueRanges[tmp[0]][tmp[1]][0]) /
 							(valueRanges[tmp[0]][tmp[1]][1] - valueRanges[tmp[0]][tmp[1]][0]);
 					}
-					CSS[display].backgroundPosition = Math.round((1 - value) * 100) + '% 0%';
+					CSS[display].backgroundPosition = _Math.round((1 - value) * 100) + '% 0%';
 				}
 			}
 		}
@@ -1211,11 +1254,11 @@
 		if (value === undefined) value = 1;
 
 		if (_doesOpacity) {
-			return 'opacity: ' + (Math.round(value * 10000000000) / 10000000000) + ';'; // value.toFixed(16) = 99% slower
+			return 'opacity: ' + (_math.round(value * 10000000000) / 10000000000) + ';'; // value.toFixed(16) = 99% slower
 			// some speed test:
 			// return ['opacity: ', (Math.round(value * 1e+10) / 1e+10), ';'].join('');
 		} else {
-			return 'filter: alpha(opacity=' + Math.round(value * 100) + ');';
+			return 'filter: alpha(opacity=' + _math.round(value * 100) + ');';
 		}
 	}
 
@@ -1247,9 +1290,11 @@
 	}
 
 	function getPageXY(e) {
+		var doc = window.document;
+
 		return {
-			X: e.pageX || e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft,
-			Y: e.pageY || e.clientY + document.body.scrollTop + document.documentElement.scrollTop
+			X: e.pageX || e.clientX + doc.body.scrollLeft + doc.documentElement.scrollLeft,
+			Y: e.pageY || e.clientY + doc.body.scrollTop + doc.documentElement.scrollTop
 		};
 	}
 

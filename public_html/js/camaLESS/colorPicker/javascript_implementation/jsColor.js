@@ -30,11 +30,14 @@
 					options.displayCallback(colors, mode, options);
 				}
 			},
+			extractValue = function(elm) {
+				return elm.value || elm.getAttribute('value') || elm.style.backgroundColor || '#FFFFFF';
+			},
 			actionCallback = function(event, action) {
 				var options = this,
 					colorPicker = colorPickers.current;
 
-				if (action === 'toMemery') {
+				if (action === 'toMemory') {
 					var memos = colorPicker.nodes.memos,
 						backgroundColor = '',
 						opacity = 0,
@@ -72,7 +75,7 @@
 						customBG: '#FFFFFF',
 						// displayCallback: displayCallback,
 						/* --- regular colorPicker options from this point --- */
-						color: elm.value,
+						color: extractValue(elm),
 						initStyle: 'display: none',
 						mode: ColorPicker.docCookies('colorPickerMode') || 'hsv-h',
 						// memoryColors: (function(colors, config) {
@@ -95,42 +98,49 @@
 				var onOff = off ? 'removeEventListener' : 'addEventListener',
 					focusListener = function(e) {
 						var input = this,
-							position = {left: input.offsetLeft, top: input.offsetTop},
+							position = window.ColorPicker.getOrigin(input),
 							index = multiple ? Array.prototype.indexOf.call(elms, this) : 0,
 							colorPicker = colorPickers[index] ||
 								(colorPickers[index] = createInstance(this, config)),
 							options = colorPicker.color.options,
-							colorPickerUI = colorPicker.nodes.colorPicker;
+							colorPickerUI = colorPicker.nodes.colorPicker,
+							appendTo = (options.appendTo || document.body),
+							isStatic = /static/.test(window.getComputedStyle(appendTo).position),
+							atrect = isStatic ? {left: 0, top: 0} : appendTo.getBoundingClientRect(),
+							waitTimer = 0;
 
-						options.color = elm.value; // brings color to default on reset
+						options.color = extractValue(elm); // brings color to default on reset
 						colorPickerUI.style.cssText = 
-							'position: absolute;' +
-							'left:' + (position.left + options.margin.left) + 'px;' +
-							'top:' + (position.top + +input.offsetHeight + options.margin.top) + 'px;';
+							'position: absolute;' + (!colorPickers[index].cssIsReady ? 'display: none;' : '') +
+							'left:' + (position.left + options.margin.left - atrect.left) + 'px;' +
+							'top:' + (position.top + +input.offsetHeight + options.margin.top - atrect.top) + 'px;';
 
 						if (!multiple) {
 							options.input = elm;
 							options.patch = elm; // check again???
-							colorPicker.setColor(elm.value, undefined, undefined, true);
+							colorPicker.setColor(extractValue(elm), undefined, undefined, true);
 							colorPicker.saveAsBackground();
 						}
 						colorPickers.current = colorPickers[index];
-						(options.appenTo || document.body).appendChild(colorPickerUI);
-						setTimeout(function() { // compensating late style on onload in colorPicker
-							colorPickerUI.style.display = 'block';
-						}, 0);
+						appendTo.appendChild(colorPickerUI);
+						waitTimer = setInterval(function() { // compensating late style on onload in colorPicker
+							if (colorPickers.current.cssIsReady) {
+								waitTimer = clearInterval(waitTimer);
+								colorPickerUI.style.display = 'block';
+							}
+						}, 10);
 					},
 					mousDownListener = function(e) {
 						var colorPicker = colorPickers.current,
 							colorPickerUI = (colorPicker ? colorPicker.nodes.colorPicker : undefined),
 							animationSpeed = colorPicker ? colorPicker.color.options.animationSpeed : 0,
-							isColorPicker = function(elm) {
+							isColorPicker = colorPicker && (function(elm) {
 								while (elm) {
 									if ((elm.className || '').indexOf('cp-app') !== -1) return elm;
 									elm = elm.parentNode;
 								}
 								return false;
-							}(e.target),
+							})(e.target),
 							inputIndex = Array.prototype.indexOf.call(elms, e.target);
 
 						if (isColorPicker && Array.prototype.indexOf.call(colorPickers, isColorPicker)) {
@@ -171,9 +181,10 @@
 					colorPickers[n].destroyAll();
 				}
 			} else {
-				var value = elm.value.split('(');
+				var color = extractValue(elm);
+				var value = color.split('(');
 
-				testColors.setColor(elm.value);
+				testColors.setColor(color);
 				if (config && config.init) {
 					config.init(elm, testColors.colors);
 				}
@@ -185,7 +196,7 @@
 			}
 		};
 
-		return this;
+		return window.jsColorPicker.colorPickers;
 	};
 
 	window.ColorPicker.docCookies = function(key, val, options) {
