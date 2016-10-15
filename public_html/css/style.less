@@ -298,9 +298,8 @@ form p button[type="reset"] {
     z-index: 1887;
     position: fixed;
     overflow: hidden;
-	padding-top: 15px;
-	padding-left: 15px;
-    width: ~"calc(100% - 50px)";
+	padding: 15px;
+    width: ~"calc(100% - 58px)";
     height: 100%;
     background-color: @background;
     color: @foreground;
@@ -316,9 +315,9 @@ form p button[type="reset"] {
         height: 2.8rem;
         line-height: 2.8rem;
         padding: 0px 0.5rem;
-		background-color: @background;
-		filter: brightness(1.4);
-		border-color: @foreground !important;
+		background-color: darken(@background, 40%) !important;
+		border-color: fadeout(@foreground, 60%) !important;
+		color: @foreground !important;
     }
 	input:invalid {
 		border-color: @foreground !important;
@@ -447,7 +446,7 @@ form p button[type="reset"] {
 		visibility: visible !important;
 	}
 	.formSearchInWordsList {
-		width: ~"calc(33.3% - 50px)" !important;
+		width: ~"calc(33.3% - 58px)" !important;
 	}
 	
 	.bb-tablist > li > a {
