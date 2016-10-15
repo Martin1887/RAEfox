@@ -83,8 +83,8 @@ function openCamaLessDb(name, types, defaults, forms, callbacks, formsStores,
                             formsClasses, formsDataTypes, almostOneThemeCB, sameNameThemesCB) {
     var openRequest = indexedDB.open(name, 1);
     stores = types;
-    var newDatabase = false;
-	
+	var newDatabase = false;
+		
 	if (almostOneThemeCB) {
 		almostOneThemeCallback = almostOneThemeCB;
 	} else {
@@ -100,88 +100,44 @@ function openCamaLessDb(name, types, defaults, forms, callbacks, formsStores,
     
     openRequest.onsuccess = function(event) {
         camaLessDb = openRequest.result;
-        
-        
-        if (newDatabase) {
-            // Default themes insertion
-            for (var i = 0; i < defaults.length; i++) {
-                var store = defaults[i].name;
-                for (var j = 0; j < defaults[i].values.length; j++) {
-                    var theme = defaults[i].values[j];
-                    newColorTheme(theme.name, theme.shownName, theme.values, j + 1, store);
-                }
-            }
-        }
-        
-        
-        // If database is created now it is necessary wait until creation is completed
-        if (newDatabase) {
-            var applied = false;
-            var inter = setInterval(function() {
-                // Default themes insertion
-                var counts = [];
-                for (var i = 0; i < defaults.length; i++) {
-                    var store = defaults[i].name;
-                    var transaction = camaLessDb.transaction([store]);
-                    var objectStore = transaction.objectStore(store);
-                    objectStore.count().onsuccess = function(event) {
-                        counts.push(event.target.result);
-                    };
-                    transaction.oncomplete = function(event) {
-                        // Check that database has all themes and that all themes
-                        // are selected when counts are completed
-                        if (counts.length === defaults.length) {
-                            var success = true;
-                            var finished = 0;
-                            for (var i = 0; i < defaults.length; i++) {
-                                if (counts[i] !== defaults[i].values.length) {
-                                    success = false;
-                                    // Loop exit
-                                    finished = defaults.length;
-                                    break;
-                                } else {
-                                    var store = defaults[i].name;
-                                    var objectStore = camaLessDb.transaction
-                                            ([store]).objectStore(store);
-                                    var index = objectStore.index('selected');
-                                    index.get(1).onsuccess = function(event) {
-                                        var res = event.target.result;
-                                        if (!res) {
-                                            success = false;
-                                        }
-                                        finished++;
-                                    };
-                                }
-                            }
-							if (finished === defaults.length) {
-								if (success) {
-									window.clearInterval(inter);
-									// In order to not execute twice doubt to
-									// inter fires before interLoop has finished
-									if (!applied) {
-										applied = true;
-										applyThemesAndCreateForms(forms, callbacks,
-											formsStores, formsClasses, formsDataTypes);
-									}
-								}
-							}
-                        }
-                    };
-                }
-            }, 100);
-        } else {
-            applyThemesAndCreateForms(forms, callbacks, formsStores, formsClasses, formsDataTypes);
-        }
+		if (!newDatabase) {
+			applyThemesAndCreateForms(forms, callbacks, formsStores, formsClasses, formsDataTypes);
+		}
     };
     
     openRequest.onupgradeneeded = function(event) {
-        camaLessDb = event.target.result;
+		newDatabase = true;
+		camaLessDb = event.target.result;
         for (var i = 0; i < stores.length; i++) {
             var objectStore = camaLessDb.createObjectStore(stores[i],
                 {keyPath: 'name'});
             objectStore.createIndex('selected', 'selected');
+			
+			objectStore.transaction.oncomplete = function(e) {
+				var added = 0;
+				var total = 0;
+
+				for (var i = 0; i < defaults.length; i++) {
+					total += defaults[i].values.length;
+				}
+
+				for (var i = 0; i < defaults.length; i++) {
+					var store = defaults[i].name;
+					for (var j = 0; j < defaults[i].values.length; j++) {
+						var theme = defaults[i].values[j];
+						newColorTheme(theme.name, theme.shownName, theme.values, j + 1, store,
+						function() {
+							added++;
+
+							if (added === total) {
+								applyThemesAndCreateForms(forms, callbacks,
+											formsStores, formsClasses, formsDataTypes);
+							}
+						});
+					}
+				}
+			};
         }
-        newDatabase = true;
     };
     
     
@@ -234,9 +190,10 @@ function applyThemesAndCreateForms(forms, callbacks, formsStores, formsClasses, 
  * @param {int} order Order of theme in the type of theme. If undefined or null
  * the subsequent of last is chosen.
  * @param {string} store The type of color theme.
+ * @param {function} callback Optional success function
  * @returns true
  */
-function newColorTheme(name, shownName, values, order, store) {
+function newColorTheme(name, shownName, values, order, store, callback) {
     var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
     
     var max = 0;
@@ -253,9 +210,17 @@ function newColorTheme(name, shownName, values, order, store) {
                     values: values, selected: 0, order: order});
 
             request.onsuccess = function(event) {
-                if (order === 1) {
-                    selectColorTheme(name, store);
-                }
+				if (order === 1) {
+                    if (callback) {
+						selectColorTheme(name, store, callback);
+					} else {
+						selectColorTheme(name, store);
+					}
+                } else {
+					if (callback) {
+						callback();
+					}
+				}
             };
         };
     } else {
@@ -263,9 +228,17 @@ function newColorTheme(name, shownName, values, order, store) {
                     values: values, selected: 0, order: order});
 
         request.onsuccess = function(event) {
-            if (order === 1) {
-                selectColorTheme(name, store);
-            }
+			if (order === 1) {
+                if (callback) {
+					selectColorTheme(name, store, callback);
+				} else {
+					selectColorTheme(name, store);
+				}
+            } else {
+				if (callback) {
+					callback();
+				}
+			}
         };
     }
     
@@ -281,9 +254,10 @@ function newColorTheme(name, shownName, values, order, store) {
  * values.
  * @param {int} order Order of theme in the type of theme
  * @param {string} store The type of color theme.
+ * @param {function} callback Optional success function
  * @returns true
  */
-function editColorTheme(name, shownName, values, order, store) {
+function editColorTheme(name, shownName, values, order, store, callback) {
     var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
     var request = objectStore.get(name);
     request.onsuccess = function(event) {
@@ -292,6 +266,10 @@ function editColorTheme(name, shownName, values, order, store) {
         data.values = values;
         data.order = order;
         objectStore.put(data);
+		
+		if (callback) {
+			callback();
+		}
     };
     
     
@@ -303,38 +281,18 @@ function editColorTheme(name, shownName, values, order, store) {
  * subsequent themes).
  * @param {string} name The name of color theme.
  * @param {string} store The type of color theme.
+ * @param {function} callback Optional success function
  * @returns true
  */
-function removeColorTheme(name, store) {
-    // All elements are searched and only subsequents are modified
-    var orderRemoved = 0;
-    var themes = [];
-    
-    var objectStore = camaLessDb.transaction([store], 'readwrite')
-                .objectStore(store);
-    var request = objectStore.get(name);
-    request.onsuccess = function(event) {
-        var data = request.result;
-        orderRemoved = data.order;
-    };
-    
-    objectStore.openCursor().onsuccess = function(event) {
-        var cursor = event.target.result;
-        if (cursor && cursor.value.order > orderRemoved) {
-            themes.push({name: cursor.value.name, shownName: cursor.value.shownName,
-                        values: cursor.value.values, selected: cursor.value.selected,
-                        order: cursor.value.order});
-            cursor.continue();
-        }
-        
-        for (var i = 0; i < themes.length; i++) {
-            editColorTheme(themes[i].name, themes[i].shownName, themes[i].values,
-                            themes[i].order - 1);
-        }
-    };
-    
-    
-    camaLessDb.transaction([store], 'readwrite').objectStore(store).delete(name);     
+function removeColorTheme(name, store, callback) {
+    var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
+	var request = objectStore.delete(name);
+	
+	request.onsuccess = function(event) {
+		if (callback) {
+			callback();
+		}
+	};	
     
     return true;
 }
@@ -345,26 +303,32 @@ function removeColorTheme(name, store) {
  * color themes as chosen theme.
  * @param {string} name The name of color theme.
  * @param {string} store The type of color theme.
+ * @param {function} callback Optional success function
  * @returns true
  */
-function selectColorTheme(name, store) {
-    var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
+function selectColorTheme(name, store, callback) {
+	var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
     var index = objectStore.index('selected');
     index.get(1).onsuccess = function(event) {
-        var res = event.target.result;
+		var res = event.target.result;
         if (res) {
             res.selected = 0;
             objectStore.put(res);
         }
+		var request = objectStore.get(name);
+		request.onsuccess = function(event) {
+			var data = request.result;
+			data.selected = 1;
+			var requestUpdate = objectStore.put(data);
+
+			if (callback) {
+				requestUpdate.onsuccess = function() {
+					callback();
+				};
+			}
+		};
     };
-    
-    var request = objectStore.get(name);
-    request.onsuccess = function(event) {
-        var data = request.result;
-        data.selected = 1;
-        objectStore.put(data);
-    };
-    
+
     
     return true;
 }
@@ -733,7 +697,7 @@ function addToCamaLessForms(store, form, clas, dataType, callback) {
  * Create, update, remove and select color themes of given form.
  * @param {string} form Form object.
  * @param {function} callback Function to execute after submit.
- * @returns true
+ * @returns false in order to finish pending transactions
  */
 function submitCamaLessForm(form, callback) {
     form = form.target;
@@ -741,8 +705,8 @@ function submitCamaLessForm(form, callback) {
         callback = form.callback;
     }
     var formStores = form.store ? [form.store] : stores;
+	console.log(formStores);
             
-    var camaLessDbThemes = [];
     var formThemes = [];
     
     // Check that color themes names are not duplicated inside the same type of theme
@@ -793,9 +757,14 @@ function submitCamaLessForm(form, callback) {
     
     var completed = 0;
     var transactions = [];
+	var toAdd = [];
+	var added = 0;
+	var toRemove = [];
+	var removed = 0;
+	var toSelect = [];
+	var selected = 0;
     for (var i = 0; i < formStores.length; i++) {
-        var theme = [];
-		camaLessDbThemes.push(theme);
+		console.log('formStore ' + i);
 		transactions.push(camaLessDb.transaction([formStores[i]], 'readonly'));
         // Get camaLessDb themes
         var objectStore = transactions[i].objectStore(formStores[i]);
@@ -803,60 +772,86 @@ function submitCamaLessForm(form, callback) {
         cursor.onsuccess = function(event) {
             var cursor = event.target.result;
             if (cursor) {
-                theme.push({name: cursor.value.name, shownName: cursor.value.shownName,
-                            values: cursor.value.values, selected: cursor.value.selected});
+                toRemove.push({name: cursor.value.name, store: cursor.source.name});
                 cursor.continue();
             } else {
                 completed++;
             }
-			
+			console.log('Completed ' + completed);
 			if (completed === formStores.length) {
 				// Check color themes
 				for (var j = 0; j < formThemes.length; j++) {
 					for (var k = 0; k < formThemes[j].length; k++) {
-						var ind = camaLessDbThemes[j].indexOf(formThemes[j][k]);
-						if (ind > -1) {
-							// Update color theme (shownName is '' to not overwrite new name)
-							editColorTheme(formThemes[j][k].name, '',
-								formThemes[j][k].values, formStores[j]);
-						} else {
-							// Add new color theme (shownName is '' to not overwrite new name)
-							newColorTheme(formThemes[j][k].name, '',
-								formThemes[j][k].values, formThemes.length, formStores[j]);
-						}
+						toAdd.push({name: formThemes[j][k].name,
+							values: formThemes[j][k].values, store: formStores[j]});
 
 						// Select selected color theme
 						if (formThemes[j][k].selected) {
-							selectColorTheme(formThemes[j][k].name, formStores[j]);
+							toSelect.push({name: formThemes[j][k].name, store: formStores[j]});
 						}
 					}
 				}
+				
+				console.log('toRemove, toAdd, toSelect');
+				console.log(toRemove);
+				console.log(toAdd);
+				console.log(toSelect);
+				
+				// apply changes sequentially: firstly remove all themes, then create all themes,
+				// then select selected theme and lastly apply themes,
+				// recreate form and execute callback
+				for (var r = 0; r < toRemove.length; r++) {
+					var removing = toRemove[r];
+					removeColorTheme(removing.name, removing.store,
+					function() {
+						removed++;
+						console.log('Removed: ' + removed);
+						
+						if (removed === toRemove.length) {
+							for (var a = 0; a < toAdd.length; a++) {
+								var adding = toAdd[a];
+								// New themes has no shownName
+								newColorTheme(adding.name, '', adding.values, a, adding.store,
+								function() {
+									added++;
+									console.log('Added: ' + added);
+									
+									if (added === toAdd.length) {
+										for (var s = 0; s < toSelect.length; s++) {
+											var selecting = toSelect[s];
+											selectColorTheme(selecting.name, selecting.store,
+											function() {
+												selected++;
+												console.log('selected: ' + selected);
 
-				for (var j = 0; j < camaLessDbThemes.length; j++) {
-					for (var k = 0; k < camaLessDbThemes[j].length; k++) {
-						var ind = formThemes[j].indexOf(camaLessDbThemes[j][k]);
-						if (ind < 0) {
-							// Remove removed color themes
-							removeColorTheme(camaLessDbThemes[j][k].name, formStores[j]);
+												if (selected === toSelect.length) {
+													console.log('applying');
+													
+													// Apply themes in every store
+													applyCamaLessColorTheme();
+
+													// Form is recreated in order to apply changes
+													createCamaLessForm(form.store, form, form.clas, form.dataType, callback);
+
+													if (callback) {
+														console.log('callback');
+														callback();
+													}
+												}
+											});
+										}
+									}
+								});
+							}
 						}
-					}
-				}
-
-				// Apply themes in every store
-				applyCamaLessColorTheme();
-
-				// Form is recreated in order to apply changes
-				createCamaLessForm(form.store, form, form.clas, form.dataType, callback);
-
-				if (callback) {
-					callback();
+					});	
 				}
 			}
         };
     }
     
     
-    return true;
+    return false;
 }
 
 
