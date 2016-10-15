@@ -142,7 +142,7 @@ form p button[type="reset"] {
     
     /* onlywords list (not history list) */
     #wordsList {
-        width: 90%;
+        width: ~"calc(100% - 28px)";
     }
     
     /* list */
@@ -280,6 +280,11 @@ form p button[type="reset"] {
 .letterShown {
     animation-duration: 2s;
     animation-name: showDown;
+	overflow-y: hidden !important;
+}
+
+header a {
+	outline: none !important;
 }
 
 #progressWordsList {
@@ -297,17 +302,17 @@ form p button[type="reset"] {
 .formSearchInWordsList {
     z-index: 1887;
     position: fixed;
-    overflow: hidden;
-	padding: 15px;
+    overflow: auto;
+	padding: 2rem 15px;
     width: ~"calc(100% - 58px)";
-    height: 100%;
+    height: ~"calc(100% - 13rem)";
     background-color: @background;
     color: @foreground;
     label {
         padding-left: 0.2rem;
         font-size: 68%;
         span {
-            font-size: 80%;
+            font-size: 72%;
             padding-left: 0.5rem;
         }
     }
