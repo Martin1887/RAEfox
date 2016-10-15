@@ -14,6 +14,10 @@ label {
     color: @foreground !important;
 }
 
+section[data-type="sidebar"] > nav > ul > li label {
+	color: #fff !important;
+}
+
 #header {
     background-color: @blueHeader;
     color: @whiteHeader !important;
@@ -48,10 +52,10 @@ label {
     }
 }
 
-.raeDrawer .bb-tabpanel {
+.raeDrawer {
     background-color: @background_rae !important;
 }
-.mainDrawer .bb-tabpanel {
+.mainDrawer {
     background-color: @background !important;
 }
 
@@ -320,8 +324,9 @@ header a {
         height: 2.8rem;
         line-height: 2.8rem;
         padding: 0px 0.5rem;
-		background-color: darken(@background, 40%) !important;
-		border-color: fadeout(@foreground, 60%) !important;
+		background-color: @background !important;
+		filter: brightness(0.8);
+		border-color: @foreground !important;
 		color: @foreground !important;
     }
 	input:invalid {
