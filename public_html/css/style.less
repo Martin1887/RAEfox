@@ -292,9 +292,9 @@ header a {
 }
 
 #progressWordsList {
-    position: relative;
-    left: 46%;
-    margin-top: 60%;
+    left: ~"calc(50% - 16px)";
+	top: ~"calc(50% - 16px)";
+	z-index: 400;
     display: inline-block;
     visibility: visible;
 }
@@ -481,5 +481,9 @@ header a {
 	}
 	.bb-tablist > li > a:after {
 		display: none !important;
+	}
+	
+	#progressWordsList {
+		left: ~"calc(83% - 16px)";
 	}
 }
