@@ -354,11 +354,14 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
     dataType = dataType ? dataType : 'list';
     
     // Empty form in order to overwrite it
-    form.innerHTML = '';
-    var formInnerHTML = '<section data-type="' + dataType + '">';
-    form.className += ' ' + clas;
+	form.innerHTML = '';
+    var themesListHtml = '<section class="camaLessFormListPanel" data-type="' + dataType + '">';
+	if (form.className.indexOf(clas) < 0) {
+		form.className += ' ' + clas;
+	}
+	
     
-    var listThemes = '';
+	var themesFieldsHtml = '';
     
     // It's neccessary knowing when all asynchronous request are finished
     // to add content to form
@@ -392,65 +395,89 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
                     // Themes sort in function of 'order' field
                     themes[currentStore].sort(function(a, b) { return a.order - b.order; });
 
-                    listThemes += '<header data-l10n-id="' + currentStore + '">'
+                    themesListHtml += '<header data-l10n-id="' + currentStore + '">'
                         + currentStore + '</header>';
-                    listThemes += '<table id="tableForm' + finished + '">';
+                    themesListHtml += '<table data-theme-id="tableForm' + currentStore + finished + '">';
+					themesFieldsHtml += '<table data-theme-id="tableFormFields' + currentStore + finished + '">';
 
                     for (var j = 0; j < themes[currentStore].length; j++) {
                         var theme = themes[currentStore][j];
-                        listThemes += '<tr><td><input type="radio" name="' + currentStore
+                        themesListHtml += '<tr data-theme-id="themesListTr' + currentStore + j + '">'
+									+ '<td><input type="radio" name="' + currentStore
                                     + '" ' + (theme.selected ? 'checked="checked"' : '')
-                                    + '/></td>';
-                        listThemes += '<td class="themeName"><input type="text"'
+                                    + '></td>';
+                        themesListHtml += '<td class="themeName"><label '
                                 + (theme.shownName ?
                                 ' data-l10n-id="' + theme.shownName + '"'
-                                : '') + 'name="' + theme.name + '" value="'
-                                + theme.name + '"></td>';
-                        listThemes += '<td class="themeColors"><ul>';
+                                : '') + '>'
+                                + theme.name + '</label></td>';
+						// edit button
+						themesListHtml += '<td><a class="iconLink" href="#" onclick="return editTheme'
+                                    + '(this.parentNode.parentNode.getAttribute(\'data-theme-id\'));"><img width="21" height="21"'
+                                    + ' src="images/edit.png" alt="edit"></a>'
+                                    + '</td>';
+						
+						// 'x' button
+                        themesListHtml += '<td><a class="iconLink" href="#" onclick="return eraseTheme'
+                                    + '(this.parentNode.parentNode);"><img width="21" height="21"'
+                                    + ' src="images/erase_cross.png" alt="erase"></a>'
+                                    + '</td>';
+
+                        themesListHtml += '</tr>';
+						
+						
+						themesFieldsHtml += '<tr data-theme-id="themesFieldsTr' + currentStore + j + '">';
+						themesFieldsHtml += '<td class="themeName"><input type="text" '
+                                + (theme.shownName ?
+                                ' data-l10n-id="' + theme.shownName + '"'
+                                : '') + ' name="' + theme.name + '" value="'
+                                + theme.name + '"'
+								+ 'onchange="updateName(this.value, this.parentNode.parentNode.getAttribute(\'data-theme-id\'));"></td>';
+                        themesFieldsHtml += '<td class="themeColors"><ul>';
                         for (var variable in theme.values) {
-                            listThemes += '<li>';
+                            themesFieldsHtml += '<li>';
                             // Without first '@'
-                            listThemes += '<label for="' + theme.name + '-'
+                            themesFieldsHtml += '<label for="' + theme.name + '-'
                                         + variable.substring(1) + '"'
                                         + ' data-l10n-id="'
-                                        + variable.substring(1) + '"></label>';
+                                        + variable.substring(1) + '">' + variable.substring(1) + '</label>';
                             // class color for colorPicker
-                            listThemes += '<input data-colormode="HEX" class="color" id="' + theme.name + '-'
-                                        + variable.substring(1) + '" name="'
+                            themesFieldsHtml += '<input data-colormode="HEX" class="color" name="'
                                         + variable.substring(1) + '[]"'
                                         + ' autocomplete="off" value="' + theme.values[variable]
                                         + '">';
-                            listThemes += '</li>';
+                            themesFieldsHtml += '</li>';
                         }
-                        listThemes += '</ul></td>';
-
-                        // 'x' button
-                        listThemes += '<td><a href="#" onclick="return eraseTheme'
-                                    + '(this.parentNode.parentNode);"><img width="14" height="14"'
-                                    + 'src="images/erase_cross.png" alt="erase"></a>'
-                                    + '</td>';
-
-                        listThemes += '</tr>';
+                        themesFieldsHtml += '</ul></td>';
+						themesFieldsHtml += '</tr>';
                     }
                     // '+' button
-                    listThemes += '<tr><td class="themeAdd" colspan="4"><a href="#" onclick='
+                    themesListHtml += '<tr><td class="themeAdd" colspan="4"><a href="#" onclick='
                                         + '"return addTheme(this.parentNode.parentNode.parentNode, \''
-                                        + currentStore + '\');"><img width="20" '
-                                        + 'height="20" src="images/add.png" alt="add"></a>'
+                                        + currentStore + '\');"><img width="30" '
+                                        + 'height="30" src="images/add.png" alt="add"></a>'
                                         + '</td></tr>';
 
-                    listThemes += '</table>';
+                    themesListHtml += '</table>';
+					
+					themesFieldsHtml += '</table>';
 
                     finished++;
 					
 					
-					// This final part of the form is written when all request are completed:
-					// Each 200 ms this is checked and when it happens the interval is cleaned
-					// to not execute more times and final part of form is written
+					// This final part of the form is written when all request are completed
 					if (finished === formStores.length) {
 
-						form.innerHTML += formInnerHTML + listThemes + '</section>';
-
+						themesListHtml += '</section>';
+						form.innerHTML += themesListHtml;
+						
+						form.innerHTML += '<section class="camaLessFormEditPanel">'
+							+ '<div class="camaLessFormBackToList" onclick="backToThemesList(\'' + clas + '\');">'
+								+ '<img width="30" height="40" src="images/back.png"/>'
+							+ '</div>'
+							+ '<div class="camaLessFormFields">' + themesFieldsHtml
+							+ '</div></section>';
+												
 						var cancel = document.createElement('button');
 						cancel.attributes['data-l10n-id'] = 'cancel';
 						cancel.type = 'button';
@@ -474,6 +501,7 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 									var l10nId = toTranslate[i].getAttribute('data-l10n-id');
 									if (l10nId) {
 										toTranslate[i].value = _(l10nId);
+										toTranslate[i].setAttribute('value', _(l10nId));
 									}
 								}
 								// Color variables
@@ -511,7 +539,7 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 								readOnly: false,
 								init: function (elm, colors) {
 									elm.style.backgroundColor = elm.value;
-									elm.style.color = colors.rgbaMixCustom.luminance > 0.22 ? '#222' : '#ddd';
+									elm.style.color = colors.rgbaMixBGMixCustom.luminance > 0.22 ? '#222' : '#ddd';
 								}
 							});
 							// When write to change background color
@@ -533,14 +561,71 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 }
 
 /**
+ * Update a theme label.
+ * @param {string} newValue The new name
+ * @param {themeTrDataThemeId} themeTrDataThemeId The theme tr data-theme-id to update.
+ * @returns false in order not to follow link
+ */
+function updateName(newValue, themeTrDataThemeId) {
+	var label = document.querySelector('[data-theme-id="'
+			+ themeTrDataThemeId.replace('themesFieldsTr', 'themesListTr') + '"] .themeName label');
+	label.innerHTML = newValue;
+	
+	return false;
+}
+
+/**
+ * Back to themes list
+ * @param {string} clas The camaLESS form class name
+ * @returns false in order not to follow link
+ */
+function backToThemesList(clas) {
+	var editPanel = document.querySelector('.' + clas + ' .camaLessFormEditPanel');
+	var trEditing = document.querySelector('.' + clas + ' .camaLessFormEditPanel tr.editing');
+	
+	trEditing.className = trEditing.className.replace(' editing', '');
+	editPanel.className = editPanel.className.replace(' editing', ' backing');
+	
+	setTimeout(function() {
+		editPanel.className = editPanel.className.replace(' backing', '');
+	}, 1000);
+	
+	// Link must not be followed
+	return false;
+}
+
+/**
+ * Edit a theme showing edit panel.
+ * @param {string} themeTrDataThemeId The theme tr data-theme-id to edit.
+ * @returns false in order not to follow link
+ */
+function editTheme(themeTrDataThemeId) {
+    
+	var themeTr = document.querySelector('[data-theme-id="'
+			+ themeTrDataThemeId.replace('themesListTr', 'themesFieldsTr') + '"]');
+    themeTr.className += " editing";
+	
+	// add class to section
+	var editPanel = themeTr.parentNode.parentNode.parentNode.parentNode;
+	editPanel.className += ' editing';
+        
+    // Link must not be followed
+    return false;
+}
+
+/**
  * Erase a DOM tr representing a color theme from the form.
  * @param {themeTr} themeTr The theme tr to erase.
- * @returns false
+ * @returns false in order not to follow link
  */
 function eraseTheme(themeTr) {
     // Deletion is done with fade out transition
     themeTr.addEventListener('animationend', function() {
         themeTr.parentNode.removeChild(themeTr);
+		
+		var editTr = document.querySelector('[data-theme-id="' + themeTr.getAttribute('data-theme-id')
+				.replace('themesListTr', 'themesFieldsTr') + '"]');
+		editTr.parentNode.removeChild(editTr);
     });
     
     themeTr.className += " removingNode";
@@ -553,14 +638,31 @@ function eraseTheme(themeTr) {
  * Add a DOM tr representing a color theme to the form
  * @param {table} themeTypeTable The table element in which insert tr
  * @param {string} store Type of color theme
- * @returns {Boolean}
+ * @returns false in order not to follow link
  */
 function addTheme(themeTypeTable, store) {
-    var newTheme = '';
-    newTheme += '<td><input type="radio" name="' + store + '"/></td>';
-    newTheme += '<td class="themeName"><input type="text"'
+    var themesListHtml = '';
+	var form = themeTypeTable.parentNode.parentNode.parentNode;
+	var themes = form.querySelectorAll('tr[data-theme-id^="themesListTr' + store + '"]').length;
+	themesListHtml += '<td><input type="radio" name="' + store
+				+ '"></td>';
+	themesListHtml += '<td class="themeName"><label data-l10n-id="newTheme">New theme</label></td>';
+	// edit button
+	themesListHtml += '<td><a href="#" onclick="return editTheme'
+				+ '(this.parentNode.parentNode.getAttribute(\'data-theme-id\'));"><img width="14" height="14"'
+				+ ' src="images/edit.png" alt="edit"></a>'
+				+ '</td>';
+
+	// 'x' button
+	themesListHtml += '<td><a href="#" onclick="return eraseTheme'
+				+ '(this.parentNode.parentNode);"><img width="14" height="14"'
+				+ ' src="images/erase_cross.png" alt="erase"></a>'
+				+ '</td>';
+
+	var themesFieldsHtml = '<tr data-theme-id="themesFieldsTr' + store + themes + '">';
+    themesFieldsHtml += '<td class="themeName"><input type="text"'
                 + 'name="new" value="New theme" data-l10n-id="newTheme"/></td>';
-    newTheme += '<td class="themeColors"><ul>';
+    themesFieldsHtml += '<td class="themeColors"><ul>';
     
     var values;
     var objectStore = camaLessDb.transaction([store], 'readonly').objectStore(store);
@@ -571,32 +673,33 @@ function addTheme(themeTypeTable, store) {
             values = cursor.value.values;
             
             for (var variable in values) {
-                newTheme += '<li>';
+                themesFieldsHtml += '<li>';
                 // Without first '@'
-                newTheme += '<label for="new-'
+                themesFieldsHtml += '<label for="new-'
                             + variable.substring(1) + '"'
                             + ' data-l10n-id="'
-                            + variable.substring(1) + '"></label>';
+                            + variable.substring(1) + '">' + variable.substring(1) + '</label>';
                 // class color for colorPicker
-                newTheme += '<input data-colormode="HEX" class="color" id="new-'
-                            + variable.substring(1) + '" name="'
+                themesFieldsHtml += '<input data-colormode="HEX" class="color" name="'
                             + variable.substring(1) + '[]"'
                             + ' autocomplete="off" value="#000000">';
-                newTheme += '</li>';
+                themesFieldsHtml += '</li>';
             }
-            newTheme += '</ul></td>';
+            themesFieldsHtml += '</ul></td></tr>';
 
-            // 'x' button
-            newTheme += '<td><a href="#" onclick="return eraseTheme'
-                        + '(this.parentNode.parentNode);"><img width="14" height="14"'
-                        + 'src="images/erase_cross.png" alt="erase"></a>'
-                        + '</td>';
 
             var tr = document.createElement('tr');
-            tr.innerHTML = newTheme;
-
+            tr.innerHTML = themesListHtml;
+			var trDataThemeId = 'themesListTr' + store + themes;
+			tr.setAttribute('data-theme-id', trDataThemeId);
             // Insert before '+' button
             themeTypeTable.insertBefore(tr, themeTypeTable.lastChild);
+			
+			var fieldsSectionTBody = form.querySelector('table[data-theme-id="'
+					+ themeTypeTable.parentNode.getAttribute('data-theme-id')
+					.replace('tableForm', 'tableFormFields') + '"]').lastChild;
+			// Insert at the end
+			fieldsSectionTBody.innerHTML += themesFieldsHtml;
 
 
             // l10n strings updated
@@ -604,22 +707,30 @@ function addTheme(themeTypeTable, store) {
 				navigator.mozL10n.ready(function() {
 					// grab l10n object
 					var _ = navigator.mozL10n.get;
+					
+					var label = tr.querySelector('label');
+					var l10nId = label.getAttribute('data-l10n-id');
+					if (l10nId) {
+						label.value = _(l10nId);
+						label.innerHTML = _(l10nId);
+					}
 
 					// Themes title
-					var input = tr.childNodes[1].childNodes[0];
+					var input = fieldsSectionTBody.lastChild.querySelector('input');
 					var l10nId = input.getAttribute('data-l10n-id');
 					if (l10nId) {
 						input.value = _(l10nId);
+						input.setAttribute('value', _(l10nId));
 					}
 
 					// Color variables localization
-					var lis = tr.childNodes[2].childNodes[0].childNodes;
+					var lis = fieldsSectionTBody.lastChild.querySelectorAll('label');
 					for (var i = 0; i < lis.length; i++) {
 						// The first child is the label
-						var l10nId = lis[i].childNodes[0].getAttribute('data-l10n-id');
+						var l10nId = lis[i].getAttribute('data-l10n-id');
 						if (l10nId) {
-							lis[i].childNodes[0].value = _(l10nId) + ':';
-							lis[i].childNodes[0].innerHTML = _(l10nId) + ':';
+							lis[i].value = _(l10nId) + ':';
+							lis[i].innerHTML = _(l10nId) + ':';
 						}
 					}
 				});
@@ -641,6 +752,9 @@ function addTheme(themeTypeTable, store) {
                     this.style.backgroundColor = this.value;
                 };
             }
+			
+			// Go to edit
+			editTheme(trDataThemeId);
         }
     };
        
@@ -705,19 +819,21 @@ function submitCamaLessForm(form, callback) {
         callback = form.callback;
     }
     var formStores = form.store ? [form.store] : stores;
-	console.log(formStores);
             
     var formThemes = [];
     
     // Check that color themes names are not duplicated inside the same type of theme
     // and that there are more than 0 color themes in each type
-    var tables = document.querySelectorAll('#' + form.id + ' table');
+    var tables = form.querySelectorAll(' .camaLessFormEditPanel table');
     
     for (var i = 0; i < tables.length; i++) {
         formThemes.push([]);
         
-        var inputs = document.querySelectorAll('#' + tables[i].id + ' input[type="text"]');
-        var selected = document.querySelectorAll('#' + tables[i].id + ' input:checked');
+        var inputs = tables[i].querySelectorAll(' input[type="text"]');
+		var listTable = form.querySelector('table[data-theme-id="'
+				+ tables[i].getAttribute('data-theme-id')
+				.replace('FormFields', 'Form') + '"]');
+        var selected = listTable.querySelectorAll(' input:checked');
         
         if (inputs.length === 0 || selected.length === 0) {
             almostOneThemeCallback();
@@ -747,7 +863,11 @@ function submitCamaLessForm(form, callback) {
 				// shownName '' in order to not change user's choice
                 formThemes[i].push({name: name,
                     shownName: '', values: values,
-                    selected: inputs[j].parentNode.previousSibling.childNodes[0].checked ? 1 : 0});
+                    selected: form.querySelector('[data-theme-id="'
+							+ inputs[j].parentNode.parentNode.getAttribute('data-theme-id')
+							.replace('themesFieldsTr', 'themesListTr') + '"]')
+							.childNodes[0].lastChild.checked ? 1 : 0
+				});
             } else {
                 sameNameThemesCallback(name);
                 return false;
@@ -779,13 +899,11 @@ function submitCamaLessForm(form, callback) {
             }
 			console.log('Completed ' + completed);
 			if (completed === formStores.length) {
-				// Check color themes
 				for (var j = 0; j < formThemes.length; j++) {
 					for (var k = 0; k < formThemes[j].length; k++) {
 						toAdd.push({name: formThemes[j][k].name,
 							values: formThemes[j][k].values, store: formStores[j]});
 
-						// Select selected color theme
 						if (formThemes[j][k].selected) {
 							toSelect.push({name: formThemes[j][k].name, store: formStores[j]});
 						}
