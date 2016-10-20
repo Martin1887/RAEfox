@@ -194,12 +194,12 @@ function enableOrDisableSearchWordsListButton() {
 function showOrHideSearchBars() {
     var searchIconLink = document.getElementById('searchIconLink');
 	var form = document.getElementById('searchInWordsListForm');
-    if (form.className === 'formHidden') {
-        form.className = 'formSearchInWordsList';
+    if (form.className.indexOf('searchFormHidden') > 0) {
+        form.className = 'formSearchInWordsList searchFormShown';
 		searchIconLink.className = 'searchIconRemarked';
 		document.getElementById('scrollWordsList').className = 'lettersNotVisible';
     } else {
-        form.className = 'formHidden';
+        form.className = 'formSearchInWordsList searchFormHidden';
 		searchIconLink.className = '';
 		document.getElementById('scrollWordsList').className = '';
     }
