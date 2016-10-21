@@ -281,4 +281,7 @@ function searchInWordsList() {
     showOrHideSearchBars();
 	document.getElementById('wordsList').className = 'hidden';
     document.getElementById('scrollWordsList').className = 'hidden';
+	
+	// return false in order not to validate form
+	return false;
 }

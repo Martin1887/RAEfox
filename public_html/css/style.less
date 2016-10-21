@@ -369,8 +369,8 @@ header a {
     position: static;
     height: 100%;
 	padding: 0px 1.5rem;
-	animation-duration: 0.25s;
-    animation-name: showDown;
+	animation-name: showDown;
+	animation-duration: 1.25s;
     
     a {
         height: auto;
@@ -458,22 +458,23 @@ header a {
 @keyframes searchShow {
     from {
 		opacity: 0.2;
-		transform: translate(90%, 0)/* scaleX(10%) scaleY(10%)*/;
+		transform: translate(1000%, 0)/;
 		width: 10% !important;
 		height: 10%;
+		left: 1000%;
 	}
 	30% {
-		transform: translate(50%, 0) /*scaleX(30%) scaleY(15%)*/;
+		transform: translate(50%, 0);
 		width: 50% !important;
 		height: 10%;
 	}
 	50% {
-		transform: translate(30%, 0) /*scaleX(50%) scaleY(30%)*/;
+		transform: translate(30%, 0);
 		width: 70% !important;
 		height: 10%;
 	}
 	80% {
-		transform: translate(10%, 0) /*scaleX(80%) scaleY(70%)*/;
+		transform: translate(10%, 0)n;
 		width: 90% !important;
 		height: 10%;
 	}
