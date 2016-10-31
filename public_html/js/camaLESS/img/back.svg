@@ -1,94 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="30in"
-   height="40in"
-   viewBox="0 0 2700 3600"
-   id="svg3390"
-   version="1.1"
-   inkscape:version="0.91 r13725"
-   inkscape:export-filename="/home/martin/Martín/Proyectos/NetBeans/RAEfox/public_html/images/back2.png"
-   inkscape:export-xdpi="7.3684211"
-   inkscape:export-ydpi="7.3684211"
-   sodipodi:docname="back.svg">
-  <defs
-     id="defs3392" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="781.35852"
-     inkscape:cy="1594.7043"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     units="in"
-     width="30in"
-     showguides="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1029"
-     inkscape:window-x="1920"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1">
-    <inkscape:grid
-       type="xygrid"
-       id="grid3416" />
-  </sodipodi:namedview>
-  <metadata
-     id="metadata3395">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Capa 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,2547.6378)">
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6000px;line-height:125%;font-family:'VL Gothic';-inkscape-font-specification:'VL Gothic';letter-spacing:0px;word-spacing:0px;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="76.646843"
-       y="1085.1832"
-       id="text3400"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3402"
-         x="76.646843"
-         y="1085.1832">&lt;</tspan></text>
-    <path
-       style="fill:#0000ff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 5,-747.6378 400,-235 z"
-       id="path3418"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#0000ff;fill-rule:evenodd;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 405,-982.6378 2,-1 0,479 -402,-243"
-       id="path3420"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#ffffff;fill-opacity:1;stroke:#0000ff;stroke-width:0.03156727"
-       d="m 373.01529,1583.5018 0.009,-0.2777 15.81521,-9.294 c 8.69836,-5.1118 15.84055,-9.2957 15.87153,-9.2978 0.0699,0 0.27436,0.3427 0.22699,0.3857 -0.0217,0.02 -31.68304,18.6229 -31.9071,18.7476 -0.0137,0.01 -0.0208,-0.1111 -0.0158,-0.2638 z"
-       id="path4222"
-       inkscape:connector-curvature="0"
-       transform="translate(0,-2547.6378)" />
-  </g>
+	width="60px"
+	height="80px"
+   xmlns="http://www.w3.org/2000/svg">
+	<defs></defs>
+	<g>
+	    <polygon stroke="white" fill="white" stroke-width="1" points="
+			2 40,
+			52 78,
+			58 72,
+			14 40,
+			58 8,
+			52 2
+			2 40
+			 ">
+	    </polygon>
+	</g>
 </svg>
+

@@ -500,7 +500,7 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 						
 						form.innerHTML += '<section class="camaLessFormEditPanel">'
 							+ '<div class="camaLessFormBackToList" onclick="backToThemesList(this.parentNode.parentNode);">'
-								+ '<img width="30" height="40" src="js/camaLESS/img/back.png"/>'
+								+ '<img width="30" height="40" src="js/camaLESS/img/back.svg"/>'
 							+ '</div>'
 							+ '<div class="camaLessFormFields">' + themesFieldsHtml
 							+ '</div></section>';
