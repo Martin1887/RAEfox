@@ -1,57 +1,66 @@
 /* 
  * CamaLESS: JavaScript library to customize HTML5 application colors with
  * color themes customizables by users.
- * @author: Marcos Martín Pozo Delgado (user Martin1887 in GitHub)
+ * @author: Marcos Martín Pozo Delgado (Martin1887 in GitHub)
  */
 
-/**
- * IndexedDB database. Structure is as follows:
- * an array of stores (types of themes) which one with name, preview and values with
- * this structure:
- * name: database internal name
- * shownName: shown name in interface (customizable using l10n)
- * selected: boolean that says which theme is selected (1 or 0)
- * values: object with colors. Indexes are color variable names
- * order: order of theme in store.
- * @type indexedDb
- */ 
-var camaLessDb;
 
-/**
- * Different types of color themes in application
- * @type array
- */
-var stores;
+var camaLess = {
+	
+	/**
+	 * LESS object
+	 */
+	less: null,
 
-/**
- * Form without themes error callback
- * @type function
- */
-var almostOneThemeCallback;
+	/**
+	 * IndexedDB database. Structure is as follows:
+	 * an array of stores (types of themes) which one with name, preview and values with
+	 * this structure:
+	 * name: database internal name
+	 * shownName: shown name in interface (customizable using l10n)
+	 * selected: boolean that says which theme is selected (1 or 0)
+	 * values: object with colors. Indexes are color variable names
+	 * order: order of theme in store.
+	 * @type indexedDb
+	 */ 
+	camaLessDb: null,
 
-/**
- * Form with a number of themes with the same name error callback
- * @type function
- * @param name The name of the themes
- */
-var sameNameThemesCallback;
+	/**
+	 * Different types of color themes in application
+	 * @type array
+	 */
+	stores: [],
 
-/*
- * Localized text variables
- */
-var themeName = '';
-var themesDifferentName = '';
-var almostOneTheme = '';
+	/**
+	 * Form without themes error callback
+	 * @type function
+	 */
+	almostOneThemeCallback: null,
 
+	/**
+	 * Form with a number of themes with the same name error callback
+	 * @type function
+	 * @param name The name of the themes
+	 */
+	sameNameThemesCallback: null,
+
+	/*
+	 * Localized text variables
+	 */
+	themeName: '',
+	themesDifferentName: '',
+	almostOneTheme: ''
+
+};
 
 if (navigator.mozL10n) {
 	navigator.mozL10n.ready(function() {
 		// grab l10n object
 		var _ = navigator.mozL10n.get;
 		// Themes title
-		themeName = _('themeName');
-		themesDifferentName = _('themesDifferentName');
-		almostOneTheme = _('almostOneTheme');
+		camaLess.themeName = _('themeName');
+		camaLess.themesDifferentName = _('themesDifferentName');
+		camaLess.almostOneTheme = _('almostOneTheme');
 	});
 }
 
@@ -66,6 +75,7 @@ if (navigator.mozL10n) {
  * least a objectStore name (each objectStore is a different type of color
  * theme).
  * @param {string} name Database name, must be unique for your application
+ * @param {object} less LESS object
  * @param {array} types Types of color themes in your application
  * @param {array} defaults Default themes in application (to write in database creation in
  * the first time that the app is opened). The format is an array with name and
@@ -79,27 +89,28 @@ if (navigator.mozL10n) {
  * @param {function} sameNameThemesCB Optional callback for form with a number of themes with the same name.
  * @returns true
  */
-function openCamaLessDb(name, types, defaults, forms, callbacks, formsStores,
+function openCamaLessDb(name, less, types, defaults, forms, callbacks, formsStores,
                             formsClasses, formsDataTypes, almostOneThemeCB, sameNameThemesCB) {
     var openRequest = indexedDB.open(name, 1);
-    stores = types;
+	camaLess.less = less;
+    camaLess.stores = types;
 	var newDatabase = false;
 		
 	if (almostOneThemeCB) {
-		almostOneThemeCallback = almostOneThemeCB;
+		camaLess.almostOneThemeCallback = almostOneThemeCB;
 	} else {
-		almostOneThemeCallback = function() {alert(almostOneTheme + '.');};
+		camaLess.almostOneThemeCallback = function() {alert(almostOneTheme + '.');};
 	}
 	if (sameNameThemesCB) {
-		sameNameThemesCallback = sameNameThemesCB;
+		camaLess.sameNameThemesCallback = sameNameThemesCB;
 	} else {
-		sameNameThemesCallback = function(name) {
-			alert(themeName + ' ' + name + ' ' + themesDifferentName + '.');
+		camaLess.sameNameThemesCallback = function(name) {
+			alert(camaLess.themeName + ' ' + name + ' ' + camaLess.themesDifferentName + '.');
 		};
 	}
     
     openRequest.onsuccess = function(event) {
-        camaLessDb = openRequest.result;
+        camaLess.camaLessDb = openRequest.result;
 		if (!newDatabase) {
 			applyThemesAndCreateForms(forms, callbacks, formsStores, formsClasses, formsDataTypes);
 		}
@@ -107,23 +118,23 @@ function openCamaLessDb(name, types, defaults, forms, callbacks, formsStores,
     
     openRequest.onupgradeneeded = function(event) {
 		newDatabase = true;
-		camaLessDb = event.target.result;
+		camaLess.camaLessDb = event.target.result;
 		
 		var added = 0;
 		// preview (stores.length) + themes
-		var total = stores.length;
+		var total = camaLess.stores.length;
 		
-		var previewStore = camaLessDb.createObjectStore('preview', {keyPath: 'name'});
+		var previewStore = camaLess.camaLessDb.createObjectStore('preview', {keyPath: 'name'});
 		
-		for (var i = 0; i < stores.length; i++) {
-			var previewRequest = previewStore.add({name: stores[i], preview: defaults[i].preview});
+		for (var i = 0; i < camaLess.stores.length; i++) {
+			var previewRequest = previewStore.add({name: camaLess.stores[i], preview: defaults[i].preview});
 			previewRequest.onsuccess = function() {
 				added++;
 			};
 		}
 		
-		for (var i = 0; i < stores.length; i++) {
-			var objectStore = camaLessDb.createObjectStore(stores[i],
+		for (var i = 0; i < camaLess.stores.length; i++) {
+			var objectStore = camaLess.camaLessDb.createObjectStore(camaLess.stores[i],
 				{keyPath: 'name'});
 			objectStore.createIndex('selected', 'selected');
 
@@ -206,7 +217,7 @@ function applyThemesAndCreateForms(forms, callbacks, formsStores, formsClasses, 
  * @returns true
  */
 function newColorTheme(name, shownName, values, order, store, callback) {
-    var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
+    var objectStore = camaLess.camaLessDb.transaction([store], 'readwrite').objectStore(store);
     
     var max = 0;
     if (!order) {
@@ -270,7 +281,7 @@ function newColorTheme(name, shownName, values, order, store, callback) {
  * @returns true
  */
 function editColorTheme(name, shownName, values, order, store, callback) {
-    var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
+    var objectStore = camaLess.camaLessDb.transaction([store], 'readwrite').objectStore(store);
     var request = objectStore.get(name);
     request.onsuccess = function(event) {
         var data = request.result;
@@ -297,7 +308,7 @@ function editColorTheme(name, shownName, values, order, store, callback) {
  * @returns true
  */
 function removeColorTheme(name, store, callback) {
-    var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
+    var objectStore = camaLess.camaLessDb.transaction([store], 'readwrite').objectStore(store);
 	var request = objectStore.delete(name);
 	
 	request.onsuccess = function(event) {
@@ -319,7 +330,7 @@ function removeColorTheme(name, store, callback) {
  * @returns true
  */
 function selectColorTheme(name, store, callback) {
-	var objectStore = camaLessDb.transaction([store], 'readwrite').objectStore(store);
+	var objectStore = camaLess.camaLessDb.transaction([store], 'readwrite').objectStore(store);
     var index = objectStore.index('selected');
     index.get(1).onsuccess = function(event) {
 		var res = event.target.result;
@@ -361,7 +372,7 @@ function selectColorTheme(name, store, callback) {
  * @returns true
  */
 function createCamaLessForm(store, form, clas, dataType, callback) {
-    var formStores = store ? [store] : stores;
+    var formStores = store ? [store] : camaLess.stores;
     clas = clas ? clas : 'camaLessForm';
     dataType = dataType ? dataType : 'list';
     
@@ -381,7 +392,7 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
     var transactions = {};
     var themes = {};
     for (var i = 0; i < formStores.length; i++) {        
-        transactions[formStores[i]] = camaLessDb.transaction([formStores[i]], 'readonly');
+        transactions[formStores[i]] = camaLess.camaLessDb.transaction([formStores[i]], 'readonly');
         var objectStore = transactions[formStores[i]].objectStore(formStores[i]);
         themes[formStores[i]] = [];
         
@@ -507,8 +518,8 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 						addToCamaLessForms(store, form, clas, dataType, callback);
 						
 						// apply preview
-						for (var i = 0; i < stores.length; i++) {
-							applyPreview(stores[i], false, form);
+						for (var i = 0; i < camaLess.stores.length; i++) {
+							applyPreview(camaLess.stores[i], false, form);
 						}
 
 						// l10n strings updated
@@ -620,8 +631,8 @@ function backToThemesList(form) {
 	}, 1000);
 	
 	// apply preview
-	for (var i = 0; i < stores.length; i++) {
-		applyPreview(stores[i], false, form);
+	for (var i = 0; i < camaLess.stores.length; i++) {
+		applyPreview(camaLess.stores[i], false, form);
 	}
 	
 	// Link must not be followed
@@ -719,7 +730,7 @@ function addTheme(themeTypeTable, store) {
     themesFieldsHtml += '<td class="themeColors"><ul>';
     
     var values;
-    var objectStore = camaLessDb.transaction([store], 'readonly').objectStore(store);
+    var objectStore = camaLess.camaLessDb.transaction([store], 'readonly').objectStore(store);
     objectStore.openCursor().onsuccess = function(event) {
         // Only 1st theme is taken, all themes of same type have the same vars
         var cursor = event.target.result;
@@ -874,7 +885,7 @@ function submitCamaLessForm(form, callback) {
     if (!callback) {
         callback = form.callback;
     }
-    var formStores = form.store ? [form.store] : stores;
+    var formStores = form.store ? [form.store] : camaLess.stores;
             
     var formThemes = [];
     
@@ -940,8 +951,7 @@ function submitCamaLessForm(form, callback) {
 	var toSelect = [];
 	var selected = 0;
     for (var i = 0; i < formStores.length; i++) {
-		console.log('formStore ' + i);
-		transactions.push(camaLessDb.transaction([formStores[i]], 'readonly'));
+		transactions.push(camaLess.camaLessDb.transaction([formStores[i]], 'readonly'));
         // Get camaLessDb themes
         var objectStore = transactions[i].objectStore(formStores[i]);
         var cursor = objectStore.openCursor();
@@ -953,7 +963,6 @@ function submitCamaLessForm(form, callback) {
             } else {
                 completed++;
             }
-			console.log('Completed ' + completed);
 			if (completed === formStores.length) {
 				for (var j = 0; j < formThemes.length; j++) {
 					for (var k = 0; k < formThemes[j].length; k++) {
@@ -966,10 +975,6 @@ function submitCamaLessForm(form, callback) {
 					}
 				}
 				
-				console.log('toRemove, toAdd, toSelect');
-				console.log(toRemove);
-				console.log(toAdd);
-				console.log(toSelect);
 				
 				// apply changes sequentially: firstly remove all themes, then create all themes,
 				// then select selected theme and lastly apply themes,
@@ -979,7 +984,6 @@ function submitCamaLessForm(form, callback) {
 					removeColorTheme(removing.name, removing.store,
 					function() {
 						removed++;
-						console.log('Removed: ' + removed);
 						
 						if (removed === toRemove.length) {
 							for (var a = 0; a < toAdd.length; a++) {
@@ -988,7 +992,6 @@ function submitCamaLessForm(form, callback) {
 								newColorTheme(adding.name, '', adding.values, a, adding.store,
 								function() {
 									added++;
-									console.log('Added: ' + added);
 									
 									if (added === toAdd.length) {
 										for (var s = 0; s < toSelect.length; s++) {
@@ -996,10 +999,8 @@ function submitCamaLessForm(form, callback) {
 											selectColorTheme(selecting.name, selecting.store,
 											function() {
 												selected++;
-												console.log('selected: ' + selected);
 
 												if (selected === toSelect.length) {
-													console.log('applying');
 													
 													// Apply themes in every store
 													applyCamaLessColorTheme();
@@ -1008,7 +1009,6 @@ function submitCamaLessForm(form, callback) {
 													createCamaLessForm(form.store, form, form.clas, form.dataType, callback);
 
 													if (callback) {
-														console.log('callback');
 														callback();
 													}
 												}
@@ -1070,9 +1070,9 @@ function applyPreview(store, edit, form) {
 	// if the store is the main store or applying to edit view,
 	// preview is applied to the whole form,
 	// else it is applied only to the store table
-	var previewStore = camaLessDb.transaction(['preview'], 'readonly').objectStore('preview');
+	var previewStore = camaLess.camaLessDb.transaction(['preview'], 'readonly').objectStore('preview');
 	var target = '';
-	if (store === stores[0] || edit) {
+	if (store === camaLess.stores[0] || edit) {
 		var sections = form.querySelectorAll('section');
 		target = [form];
 		for (var i = 0; i < sections.length; i++) {
@@ -1123,8 +1123,8 @@ function applyCamaLessColorTheme() {
 	
 	var allVars = {};
 	var added = 0;
-	stores.forEach(function(store) {
-		var objectStore = camaLessDb.transaction([store], 'readonly').objectStore(store);
+	camaLess.stores.forEach(function(store) {
+		var objectStore = camaLess.camaLessDb.transaction([store], 'readonly').objectStore(store);
 		var index = objectStore.index('selected');
 		index.get(1).onsuccess = function(event) {
 			if (event.target.result && event.target.result.values) {
@@ -1134,8 +1134,8 @@ function applyCamaLessColorTheme() {
 				added++;
 				
 				// modifyVars when all variables of all themes are in allVars
-				if (added === stores.length) {
-					less.modifyVars(allVars);
+				if (added === camaLess.stores.length) {
+					camaLess.less.modifyVars(allVars);
 				}
 			}
 		};

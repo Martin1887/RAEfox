@@ -56,5 +56,5 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 	}, 500);
 	// Open DB and create form
-    openCamaLessDb('RAEfox_camaLESSdb', themesTypesNames, themes, form, callbacks);
+    openCamaLessDb('RAEfox_camaLESSdb', less, themesTypesNames, themes, form, callbacks);
 });
