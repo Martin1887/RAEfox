@@ -66,19 +66,6 @@
                     </li>
                 </ul>
                 <ul>
-                    <li>
-                        <label for="typeSelect" class="labelOptions" data-l10n-id="searchType">Search type</label>
-                        <span class="button icon icon-dialog spanSelectOptions">
-                            <select class="selectOptions" id="typeSelect">
-                                <option value="3" selected="selected" data-l10n-id="staggered">Staggered</option>
-                                <option value="0" data-l10n-id="lemmesAndForms">By lemmes and forms</option>
-                                <option value="1" data-l10n-id="withoutTildes">Without tildes nor case</option>
-                                <option value="2" data-l10n-id="approx">Approximate</option>
-                            </select>
-                        </span>
-                    </li>
-                </ul>
-                <ul>
                     <li><a href="#panel1" id="showThemes" data-l10n-id="themes">Color themes</a></li>
                 </ul>
                 <ul>
@@ -86,7 +73,7 @@
                 </ul>
             </nav>
         </section>
-        <section id="drawer" class="raeDrawer" role="region">
+        <section id="drawer" class="mainDrawer" role="region">
             <header id="header">
                 <a href="#panel1" onclick="return back();"><span class="icon icon-menu">hide sidebar</span></a>
                 <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
@@ -102,7 +89,7 @@
                 <li id="panel1" role="presentation" class="darkTabList">
                     <a id="tab1" href="#panel1" onclick="changeTab(1);" class="tabIcon" role="tab" aria-controls="main1"><i class="fa fa-search"></i></a>
                     <div id="main1" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab1">
-                        <div class="raeContent">
+                        <div class="mainContent raeContent">
                             <form role="search" id="searchForm">
                                 <button type="submit" disabled="disabled" data-l10n-id="search" id="searchButton">Search</button>
                                 <p>
@@ -110,7 +97,7 @@
                                     <button id="resetSearch" onclick="clearInput(document.getElementById('inputSearch'));" type="reset">Clear</button>
                                 </p>
                             </form>
-                            <iframe id="iframe" src="" frameborder="0" width="100%" height="82%"></iframe>
+							<div id="definitions" class="definitionsContainer"></div>
                             <div role="toolbar" id="iframeNavigation">
                                 <ul class="leftIcons">
                                     <li><button disabled="disabled" id="iframeBack" data-l10n-id="back" class="action-icon browser-back">Back</button></li>

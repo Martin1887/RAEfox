@@ -3,14 +3,33 @@ var searches = [];
 searches.push('');
 var indexSearches = 0;
 
-var searchType = 3;
 var autosaveHistory = false;
 var wordSaved = false;
+
+var defHeaderMoreResults = '';
+var defBodyMoreResults = '';
+var defHeaderNoResults = '';
+var defBodyNoResults = '';
+
+var allDefs = {};
 
 var prevWindowWidth = 0;
 
 
 var callbackThemesClose;
+
+if (navigator.mozL10n) {
+	navigator.mozL10n.ready(function() {
+		// grab l10n object
+		var _ = navigator.mozL10n.get;
+		
+		defHeaderMoreResults = _('defHeaderMoreResults');
+		defBodyMoreResults = _('defBodyMoreResults');
+		defHeaderNoResults = _('defHeaderNoResults');
+		defBodyNoResults = _('defBodyNoResults');
+	});
+}
+
 
 window.addEventListener('resize', function(e) {
 	if (e.currentTarget.innerWidth >= 900) {
@@ -29,8 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	enableOrDisableSearchButton();
     
-    // Change searchType on select selection
-    document.getElementById('typeSelect').onchange = changeSearchType;
     // Autosave history on/off
     document.getElementById('autosaveInput').onchange = changeAutosave;
     
@@ -55,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (indexSearches > 0) {
             var searchInput = document.getElementById('inputSearch');
             searchInput.value = searches[--indexSearches];
-            iFrame.setAttribute('src', getURLRAE(searchInput.value));
+			insertHTMLDefinition(searchInput.value);
             forwardButton.disabled = false;
         }
         if (indexSearches === 0) {
@@ -69,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (indexSearches < (searches.length - 1)) {
             var searchInput = document.getElementById('inputSearch');
             searchInput.value = searches[++indexSearches];
-            iFrame.setAttribute('src', getURLRAE(searchInput.value));
+			insertHTMLDefinition(searchInput.value);
             backButton.disabled = false;
         }
         if (indexSearches === searches.length - 1) {
@@ -110,6 +127,10 @@ document.addEventListener('DOMContentLoaded', function() {
         back();
         back();
     };
+	
+	setTimeout(function() {
+		readCSV('./resources/definitions.csv', allDefs);
+	}, 500);
 });
 
 function clearInput(input) {
@@ -119,33 +140,16 @@ function clearInput(input) {
 
 function changeTab(tab) {
     if (tab === 1) {
-        changeDrawerClass('raeDrawer');
 		if (window.innerWidth < 900) {
 			document.getElementById('menuEdit').className = 'hidden';
 		}
     } else if (tab === 2) {
-        changeDrawerClass('mainDrawer');
         document.getElementById('menuEdit').className = '';
     } else if (tab === 3) {
-        changeDrawerClass('mainDrawer');
         if (window.innerWidth < 900) {
 			document.getElementById('menuEdit').className = 'hidden';
 		}
     }
-}
-
-function changeSearchType() {
-    var newValue = document.getElementById('typeSelect').value;
-    searchType = newValue;
-    
-    // Store value in database
-    var objectStore = db.transaction(['searchType'], 'readwrite').objectStore('searchType');
-    objectStore.get('searchType').onsuccess = function(event) {
-        var data = event.target.result;
-        data.type = searchType;
-        
-        objectStore.put(data);
-    };
 }
 
 function changeAutosave() {
@@ -216,6 +220,7 @@ function updateWordSaved() {
 function enableOrDisableSearchButton() {
     var searchButton = document.getElementById('searchButton');
     var resetSearchButton = document.getElementById('resetSearch');
+	var inputSearch = document.getElementById('inputSearch');
     if (inputSearch.value.length > 0) {
         searchButton.disabled = false;
         resetSearchButton.style.opacity = 1;
@@ -226,61 +231,142 @@ function enableOrDisableSearchButton() {
     }
 }
 
-// Return URL of a RAE search
-function getSearchURL(word) {
-    // escape is used because RAE uses ISO-8859-1 encoding instead UTF-8
-    if (word.length > 0) {
-        //return "http://lema.rae.es/drae/srv/search?val=" + escape(word) + '&origen=APP&type=' + searchType;
-		//return "http://dle.rae.es/srv/search?w=" + escape(word) + "&m=form";
-		//return "http://es.thefreedictionary.com/" + escape(word);
-		return "https://od-api.oxforddictionaries.com:443/api/v1/entries/es/" + word + "/definitions";
-    } else {
-        return '';
-    }
-}
 
 function searchDefinition() {
-        var search = document.getElementById('inputSearch').value;
-		var reqSearch = new XMLHttpRequest();
-        reqSearch.open('GET', getSearchURL(search), true);
-        //reqSearch.setRequestHeader('Content-Type', 'application/json');
-		reqSearch.setRequestHeader('Accept', 'application/json');
-		reqSearch.setRequestHeader('app_id', '07ac571b');
-		reqSearch.setRequestHeader('app_key', '308c3137db8439c888a729cda81b6d02');
-        //reqSearch.responseType = 'application/json';
-        reqSearch.onreadystatechange = function (aEvt) {
-            if (reqSearch.readyState === 4) {
-                if (reqSearch.status === 200 || (reqSearch.status === 0 && reqSearch.responseText)) {
-                    // Event is removed because response is already set
-                    reqSearch.onreadystatechange = null;
+	var search = document.getElementById('inputSearch').value;
+	
+	insertHTMLDefinition(search);
+	
+	// Search is stored in array
+	searches.push(search);
+	indexSearches++;
+	var backButton = document.getElementById('iframeBack');
+	backButton.disabled = false;
 
-                    // Each line contains a word, and they are saved as array 
-                    console.log(reqSearch.responseText);
-                } else {
-                    dump("Error loading page\n");
-                }
-            }
-        };
-        reqSearch.send();
-		//iFrame.setAttribute('src', getSearchURL(search));
-        // Search is stored in array
-        searches.push(search);
-        indexSearches++;
-		var backButton = document.getElementById('iframeBack');
-        backButton.disabled = false;
-        
-        // Add word to history
-        wordSaved = false;
-        if (autosaveHistory) {
-            addWordToHistory(search);
-        } else {
-            updateWordSaved();
-        }
-    }
-
-function changeDrawerClass(className) {
-    document.getElementById('drawer').className = className;
+	// Add word to history
+	wordSaved = false;
+	if (autosaveHistory) {
+		addWordToHistory(search);
+	} else {
+		updateWordSaved();
+	}
 }
+
+
+function insertHTMLDefinition(search) {
+	if (!search) {
+		document.getElementById('definitions').innerHTML = '';
+		return;
+	}
+	
+	var defs = allDefs[search];
+	
+	if (!defs) {
+		var html = '';
+		html += '<section data-type="list"><header data-l10n-id="defHeaderNoResults">' + defHeaderNoResults + '</header>';
+		html += '<p><span data-l10n-id="defBodyNoResults">' + defBodyNoResults
+			+ '</span><a target="_blank" href="http://rae.es">rae.es</a>.</p></section>';
+		document.getElementById('definitions').innerHTML = html;
+		return;
+	}
+	
+	var html = '<section data-type="list">';
+	
+	defs.forEach(function(def, ind) {
+		html += '<header>' + (ind + 1) + '.</header>';
+		html += '<p>' + def + '</p>';
+	});
+	
+	html += '<header data-l10n-id="defHeaderMoreResults">' + defHeaderMoreResults + '</header>';
+	html += '<p><span data-l10n-id="defBodyMoreResults">' + defBodyMoreResults
+			+ '</span><a target="_blank" href="http://rae.es">rae.es</a>.</p>';
+	
+	html += '</section>';
+	document.getElementById('definitions').innerHTML = html;
+}
+
+/**
+ * 
+ * @param {string} path The path to the CSV to read
+ * @param {object} dest The object in which write the results
+ * @param {boolean} hasHeader true if CSV has header, by default true
+ * @param {string} delimiter The delimiter string, by default ','
+ * @param {string} enclosing The character enclosing each column, by default '"'
+ * @param {int} key_idx The key column index begining by 0, by default 0
+ * @param {int} value_idx The value column index begining by 0, by default 1
+ */
+function readCSV(path, dest, hasHeader, delimiter, enclosing, key_idx, value_idx) {
+	if (hasHeader === null || hasHeader === undefined) {
+		hasHeader = true;
+	}
+	if (!delimiter) {
+		delimiter = ',';
+	}
+	if (!enclosing) {
+		enclosing = '"';
+	}
+	if (!key_idx) {
+		key_idx = 0;
+	}
+	if (!value_idx) {
+		value_idx = 1;
+	}
+	
+	var reqDefs = new XMLHttpRequest();
+	reqDefs.open('GET', path, true);
+	reqDefs.setRequestHeader('Content-Type', 'text/plain');
+	reqDefs.responseType = 'text';
+	reqDefs.onreadystatechange = function (aEvt) {
+		if (reqDefs.readyState === 4) {
+			if (reqDefs.status === 200 || (reqDefs.status === 0 && reqDefs.responseText)) {
+				// Event is removed because response is already set
+				reqDefs.onreadystatechange = null;
+
+				// Each line contains a word, and they are saved as array 
+				var allDefs = reqDefs.responseText.split('\n');
+				
+				var firstLine = true;
+				
+				allDefs.forEach(function(line) {
+					if (!firstLine || !hasHeader) {
+						var split = line.split(enclosing + delimiter + enclosing);
+						var key = split[key_idx];
+						var value = split[value_idx];
+
+						// remove enclosing character
+						if (key.charAt(0) === enclosing) {
+							key = key.substring(1);
+						} else if (key.charAt(key.length - 1) === enclosing && key.charAt(key.length - 2) !== '\\') {
+							key = key.substring(0, key.length - 1);
+						}
+						if (value.charAt(0) === enclosing) {
+							value = value.substring(1);
+						} else if (value.charAt(value.length - 1) === enclosing && value.charAt(value.length - 2) !== '\\') {
+							value = value.substring(0, value.length - 1);
+						}
+						
+
+						if (dest[key] && Array.isArray(dest[key])) {
+							var defs = dest[key];
+							defs.push(value);
+							dest[key] = defs;
+						} else {
+							dest[key] = [value];
+						}
+					}
+					
+					if (firstLine) {
+						firstLine = false;
+					}
+				});
+			} else {
+				dump("Error loading page\n");
+			}
+		}
+	};
+	reqDefs.send();
+}
+
 
 function back() {
     history.go(-1);

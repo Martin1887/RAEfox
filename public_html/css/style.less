@@ -35,7 +35,7 @@ section[data-type="sidebar"] > nav > ul > li label {
     background-color: @blueHeader;
     color: @whiteHeader !important;
 	margin: 0;
-	height: 3.7rem;
+	height: 4.1rem;
 	
     h1 {
         margin: 0;
@@ -52,9 +52,6 @@ section[data-type="sidebar"] > nav > ul > li label {
     }
 }
 
-.raeDrawer {
-    background-color: @background_rae !important;
-}
 .mainDrawer {
     background-color: @background !important;
 }
@@ -116,11 +113,8 @@ form p button[type="reset"] {
     top: 4.7rem;
 }
 
-.raeContent {
-    background-color: @background_rae;
-    width: 100%;
-    height: 100%;
-    position: absolute;
+.mainContent {
+	height: 100% !important;
 }
 
 .mainContent {
@@ -154,14 +148,16 @@ form p button[type="reset"] {
         header {
             color: @listsHeader;
             border-bottom-color: @listsHeader;
-        }
-        a {
-            color: @listsHeader !important;
-            border-bottom-color: @listsHeader;
-            text-decoration: none;
-			width: 100%;
-			display: inline-block;
-        }
+			margin-bottom: 10px;
+        
+			a {
+				color: @listsHeader !important;
+				border-bottom-color: @listsHeader;
+				text-decoration: none;
+				width: 100%;
+				display: inline-block;
+			}
+		}
         ul li {
             height: auto;
             a {
@@ -220,6 +216,7 @@ form p button[type="reset"] {
 .ulHistory {
     padding: 0 !important;
     overflow: hidden !important;
+	margin-bottom: 20px !important;
 }
 
 .checkHistory {
@@ -238,16 +235,23 @@ form p button[type="reset"] {
     background-color: @blueNav !important;
 }
 
-#iframe {
-    top: 3rem;
-    position: absolute;
-}
-
 #searchForm {
-    top: 4.7rem;
+    top: 5rem;
     position: fixed;
     width: 100%;
     z-index: 15;
+}
+
+.definitionsContainer {
+	margin-top: 5rem;
+	height: ~"calc(100% - 8rem)";
+	box-sizing: border-box;
+	overflow-y: scroll;
+}
+.definitionsContainer p {
+	padding: 10px;
+	margin-top: 0;
+	font-size: 80%;
 }
 
 .darkTabList {
