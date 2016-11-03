@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     var themesTypesNames = [];
-    themesTypesNames.push('Application');
-    themesTypesNames.push('RAESearch');
+    themesTypesNames.push('ColorThemes');
 
     /*
      * By default 2 types of themes: application and RAE search (only background
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * First theme of each type is selected.
      */
     var themes = [];
-    themes.push({name: 'Application', values: [
+    themes.push({name: 'ColorThemes', values: [
             {name: 'dark', shownName: 'dark',
                 values: {'@background': '#151515', '@foreground': '#BBBBBB',
                         '@links': '#88AAFF', '@linksBackground': 'rgba(87, 187, 255, 0.2)',
@@ -39,16 +38,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 values: {'@background': '#E8E8E8', '@foreground': '#000000',
                         '@links': '#0000BB', '@linksBackground': 'rgba(0, 213, 255, 0.3)',
                         '@listsHeader': '#FF4E00'}}],
-		preview: {'this': 'background-color: @background; color: @foreground !important;', 'label': 'color: @foreground !important;', 'a': 'color: @links;',
+		preview: {'this': 'background: @background; color: @foreground !important;', 'label': 'color: @foreground !important;', 'a': 'color: @links;',
 			'section header': 'color: @listsHeader; border-bottom-color: @listHeader;',
-			'input:not(.color)': 'color: @foreground; background-color: @background; filter: brightness(0.8); border-color: @foreground;'}});
-    themes.push({name: 'RAESearch', values: [
-            {name: 'sepia', shownName: 'sepia',
-                values: {'@background_rae': '#CCCCAA'}},
-            {name: 'light', shownName: 'light',
-                values: {'@background_rae': '#E8E8E8'}}],
-		preview: {'this': 'background-color: @background_rae;',
-				'input:not(.color)': 'background-color: @background_rae; filter: brightness(0.8);'}});
+			'input:not(.color),.camaLessForm input[type="radio"] ~ span': 'color: @foreground; background-color: @background; filter: brightness(0.8); border-color: @foreground;'}});
+    
 
     var form = [document.getElementById('themes')];
     var callbacks = [callbackThemesClose];

@@ -57,7 +57,7 @@ if (navigator.mozL10n) {
 	navigator.mozL10n.ready(function() {
 		// grab l10n object
 		var _ = navigator.mozL10n.get;
-		// Themes title
+		
 		camaLess.themeName = _('themeName');
 		camaLess.themesDifferentName = _('themesDifferentName');
 		camaLess.almostOneTheme = _('almostOneTheme');
@@ -99,7 +99,7 @@ function openCamaLessDb(name, less, types, defaults, forms, callbacks, formsStor
 	if (almostOneThemeCB) {
 		camaLess.almostOneThemeCallback = almostOneThemeCB;
 	} else {
-		camaLess.almostOneThemeCallback = function() {alert(almostOneTheme + '.');};
+		camaLess.almostOneThemeCallback = function() {alert(camaLess.almostOneTheme + '.');};
 	}
 	if (sameNameThemesCB) {
 		camaLess.sameNameThemesCallback = sameNameThemesCB;
@@ -429,7 +429,7 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 									+ '<td><input type="radio" name="' + currentStore
                                     + '" ' + (theme.selected ? 'checked="checked"' : '')
                                     + ' onclick="applyPreview(\'' + currentStore + '\', false, '
-									+ 'this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);"></td>';
+									+ 'this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);"><span></span></td>';
                         themesListHtml += '<td class="themeName"><label '
                                 + (theme.shownName ?
                                 ' data-l10n-id="' + theme.shownName + '"'
@@ -604,7 +604,7 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
  * Update a theme label.
  * @param {string} newValue The new name
  * @param {themeTrDataThemeId} themeTrDataThemeId The theme tr data-theme-id to update.
- * @returns false in order not to follow link
+ * @returns false in order to not follow link
  */
 function updateName(newValue, themeTrDataThemeId) {
 	var label = document.querySelector('[data-theme-id="'
@@ -617,7 +617,7 @@ function updateName(newValue, themeTrDataThemeId) {
 /**
  * Back to themes list
  * @param {form} form The camaLESS form
- * @returns false in order not to follow link
+ * @returns false in order to not follow link
  */
 function backToThemesList(form) {
 	var editPanel = form.querySelector('.camaLessFormEditPanel');
@@ -643,7 +643,7 @@ function backToThemesList(form) {
  * Edit a theme showing edit panel.
  * @param {string} themeTrDataThemeId The theme tr data-theme-id to edit.
  * @param {string} store The theme store
- * @returns false in order not to follow link
+ * @returns false in order to not follow link
  */
 function editTheme(themeTrDataThemeId, store) {
     
@@ -667,7 +667,7 @@ function editTheme(themeTrDataThemeId, store) {
 /**
  * Erase a DOM tr representing a color theme from the form.
  * @param {themeTr} themeTr The theme tr to erase.
- * @returns false in order not to follow link
+ * @returns false in order to not follow link
  */
 function eraseTheme(themeTr) {
     var selectAnotherTheme = false;
@@ -701,7 +701,7 @@ function eraseTheme(themeTr) {
  * Add a DOM tr representing a color theme to the form
  * @param {table} themeTypeTable The table element in which insert tr
  * @param {string} store Type of color theme
- * @returns false in order not to follow link
+ * @returns false in order to not follow link
  */
 function addTheme(themeTypeTable, store) {
 	var themesListHtml = '';
@@ -710,7 +710,7 @@ function addTheme(themeTypeTable, store) {
 	var themes = form.querySelectorAll('tr[data-theme-id^="themesListTr' + store + '"]').length;
 	themesListHtml += '<td><input type="radio" name="' + store
 				+ '" onclick="applyPreview(\'' + store + '\', false, '
-				+ 'this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);"></td>';
+				+ 'this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);"><span></span></td>';
 	themesListHtml += '<td class="themeName"><label data-l10n-id="newTheme">New theme</label></td>';
 	// edit button
 	themesListHtml += '<td><a href="#" onclick="return editTheme'
@@ -903,7 +903,7 @@ function submitCamaLessForm(form, callback) {
         var selected = listTable.querySelectorAll(' input:checked');
         
         if (inputs.length === 0 || selected.length === 0) {
-            almostOneThemeCallback();
+            camaLess.almostOneThemeCallback();
             return false;
         }
         
@@ -933,10 +933,10 @@ function submitCamaLessForm(form, callback) {
                     selected: form.querySelector('[data-theme-id="'
 							+ inputs[j].parentNode.parentNode.getAttribute('data-theme-id')
 							.replace('themesFieldsTr', 'themesListTr') + '"]')
-							.childNodes[0].lastChild.checked ? 1 : 0
+							.childNodes[0].firstChild.checked ? 1 : 0
 				});
             } else {
-                sameNameThemesCallback(name);
+                camaLess.sameNameThemesCallback(name);
                 return false;
             }
         }
