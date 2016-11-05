@@ -23,6 +23,9 @@
 .camaLessForm input[type="radio"] {
 	opacity: 0;
 	margin: 0;
+	position: absolute;
+	width: 20px;
+	height: 35px;
 }
 .camaLessForm input[type="radio"] ~ span {
 	height: 15px;
