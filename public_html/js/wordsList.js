@@ -59,7 +59,7 @@ function loadHeaders() {
     var currentLetter;
     for (var i = 0; i < letters.length; i++) {
         currentLetter = letters[i];
-        wordsList += '<header ><a id="hLetA" href="#let' + currentLetter
+        wordsList += '<header ><a id="hLet' + currentLetter + '" href="#hLet' + currentLetter
                 + '" onclick="return focusLetter(\''
                 + currentLetter + '\');">'
                 + currentLetter + '</a></header>';
@@ -134,9 +134,9 @@ function writeHTMLWordsOfLetter(letter) {
             
             if (letterDOM.className !== 'letterShown') {
                 letterDOM.className = 'letterShown';
-                window.location = window.location.pathname + '#let' + letter;
+                window.location = window.location.pathname + '#hLet' + letter;
                 window.location.href = window.location.pathname + '#panel3';
-
+				
                 // Spinner is removed
                 var spinner = document.getElementById('progressWordsList');
                 if (spinner) {
