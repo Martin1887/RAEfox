@@ -46,6 +46,7 @@ section[data-type="sidebar"] > nav > ul > li label {
 		line-height: 3.7rem;
         font-weight: 500 !important;
 		font-size: 95%;
+		text-transform: uppercase;
 		
 		span {
 			font-size: 80%;
@@ -378,10 +379,11 @@ header a {
 
 .searchedPanel {
     position: static;
-    height: ~"calc(100% - 1.25rem)";
+    height: 100%;
 	padding: 0px 1.5rem;
 	animation-name: showDown;
 	animation-duration: 1.25s;
+	overflow: auto;
     
     a {
         height: auto;
