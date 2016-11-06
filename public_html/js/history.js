@@ -202,6 +202,8 @@ function changeHistoryEditMode(newEditMode) {
         checkRemoveButtonsDisabled();
         removeSelected.className = 'danger';
         removeAll.className = 'danger';
+		
+		document.getElementById('historyList').className = 'historyListEditMode';
         
         // Show checkboxes
         for (var i = 0; i < checks.length; i++) {
@@ -227,6 +229,8 @@ function changeHistoryEditMode(newEditMode) {
             // With hiddenCheckHistory
             checks[i].className = 'pack-checkbox danger checkHistory hiddenCheckHistory';
         }
+		
+		document.getElementById('historyList').className = '';
     }
     // false is returned in order to not go to link
     return false;

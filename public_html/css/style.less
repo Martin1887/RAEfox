@@ -147,13 +147,18 @@ form p button[type="reset"] {
     /* onlywords list (not history list) */
     #wordsList {
         width: ~"calc(100% - 28px)";
-		height: 100%;
-		overflow: auto;
     }
+	
+	.historyListEditMode {
+		height: ~"calc(100% - 9.5rem) !important";
+	}
     
     /* list */
     section[data-type="list"] {
-        header {
+        height: 100%;
+		overflow: auto;
+		
+		header {
             color: @listsHeader;
             border-bottom-color: @listsHeader;
 			margin-bottom: 10px;
