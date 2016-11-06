@@ -31,11 +31,14 @@ section[data-type="sidebar"] > nav > ul > li label {
     }
 }
 
-.historyHeader {
+.topHeader {
     background-color: @blueHeader;
     color: @whiteHeader !important;
 	margin: 0;
 	height: 4.1rem;
+	width: 100%;
+	position: fixed;
+	z-index: 200;
 	
     h1 {
         margin: 0;
@@ -50,6 +53,9 @@ section[data-type="sidebar"] > nav > ul > li label {
 			margin-left: 0.5rem;
 		}
     }
+}
+.wordsListHeader {
+	display: none;
 }
 
 .mainDrawer {
@@ -113,16 +119,15 @@ form p button[type="reset"] {
     top: 4.7rem;
 }
 
-.mainContent {
-	height: 100% !important;
+.raeContent {
+	height: ~"calc(100% - 8.1rem)";
+	top: 4.1rem;
 }
 
 .mainContent {
     background-color: @background;
     color: @foreground;
     width: 100%;
-    height: auto;
-    min-height: 100%;
     position: absolute;
     a {
         color: @links !important;
@@ -131,7 +136,7 @@ form p button[type="reset"] {
     nav[data-type="scrollbar"] {
         position: fixed;
         top: 4.65rem;
-        bottom: 4.05rem;
+        bottom: 4.5rem;
         
         ol li a {
             color: @foreground !important;
@@ -141,6 +146,8 @@ form p button[type="reset"] {
     /* onlywords list (not history list) */
     #wordsList {
         width: ~"calc(100% - 28px)";
+		height: 100%;
+		overflow: auto;
     }
     
     /* list */
@@ -233,6 +240,7 @@ form p button[type="reset"] {
 #iframeNavigation {
     bottom: 4.5rem !important;
     background-color: @blueNav !important;
+	z-index: 1000;
 }
 
 #searchForm {
@@ -243,15 +251,14 @@ form p button[type="reset"] {
 }
 
 .definitionsContainer {
-	margin-top: 5rem;
-	height: ~"calc(100% - 8rem)";
+	height: 100%;
 	box-sizing: border-box;
 	overflow-y: scroll;
 }
 .definitionsContainer p {
-	padding: 10px;
+	padding: 10px 25px;
 	margin-top: 0;
-	font-size: 80%;
+	font-size: 85%;
 }
 
 .darkTabList {
@@ -371,7 +378,7 @@ header a {
 
 .searchedPanel {
     position: static;
-    height: 100%;
+    height: ~"calc(100% - 1.25rem)";
 	padding: 0px 1.5rem;
 	animation-name: showDown;
 	animation-duration: 1.25s;
@@ -401,6 +408,7 @@ header a {
 		text-transform: uppercase;
 		text-align: center;
 		margin-bottom: 0;
+		margin-top: 1rem;
 	}
 	h2 {
 		font-size: 2rem;
@@ -532,9 +540,6 @@ header a {
 	#searchForm {
 		width: 33.3%;
 	}
-	#iframeNavigation {
-		width: 33.3%;
-	}
 	
 	#main2 {
 		left: 33.3%;
@@ -564,5 +569,29 @@ header a {
 	
 	#progressWordsList {
 		left: ~"calc(83% - 16px)";
+	}
+	
+	.topHeader {
+		width: 33.3%;
+	}
+	.wordsListHeader {
+		display: block;
+	}
+	
+	.mainContent {
+		margin-top: 4.1rem;
+		height: ~"calc(100% - 8.1rem)";
+		
+		nav[data-type="scrollbar"] {
+			top: 8.65rem;
+			bottom: 8.5rem;
+		}
+	}
+	.raeContent {
+		margin-top: 0;
+	}
+	
+	.formSearchInWordsList {
+		height: ~"calc(100% - 21.2rem)";
 	}
 }

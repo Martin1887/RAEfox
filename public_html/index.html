@@ -89,14 +89,14 @@
                 <li id="panel1" role="presentation" class="darkTabList">
                     <a id="tab1" href="#panel1" onclick="changeTab(1);" class="tabIcon" role="tab" aria-controls="main1"><i class="fa fa-search"></i></a>
                     <div id="main1" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab1">
-                        <div class="mainContent raeContent">
-                            <form role="search" id="searchForm">
-                                <button type="submit" disabled="disabled" data-l10n-id="search" id="searchButton">Search</button>
-                                <p>
-                                    <input type="text" id="inputSearch" data-l10n-id="searchPlace" placeholder="Search..." required>
-                                    <button id="resetSearch" onclick="clearInput(document.getElementById('inputSearch'));" type="reset">Clear</button>
-                                </p>
-                            </form>
+                        <form role="search" id="searchForm">
+							<button type="submit" disabled="disabled" data-l10n-id="search" id="searchButton">Search</button>
+							<p>
+								<input type="text" id="inputSearch" data-l10n-id="searchPlace" placeholder="Search..." required>
+								<button id="resetSearch" onclick="clearInput(document.getElementById('inputSearch'));" type="reset">Clear</button>
+							</p>
+						</form>
+						<div class="mainContent raeContent">
 							<div id="definitions" class="definitionsContainer"></div>
                             <div role="toolbar" id="iframeNavigation">
                                 <ul class="leftIcons">
@@ -114,10 +114,10 @@
                 <li id="panel2" role="presentation" class="darkTabList">
                     <a id="tab2" href="#panel2" onclick="changeTab(2);" class="tabIcon" role="tab" aria-controls="main2"><i class="fa fa-clock-o fa-rotate-90"></i></a>
                     <div id="main2" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab2">
-                        <div class="mainContent">
-                            <div class="historyHeader">
-								<h1 data-l10n-id="history">History <span id="historyCount">(0)</span></h1>
-							</div>
+                        <div class="topHeader">
+							<h1 data-l10n-id="history">History <span id="historyCount">(0)</span></h1>
+						</div>
+						<div class="mainContent">
 							<button onclick="confirmRemoveHistorySelected();" role="button" style="text-align: center !important;" id="removeSelectedFromHistory" data-l10n-id="removeSelected" class="danger hidden">Remove selected</button>
                             <button onclick="confirmRemoveAllHistoryElements();" role="button" style="text-align: center !important;" id="removeAllFromHistory" data-l10n-id="removeAll" class="danger hidden">Remove all</button>
 							<section id="historyList" data-type="list"></section>
@@ -127,7 +127,10 @@
                 <li id="panel3" role="presentation" class="darkTabList">
                     <a id="tab3" href="#panel3" onclick="changeTab(3);" class="tabIcon" role="tab" aria-controls="main3"><i class="fa fa-sort-alpha-asc"></i></a>
                     <div id="main3" class="bb-tabpanel" role="tabpanel" aria-labelledby="tab3">
-                        <div id="main3Content" class="mainContent">
+                        <div class="topHeader wordsListHeader">
+							<h1 data-l10n-id="index">Alphabetical index</h1>
+						</div>
+						<div id="main3Content" class="mainContent">
                             <!-- Search form, hidden by default -->
                             <form class="formHidden formSearchInWordsList searchFormHidden" id="searchInWordsListForm">
                                 <p>

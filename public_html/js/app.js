@@ -332,26 +332,28 @@ function readCSV(path, dest, hasHeader, delimiter, enclosing, key_idx, value_idx
 						var split = line.split(enclosing + delimiter + enclosing);
 						var key = split[key_idx];
 						var value = split[value_idx];
-
-						// remove enclosing character
-						if (key.charAt(0) === enclosing) {
-							key = key.substring(1);
-						} else if (key.charAt(key.length - 1) === enclosing && key.charAt(key.length - 2) !== '\\') {
-							key = key.substring(0, key.length - 1);
-						}
-						if (value.charAt(0) === enclosing) {
-							value = value.substring(1);
-						} else if (value.charAt(value.length - 1) === enclosing && value.charAt(value.length - 2) !== '\\') {
-							value = value.substring(0, value.length - 1);
-						}
 						
+						if (value) {
+							// remove enclosing character
+							if (key.charAt(0) === enclosing) {
+								key = key.substring(1);
+							} else if (key.charAt(key.length - 1) === enclosing && key.charAt(key.length - 2) !== '\\') {
+								key = key.substring(0, key.length - 1);
+							}
+							if (value.charAt(0) === enclosing) {
+								value = value.substring(1);
+							} else if (value.charAt(value.length - 1) === enclosing && value.charAt(value.length - 2) !== '\\') {
+								value = value.substring(0, value.length - 1);
+							}
 
-						if (dest[key] && Array.isArray(dest[key])) {
-							var defs = dest[key];
-							defs.push(value);
-							dest[key] = defs;
-						} else {
-							dest[key] = [value];
+
+							if (dest[key] && Array.isArray(dest[key])) {
+								var defs = dest[key];
+								defs.push(value);
+								dest[key] = defs;
+							} else {
+								dest[key] = [value];
+							}
 						}
 					}
 					
