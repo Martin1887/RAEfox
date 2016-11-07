@@ -261,16 +261,16 @@ function insertHTMLDefinition(search) {
 	
 	var defs = allDefs[search];
 	
+	var html = '<section class="definitions" data-type="list">';
+	
 	if (!defs) {
-		var html = '';
-		html += '<section data-type="list"><header data-l10n-id="defHeaderNoResults">' + defHeaderNoResults + '</header>';
+		html += '<header data-l10n-id="defHeaderNoResults">' + defHeaderNoResults + '</header>';
 		html += '<p><span data-l10n-id="defBodyNoResults">' + defBodyNoResults
 			+ '</span><a target="_blank" href="http://rae.es">rae.es</a>.</p></section>';
 		document.getElementById('definitions').innerHTML = html;
 		return;
 	}
 	
-	var html = '<section data-type="list">';
 	
 	defs.forEach(function(def, ind) {
 		html += '<header>' + (ind + 1) + '.</header>';

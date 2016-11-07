@@ -96,7 +96,7 @@
 								<button id="resetSearch" onclick="clearInput(document.getElementById('inputSearch'));" type="reset">Clear</button>
 							</p>
 						</form>
-						<div class="mainContent raeContent">
+						<div class="mainContent allwaysHeaderContent">
 							<div id="definitions" class="definitionsContainer"></div>
                             <div role="toolbar" id="iframeNavigation">
                                 <ul class="leftIcons">
@@ -117,7 +117,7 @@
                         <div class="topHeader">
 							<h1 data-l10n-id="history">History <span id="historyCount">(0)</span></h1>
 						</div>
-						<div class="mainContent">
+						<div class="mainContent allwaysHeaderContent withoutNavigation">
 							<button onclick="confirmRemoveHistorySelected();" role="button" style="text-align: center !important;" id="removeSelectedFromHistory" data-l10n-id="removeSelected" class="danger hidden">Remove selected</button>
                             <button onclick="confirmRemoveAllHistoryElements();" role="button" style="text-align: center !important;" id="removeAllFromHistory" data-l10n-id="removeAll" class="danger hidden">Remove all</button>
 							<section id="historyList" data-type="list"></section>

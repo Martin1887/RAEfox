@@ -120,9 +120,12 @@ form p button[type="reset"] {
     top: 4.7rem;
 }
 
-.raeContent {
+.allwaysHeaderContent {
 	height: ~"calc(100% - 8.1rem)";
 	top: 4.1rem;
+}
+.withoutNavigation {
+	height: ~"calc(100% - 4.2rem)";
 }
 
 .mainContent {
@@ -137,7 +140,7 @@ form p button[type="reset"] {
     nav[data-type="scrollbar"] {
         position: fixed;
         top: 4.65rem;
-        bottom: 4.5rem;
+		bottom: 4.5rem;
         
         ol li a {
             color: @foreground !important;
@@ -265,6 +268,10 @@ form p button[type="reset"] {
 	padding: 10px 25px;
 	margin-top: 0;
 	font-size: 85%;
+}
+.definitions {
+    animation-duration: 1s;
+    animation-name: showDown;
 }
 
 .darkTabList {
@@ -431,12 +438,12 @@ header a {
 }
 
 .searchButtonScrollbar {
-    height: 3rem !important;
+    height: 6.5% !important;
 
     span {
-        width: 2.8rem !important;
-        height: 2.8rem !important;
-        background-size: 3.5rem auto !important;
+        width: 80% !important;
+		height: 80% !important;
+		background-size: 115% auto !important;
     }
 }
 
@@ -594,11 +601,19 @@ header a {
 			bottom: 8.5rem;
 		}
 	}
-	.raeContent {
+	.allwaysHeaderContent {
 		margin-top: 0;
+		height: ~"calc(100% - 8.1rem)";
+	}
+	.withoutNavigation {
+		height: ~"calc(100% - 8.1rem)";
 	}
 	
 	.formSearchInWordsList {
 		height: ~"calc(100% - 21.2rem)";
+	}
+	
+	.historyButton {
+		right: 67% !important;
 	}
 }
