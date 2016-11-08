@@ -259,6 +259,7 @@ function insertHTMLDefinition(search) {
 		return;
 	}
 	
+	search = search.toLowerCase();
 	var defs = allDefs[search];
 	
 	var html = '<section class="definitions" data-type="list">';
@@ -274,7 +275,18 @@ function insertHTMLDefinition(search) {
 	
 	defs.forEach(function(def, ind) {
 		html += '<header>' + (ind + 1) + '.</header>';
-		html += '<p>' + def + '</p>';
+		html += '<p>';
+		// split by all whitespace, quotation marks and punctuation characters
+		var split = def.split(/[\s]/);
+		split.forEach(function(word) {
+			html += '<span class="definitionWord" onclick="searchInRae(\'';
+			
+			// remove punctuation characters in onclick
+			html += word.replace(/[\s,;.:_ \'\"\(\)\[\]\{\}¿?¡!/0-9%\u00AB\u2039\u00BB\u203A]/gi, '').toLowerCase() + '\')"';
+			
+			html += '>' + word + '&nbsp;</span>';
+		});
+		html += '</p>';
 	});
 	
 	html += '<header data-l10n-id="defHeaderMoreResults">' + defHeaderMoreResults + '</header>';
