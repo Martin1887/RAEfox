@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Enable/disable search button
     var inputSearch = document.getElementById('inputSearch');
 	var suggestions = document.getElementById('suggestions');
-	inputSearch.onkeypress = navigateSuggestions;
+	inputSearch.onkeyup = navigateSuggestions;
     inputSearch.oninput = searchTyping;
 	inputSearch.onfocus = function() {
 		suggestions.className = suggestions.className.replace(/ hidden/g, '');
