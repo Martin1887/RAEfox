@@ -326,13 +326,13 @@ function searchSuggestions(search) {
 				}
 			} else {
 				// remove animation class
-				suggestionsUl.className = 'suggestionsUl';
+				suggestionsUl.className = suggestionsUl.className.replace(/suggestionsUlShown/g, '');
 			}
 		};
 		suggestionsWorker.postMessage({allWords: allWords, word: search});
 	} else {
 		suggestionsUl.innerHTML = '';
-		suggestionsUl.className = 'suggestionsUl';
+		suggestionsUl.className = suggestionsUl.className.replace(/suggestionsUlShown/g, '');
 	}
 }
 
@@ -366,7 +366,7 @@ function insertHTMLDefinition(search) {
 	search = search.toLowerCase();
 	var defs = allDefs[search];
 	
-	var html = '<section class="definitions" data-type="list">';
+	var html = '<h1>' + search + '</h1><section class="definitions" data-type="list">';
 	
 	if (!defs) {
 		html += '<header data-l10n-id="defHeaderNoResults">' + defHeaderNoResults + '</header>';
