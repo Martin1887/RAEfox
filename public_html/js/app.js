@@ -6,6 +6,9 @@ var indexSearches = 0;
 var autosaveHistory = false;
 var wordSaved = false;
 
+// the worker is global in order to only one execution at a time of search suggestions
+var suggestionsWorker = null;
+
 var defHeaderMoreResults = '';
 var defBodyMoreResults = '';
 var defHeaderNoResults = '';
@@ -46,7 +49,7 @@ window.addEventListener('resize', function(e) {
 document.addEventListener('DOMContentLoaded', function() {
     prevWindowWidth = window.innerWidth;
 	
-	enableOrDisableSearchButton();
+	searchTyping();
     
     // Autosave history on/off
     document.getElementById('autosaveInput').onchange = changeAutosave;
@@ -54,8 +57,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Enable/disable search button
     var inputSearch = document.getElementById('inputSearch');
-    inputSearch.onkeyup = enableOrDisableSearchButton;
-    inputSearch.oninput = enableOrDisableSearchButton;
+	var suggestions = document.getElementById('suggestions');
+	inputSearch.onkeypress = navigateSuggestions;
+    inputSearch.oninput = searchTyping;
+	inputSearch.onfocus = function() {
+		suggestions.className = suggestions.className.replace(/ hidden/g, '');
+	};
+	inputSearch.onblur = function() {
+		setTimeout(function() {
+			suggestions.className += ' hidden';
+		}, 200);
+	};
 
     // Search a term when form is submited
     var form = document.getElementById('searchForm');
@@ -135,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function clearInput(input) {
     input.value = '';
-    enableOrDisableSearchButton();
+    searchTyping();
 }
 
 function changeTab(tab) {
@@ -217,7 +229,60 @@ function updateWordSaved() {
     saveOrRemoveButton();
 }
 
-function enableOrDisableSearchButton() {
+function navigateSuggestions(event) {
+	var key = event.key;
+	var suggestionsUl = document.getElementById('suggestions');
+	var cursorIn = suggestionsUl.querySelector('.cursorIn');
+	
+	switch (key) {
+		case 'ArrowDown':
+			if (cursorIn) {
+				if (cursorIn.nextSibling) {
+					cursorIn.className = '';
+					cursorIn.nextSibling.className = 'cursorIn';
+				}
+			} else {
+				suggestionsUl.firstChild.className = 'cursorIn';
+			}
+			cursorIn = suggestionsUl.querySelector('.cursorIn');
+			if (cursorIn) {
+				// keep selection in center of scrolling
+				var center = cursorIn.offsetTop - (suggestionsUl.clientHeight / 2);
+				suggestionsUl.scrollTop = center > 0 ? center : 0;
+			}
+			break;
+		case 'ArrowUp':
+			if (cursorIn) {
+				cursorIn.className = '';
+				if (cursorIn.previousSibling) {
+					cursorIn.previousSibling.className = 'cursorIn';
+				}
+			}
+			cursorIn = suggestionsUl.querySelector('.cursorIn');
+			if (cursorIn) {
+				// keep selection in center of scrolling
+				var center = cursorIn.offsetTop - (suggestionsUl.clientHeight / 2);
+				suggestionsUl.scrollTop = center > 0 ? center : 0;
+			}
+			break;
+			
+		case 'ArrowRight':
+			if (cursorIn) {
+				document.getElementById('inputSearch').value = cursorIn.textContent;
+			}
+			break;
+		case 'Enter':
+			if (cursorIn) {
+				document.getElementById('inputSearch').value = cursorIn.textContent;
+			}
+			break;
+		default:
+			searchTyping();
+			break;
+	}
+}
+
+function searchTyping() {
     var searchButton = document.getElementById('searchButton');
     var resetSearchButton = document.getElementById('resetSearch');
 	var inputSearch = document.getElementById('inputSearch');
@@ -227,10 +292,49 @@ function enableOrDisableSearchButton() {
     } else {
         searchButton.disabled = true;
         resetSearchButton.style.opacity = 0;
-        
+    }
+	
+	if (!allWords || allWords.length === 0) {
+        loadAllWords(searchSuggestions, [inputSearch.value]);
+    } else {
+        searchSuggestions(inputSearch.value);
     }
 }
 
+function searchSuggestions(search) {
+	var suggestionsUl = document.getElementById('suggestions');
+	if (search && search.length > 0) {
+		search = search.toLowerCase();
+		
+		if (suggestionsWorker) {
+			suggestionsWorker.terminate();
+		}
+		suggestionsWorker = new Worker('js/workerBinarySearch.js');
+		suggestionsWorker.onmessage = function(e) {
+			var matches = e.data.matches;
+
+			var lisHtml = '';
+			matches.forEach(function(match) {
+				lisHtml += '<li onclick="searchInRae(\'' + match + '\');">' + match + '</li>';
+			});
+			suggestionsUl.innerHTML = lisHtml;
+
+			if (matches.length > 0) {
+				// add animation if it had not elements
+				if (suggestionsUl.className.indexOf('suggestionsUlShown') < 0) {
+					suggestionsUl.className += ' suggestionsUlShown';
+				}
+			} else {
+				// remove animation class
+				suggestionsUl.className = 'suggestionsUl';
+			}
+		};
+		suggestionsWorker.postMessage({allWords: allWords, word: search});
+	} else {
+		suggestionsUl.innerHTML = '';
+		suggestionsUl.className = 'suggestionsUl';
+	}
+}
 
 function searchDefinition() {
 	var search = document.getElementById('inputSearch').value;

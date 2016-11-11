@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         chargeWordsList();
     };
+	
 });
 
 function chargeWordsList() {
@@ -74,28 +75,41 @@ function loadHeaders() {
 // loading all words uses too much RAM
 function getWordsOfLetter(letter) {
     if (!allWords || allWords.length === 0) {
-        var reqWordsList = new XMLHttpRequest();
-        reqWordsList.open('GET', './resources/words_UTF8.txt', true);
-        reqWordsList.setRequestHeader('Content-Type', 'text/plain');
-        reqWordsList.responseType = 'text';
-        reqWordsList.onreadystatechange = function (aEvt) {
-            if (reqWordsList.readyState === 4) {
-                if (reqWordsList.status === 200 || (reqWordsList.status === 0 && reqWordsList.responseText)) {
-                    // Event is removed because response is already set
-                    reqWordsList.onreadystatechange = null;
-
-                    // Each line contains a word, and they are saved as array 
-                    allWords = reqWordsList.responseText.split('\n');
-                    writeHTMLWordsOfLetter(letter);
-                } else {
-                    dump("Error loading page\n");
-                }
-            }
-        };
-        reqWordsList.send();
+        loadAllWords(writeHTMLWordsOfLetter, [letter]);
     } else {
         writeHTMLWordsOfLetter(letter);
     }
+}
+
+/**
+ * 
+ * @param {function} callback Callback funciton
+ * @param {array} args Arguments of callback
+ * @returns false
+ */
+function loadAllWords(callback, args) {
+	var reqWordsList = new XMLHttpRequest();
+	reqWordsList.open('GET', './resources/words_UTF8.txt', true);
+	reqWordsList.setRequestHeader('Content-Type', 'text/plain');
+	reqWordsList.responseType = 'text';
+	reqWordsList.onreadystatechange = function (aEvt) {
+		if (reqWordsList.readyState === 4) {
+			if (reqWordsList.status === 200 || (reqWordsList.status === 0 && reqWordsList.responseText)) {
+				// Event is removed because response is already set
+				reqWordsList.onreadystatechange = null;
+
+				// Each line contains a word, and they are saved as array 
+				allWords = reqWordsList.responseText.split('\n');
+				callback.apply(window, args);
+			} else {
+				dump("Error loading page\n");
+			}
+		}
+	};
+	reqWordsList.send();
+	
+	
+	return false;
 }
 
 // Write HTML with words
@@ -171,7 +185,7 @@ function searchInRae(word) {
     document.getElementById('inputSearch').value = word;
     document.getElementById('searchButton').disabled = false;
     document.getElementById('searchButton').click();
-	enableOrDisableSearchButton();
+	searchTyping();
     changeTab(1);
     return true;
 }
