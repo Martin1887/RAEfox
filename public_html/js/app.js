@@ -179,6 +179,8 @@ function changeAutosave() {
     
     // show/hide save/remove button
     saveOrRemoveButton();
+	
+	return false;
 }
 
 // Show correct history button

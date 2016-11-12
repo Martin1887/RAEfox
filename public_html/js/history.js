@@ -74,6 +74,8 @@ function chargeHistory() {
 			}
 		}, 100);
 	}
+	
+	return false;
 }
 
 function updateHistoryCount() {
@@ -122,6 +124,8 @@ function addWordToHistory(word) {
     };
     wordSaved = true;
     saveOrRemoveButton();
+	
+	return false;
 }
 
 // Remove searched word form history
@@ -176,6 +180,8 @@ function removeWordFromHistory(word, id) {
     saveOrRemoveButton();
     checkRemoveButtonsDisabled();
 	updateHistoryCount();
+	
+	return false;
 }
 
 
