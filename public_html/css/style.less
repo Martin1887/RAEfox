@@ -2,12 +2,14 @@
 @blueNav: rgba(0, 0, 87, 1);
 @whiteHeader: #E8E8E8;
 
-body {
-    font-family: "Fira Sans";
+body,button {
+    font-family: "Fira Sans" !important;
 }
 
 input {
-    font-family: "Fira Sans";
+    font-family: "Fira Sans" !important;
+	outline: none;
+	box-sizing: border-box;
 }
 
 label {
@@ -128,6 +130,11 @@ form p button[type="reset"] {
 	height: ~"calc(100% - 4.2rem)";
 }
 
+
+#main1 {
+	overflow: hidden;	
+}
+
 .mainContent {
     background-color: @background;
     color: @foreground;
@@ -142,9 +149,13 @@ form p button[type="reset"] {
         top: 4.65rem;
 		bottom: 4.5rem;
         
-        ol li a {
-            color: @foreground !important;
-        }
+        ol {
+			padding: 0 0 0.2rem 0;
+			
+			li a {
+				color: @foreground !important;
+			}
+		}
     }
     
     /* onlywords list (not history list) */
@@ -364,6 +375,7 @@ header a {
 	z-index: 400;
     display: inline-block;
     visibility: visible;
+	position: fixed !important;
 }
 
 .formHidden {
@@ -481,7 +493,7 @@ header a {
 }
 
 .searchButtonScrollbar {
-    height: 6.5% !important;
+    height: 6.9% !important;
 	min-height: 3rem;
 
     span {

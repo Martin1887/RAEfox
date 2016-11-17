@@ -116,7 +116,6 @@ function loadAllWords(callback, args) {
 function writeHTMLWordsOfLetter(letter) {
     var progress = document.createElement('progress');
     progress.id = 'progressWordsList';
-    progress.style.position = 'fixed';
     document.getElementById('main3Content').insertBefore(progress, document.getElementById('wordsList'));
     
     // Put content in words list section
