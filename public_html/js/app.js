@@ -358,6 +358,8 @@ function searchDefinition() {
 	} else {
 		updateWordSaved();
 	}
+	
+	return false;
 }
 
 
