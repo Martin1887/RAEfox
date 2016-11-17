@@ -1,4 +1,5 @@
 var db;
+var databaseOpened = false;
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -15,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
 				autosaveHistory = event.target.result.val;
 				document.getElementById('autosaveInput').checked = autosaveHistory;
 				changeAutosave();
+				
+				databaseOpened = true;
 			};
 		}
 
@@ -33,7 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		// autosave history: a field whose value is always 'autoSave' is used to access
 		var autosaveHistoryStore = db.createObjectStore('autosaveHistory', {keyPath: 'varName'});
 		autosaveHistoryStore.add({varName: 'autosave', val: false});
-
+		
+		databaseOpened = true;
 	};
 
 });

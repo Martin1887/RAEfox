@@ -25,7 +25,7 @@ function chargeHistory() {
 
 		// wait until db is loaded
 		var inter = setInterval(function() {
-			if (db) {
+			if (db && databaseOpened) {
 				clearInterval(inter);
 				
 				var objectStore = db.transaction(['history']).objectStore('history');
