@@ -102,7 +102,7 @@ function loadAllWords(callback, args) {
 				allWords = reqWordsList.responseText.split('\n');
 				callback.apply(window, args);
 			} else {
-				dump("Error loading page\n");
+				console.log("Error loading page\n");
 			}
 		}
 	};

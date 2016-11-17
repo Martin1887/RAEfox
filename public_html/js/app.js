@@ -482,7 +482,7 @@ function readCSV(path, dest, hasHeader, delimiter, enclosing, key_idx, value_idx
 					}
 				});
 			} else {
-				dump("Error loading page\n");
+				console.log("Error loading page\n");
 			}
 		}
 	};
