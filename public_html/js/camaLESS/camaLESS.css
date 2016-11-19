@@ -4,6 +4,8 @@
 }
 .camaLessForm section {
 	background-color: #fff;
+	box-sizing: border-box;
+	overflow-y: auto !important;
 }
 
 .camaLessForm label {
@@ -26,6 +28,7 @@
 	position: absolute;
 	width: 20px;
 	height: 35px;
+	z-index: 10;
 }
 .camaLessForm input[type="radio"] ~ span {
 	height: 15px;
