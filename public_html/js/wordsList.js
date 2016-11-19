@@ -244,6 +244,9 @@ function searchInWordsList() {
 	var beginSearch = document.getElementById('beginSearch');
     var containSearch = document.getElementById('containSearch');
     var endSearch = document.getElementById('endSearch');
+	beginSearch.blur();
+	containSearch.blur();
+	endSearch.blur();
     
     var begin = beginSearch.value;
 	var searchInBegin = begin.length > 0;
