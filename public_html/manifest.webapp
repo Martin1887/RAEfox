@@ -1,8 +1,8 @@
 {
-  "version": "0.1",
+  "version": "1.0",
   "name": "RAEfox",
   "launch_path": "/index.html#panel1",
-  "description": "RAEfox is an open source application licensed under GPLv3 that facilitates to search words in RAE dictionary in Firefox OS and Firefox for Desktop and Android. This application only facilitates to search in RAE web, it's not a official RAE application and all RAE trademarks and contents are property of RAE.",
+  "description": "RAEfox is an open source application under Apache 2.0 license that allows an offline definition search in the castilian dictionary from Wiktionary. Wiktionary offline content has been obtained from OmegaWiki (http://www.omegawiki.org/Special:Ow_downloads), a web site that extracts the Wiktionary content in CSV format. The alphabetical index has been obtained from http://listapalabras.com. RAEFox source code can be found in https://github.com/Martin1887/RAEfox. Customizable color themes form creation funcionality is available as library under Apache 2.0 license in https://github.com/Martin1887/camaLESS. The color picker used in camaLESS has been developed by Peter Dematté and it can be found under MIT license in https://github.com/PitPik/colorPicker.",
   "icons": {
     "60": "/images/icon_60x60.png",
     "64": "/images/icon_64x64.png",
@@ -21,11 +21,11 @@
   "locales": {
    "en": {
       "name": "RAEfox",
-      "description": "RAEfox is an open source application licensed under GPLv3 that facilitates to search words in RAE dictionary in Firefox OS and Firefox for Desktop and Android. This application only facilitates to search in RAE web, it's not a official RAE application and all RAE trademarks and contents are property of RAE."
+      "description": "RAEfox is an open source application under Apache 2.0 license that allows an offline definition search in the castilian dictionary from Wiktionary. Wiktionary offline content has been obtained from OmegaWiki (http://www.omegawiki.org/Special:Ow_downloads), a web site that extracts the Wiktionary content in CSV format. The alphabetical index has been obtained from http://listapalabras.com. RAEFox source code can be found in https://github.com/Martin1887/RAEfox. Customizable color themes form creation funcionality is available as library under Apache 2.0 license in https://github.com/Martin1887/camaLESS. The color picker used in camaLESS has been developed by Peter Dematté and it can be found under MIT license in https://github.com/PitPik/colorPicker."
     },
     "es": {
       "name": "RAEfox",
-      "description": "RAEfox es una aplicación de código abierto licenciada bajo GPLv3 que facilita la búsqueda de palabras en el diccionario de la RAE en Firefox OS y Firefox para escritorio y Android. Esta aplicación solo facilita la búsqueda en la web de la RAE, no es una aplicación oficial de la RAE y todos los contenidos, logos y marcas son propiedad de la RAE."
+      "description": "RAEfox es una aplicación de código abierto sujeto a la licencia Apache 2.0 que facilita la búsqueda de definiciones sin conexión a Internet en el diccionario de castellano de Wiktionary. El contenido offline de Wiktionary ha sido obtenido de OmegaWiki (http://www.omegawiki.org/Special:Ow_downloads), un sitio web que extrae el contenido de Wiktionary en formato CSV. El índice alfabético de palabras ha sido obtenido de http://listapalabras.com. El código fuente de RAEFox se puede encontrar en https://github.com/Martin1887/RAEfox. La funcionalidad de crear formularios de temas de colores personalizables por el usuario se encuentra disponible como librería bajo la licencia Apache 2.0 en https://github.com/Martin1887/camaLESS. El selector de colores ('color picker') incluido en camaLESS ha sido creado por Peter Dematté y puede encontrarse bajo licencia MIT en https://github.com/PitPik/colorPicker."
     }
   }
 }
