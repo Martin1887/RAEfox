@@ -4,8 +4,6 @@
 }
 .camaLessForm section {
 	background-color: #fff;
-	box-sizing: border-box;
-	overflow-y: auto !important;
 }
 
 .camaLessForm label {
