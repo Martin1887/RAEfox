@@ -11,23 +11,23 @@ RAEfox is coded in vanilla JavaScript and it uses indexedDB to save history and 
 
 The main funcionalities of RAEfox are below:
 
--Offline definitions search in Wiktionary.
+- Offline definitions search in Wiktionary.
 
--Autocompleted words while writing in search bar.
+- Autocompleted words while writing in search bar.
 
--Words searched history.
+- Words searched history.
 
--Autosave words in history (disabled by default to protect your privacity).
+- Autosave words in history (disabled by default to protect your privacity).
 
--Delete selected words or all words from history.
+- Delete selected words or all words from history.
 
--Alphabetical index.
+- Alphabetical index.
 
--Search words by prefix, suffix and/or contained letters.
+- Search words by prefix, suffix and/or contained letters.
 
--Customizable color themes (edit, add and delete themes).
+- Customizable color themes (edit, add and delete themes).
 
--Three tabs view in large screens.
+- Three tabs view in large screens.
 
 
 Español:
