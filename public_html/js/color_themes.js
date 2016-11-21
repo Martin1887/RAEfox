@@ -4,9 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     themesTypesNames.push('ColorThemes');
 
     /*
-     * By default 2 types of themes: application and RAE search (only background
-     * color in this) with 4 themes for the first and 2 for the second.
-     * First theme of each type is selected.
+     * Preset themes
      */
     var themes = [];
     themes.push({name: 'ColorThemes', values: [
@@ -47,9 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var form = [document.getElementById('themes')];
     var callbacks = [callbackThemesClose];
-    setTimeout(function() {
-		
-	}, 500);
+	
 	// Open DB and create form
     openCamaLessDb('RAEfox_camaLESSdb', less, themesTypesNames, themes, form, callbacks);
 });
