@@ -40,20 +40,20 @@ RAEfox está desarrollada en JavaScript puro y utiliza indexedDB para el histori
 
 Las principales funcionalidades de RAEfox son:
 
--Búsqueda de definiciones en el diccionario de Wiktionary sin conexión a Internet.
+- Búsqueda de definiciones en el diccionario de Wiktionary sin conexión a Internet.
 
--Autocompletado de palabras mientras se escribe en la barra de búsqueda.
+- Autocompletado de palabras mientras se escribe en la barra de búsqueda.
 
--Historial de palabras buscadas.
+- Historial de palabras buscadas.
 
--Autoguardado de palabras en el historial (desactivado por defecto para proteger tu privacidad).
+- Autoguardado de palabras en el historial (desactivado por defecto para proteger tu privacidad).
 
--Borrar palabras individuales del historial o el historial completo.
+- Borrar palabras individuales del historial o el historial completo.
 
--Índice alfabético de palabras.
+- Índice alfabético de palabras.
 
--Búsqueda de palabras mediante prefijo, sufijo y/o letras contenidas en la palabra.
+- Búsqueda de palabras mediante prefijo, sufijo y/o letras contenidas en la palabra.
 
--Temas de colores personalizables por el usuario (editar, crear y borrar temas).
+- Temas de colores personalizables por el usuario (editar, crear y borrar temas).
 
--Vista de tres pestañas simultáneas cuando el tamaño de la ventana es lo suficientemente grande.
+- Vista de tres pestañas simultáneas cuando el tamaño de la ventana es lo suficientemente grande.
