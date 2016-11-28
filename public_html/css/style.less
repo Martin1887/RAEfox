@@ -382,10 +382,17 @@ header a {
 }
 
 #progressWordsList {
-    left: ~"calc(50% - 16px)";
+    background: url('BB/style/progress_activity/images/ui/default.png') no-repeat center center / 100% auto;
+	animation: 0.9s rotate infinite steps(30);
+	width: 2.9rem;
+	height: 2.9rem;
+	border: none;
+	display: inline-block;
+	vertical-align: middle;
+	
+	left: ~"calc(50% - 16px)";
 	top: ~"calc(50% - 16px)";
 	z-index: 400;
-    display: inline-block;
     visibility: visible;
 	position: fixed !important;
 }

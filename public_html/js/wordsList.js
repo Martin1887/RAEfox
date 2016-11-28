@@ -114,7 +114,7 @@ function loadAllWords(callback, args) {
 
 // Write HTML with words
 function writeHTMLWordsOfLetter(letter) {
-    var progress = document.createElement('progress');
+    var progress = document.createElement('span');
     progress.id = 'progressWordsList';
     document.getElementById('main3Content').insertBefore(progress, document.getElementById('wordsList'));
     
