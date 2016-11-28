@@ -63,9 +63,13 @@ var camaLess = {
 	 */
 	themeName: '',
 	themesDifferentName: '',
-	almostOneTheme: ''
+	almostOneTheme: '',
+
+	path: document.currentScript.src
 
 };
+camaLess.path = camaLess.path.substring(0, camaLess.path.lastIndexOf('/'));
+
 
 if (navigator.mozL10n) {
 	navigator.mozL10n.ready(function() {
@@ -453,13 +457,13 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 						themesListHtml += '<td><a class="iconLink" href="#" onclick="return editTheme'
                                     + '(this.parentNode.parentNode.getAttribute(\'data-theme-id\'), \''
                                     + currentStore + '\');"><img width="24" height="24"'
-                                    + ' src="js/camaLESS/img/edit.svg" alt="edit"></a>'
+                                    + ' src="' + camaLess.path + '/img/edit.svg" alt="edit"></a>'
                                     + '</td>';
 						
 						// 'x' button
                         themesListHtml += '<td><a class="iconLink" href="#" onclick="return eraseTheme'
                                     + '(this.parentNode.parentNode);"><img width="24" height="24"'
-                                    + ' src="js/camaLESS/img/erase_cross.png" alt="erase"></a>'
+                                    + ' src="' + camaLess.path + '/img/erase_cross.png" alt="erase"></a>'
                                     + '</td>';
 
                         themesListHtml += '</tr>';
@@ -495,7 +499,7 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
                     themesListHtml += '<tr><td class="themeAdd" colspan="4"><a href="#" onclick='
                                         + '"return addTheme(this.parentNode.parentNode.parentNode, \''
                                         + currentStore + '\');"><img width="30" '
-                                        + 'height="30" src="js/camaLESS/img/add.png" alt="add">'
+                                        + 'height="30" src="' + camaLess.path + '/img/add.png" alt="add">'
 										+ '<span data-l10n-id="createTheme">Create theme</span></a>'
                                         + '</td></tr>';
 
@@ -514,19 +518,20 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 						
 						form.innerHTML += '<section class="camaLessFormEditPanel">'
 							+ '<div class="camaLessFormBackToList" onclick="backToThemesList(this.parentNode.parentNode);">'
-								+ '<img width="30" height="40" src="js/camaLESS/img/back.svg"/>'
+								+ '<img width="30" height="40" src="' + camaLess.path + '/img/back.svg"/>'
 							+ '</div>'
 							+ '<div class="camaLessFormFields">' + themesFieldsHtml
 							+ '</div></section>';
 												
 						var cancel = document.createElement('button');
 						cancel.attributes['data-l10n-id'] = 'cancel';
+						cancel.innerHTML = 'Cancel';
 						cancel.type = 'button';
 						cancel.dataset['l10nId'] = 'cancel';
 						cancel.onclick = cancelCamaLessForm(store, form, clas, dataType, callback);
 						form.innerHTML += '<menu>'
 										  + '<button class="recommend" type="submit" '
-										  + 'data-l10n-id="save"></button></menu>';
+										  + 'data-l10n-id="save">Save</button></menu>';
 						form.lastChild.insertBefore(cancel, form.lastChild.lastChild);
 
 						addToCamaLessForms(store, form, clas, dataType, callback);
@@ -729,13 +734,13 @@ function addTheme(themeTypeTable, store) {
 	// edit button
 	themesListHtml += '<td><a href="#" onclick="return editTheme'
 				+ '(this.parentNode.parentNode.getAttribute(\'data-theme-id\'));"><img width="24" height="24"'
-				+ ' src="js/camaLESS/img/edit.svg" alt="edit"></a>'
+				+ ' src="' + camaLess.path + '/img/edit.svg" alt="edit"></a>'
 				+ '</td>';
 
 	// 'x' button
 	themesListHtml += '<td><a href="#" onclick="return eraseTheme'
 				+ '(this.parentNode.parentNode);"><img width="24" height="24"'
-				+ ' src="js/camaLESS/img/erase_cross.png" alt="erase"></a>'
+				+ ' src="' + camaLess.path + '/img/erase_cross.png" alt="erase"></a>'
 				+ '</td>';
 
 	var themesFieldsHtml = '<tr data-theme-id="themesFieldsTr' + store + themes + '">';

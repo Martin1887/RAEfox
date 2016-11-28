@@ -35,9 +35,9 @@
 	font-size: 210%;
 	text-align: center;
 	vertical-align: middle;
-	line-height: 13px;
-	width: 15px;
-	height: 15px;
+	line-height: 23px;
+	width: 19px;
+	height: 19px;
 	display: inline-block;
 	font-weight: bold;
 	border-radius: 100px;
@@ -53,6 +53,9 @@
 }
 .camaLessForm input[type="radio"]:checked ~ span:after {
 	content: '·';
+	display: inline-block;
+    width: 17px;
+    height: 17px;
 }
 
 .camaLessForm .themeAdd a {
