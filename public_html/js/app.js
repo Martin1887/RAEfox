@@ -342,7 +342,7 @@ function searchSuggestions(search) {
 }
 
 function searchDefinition() {
-	var search = document.getElementById('inputSearch').value;
+	var search = document.getElementById('inputSearch').value.trim();
 	
 	insertHTMLDefinition(search);
 	
