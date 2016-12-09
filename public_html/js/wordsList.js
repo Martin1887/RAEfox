@@ -1,5 +1,6 @@
 // Arrays of words lists
 var allWords = [];
+var wordsByLetter = [];
 var wordsCharged = false;
 
 // Dynamic localize
@@ -81,6 +82,18 @@ function getWordsOfLetter(letter) {
     }
 }
 
+// Compare two letters in downcase and without tildes
+function sameLetter(first, second) {
+    first = first.toLowerCase();
+    second = second.toLowerCase();
+    
+    // Tildes are removed
+    first = first.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u');
+    second = second.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u');
+    
+    return first === second;
+}
+
 /**
  * 
  * @param {function} callback Callback funciton
@@ -100,9 +113,26 @@ function loadAllWords(callback, args) {
 
 				// Each line contains a word, and they are saved as array 
 				allWords = reqWordsList.responseText.split('\n');
+				
+				var letter = 'A';
+				var wordsNumber = 0;
+				var index = 0;
+				allWords.forEach(function(word) {
+					var currentLetter = word.charAt(0).toUpperCase();
+					if (sameLetter(currentLetter, letter)) {
+						wordsNumber++;
+					} else {
+						wordsByLetter[index] = wordsNumber;
+						wordsNumber = 1;
+						letter = currentLetter;
+						index++;
+					}
+				});
+				wordsByLetter[index] = wordsNumber;
+				
 				callback.apply(window, args);
 			} else {
-				console.log("Error loading page\n");
+				console.log("Error loading resource\n");
 			}
 		}
 	};
@@ -129,36 +159,103 @@ function writeHTMLWordsOfLetter(letter) {
     gap.id = 'gap';
     gap.style.height = window.innerHeight + 'px';
 	wordsListDOM.appendChild(gap);
+	
+	var offset = 0;
+	var pageSize = 200;
+	var prevOffset = 0;
+	var prevInverse = undefined;
+	var newScroll = false;
+	var newInverse = true;
     
     var worker = new Worker('js/workerHTMLWordsList.js');
     worker.onmessage = function(e) {
-        var wordsList = e.data.wordsList;
-        
-        if (e.data.end) {
-            // add the rest of HTML when transitions are finished
-            setTimeout(function() {
-                listDOM.innerHTML += wordsList;
+        if (e.data.written > 0) {
+			var wordsList = e.data.wordsList;
+			var toReplace = e.data.toRemove;
+			prevOffset = offset;
+			prevInverse = e.data.inverse;
+			offset = e.data.offset;
+
+			if (e.data.inverse) {
+				listDOM.innerHTML = wordsList + listDOM.innerHTML;
+			} else {
+				listDOM.innerHTML += wordsList;
+			}
+			if (toReplace) {
+				var wordHeight = listDOM.querySelector('a').clientHeight;
+				listDOM.innerHTML = listDOM.innerHTML.replace(toReplace, '');
+				if (e.data.inverse) {
+					wordsListDOM.scrollTop += e.data.written * wordHeight;
+				} else {
+					wordsListDOM.scrollTop -= e.data.written * wordHeight;
+				}
+			}
+		}
+		
+		setTimeout(function() {
+			newScroll = true;
+			newInverse = true;
+		}, 500);
+
+		if (letterDOM.className !== 'letterShown') {
+			letterDOM.className = 'letterShown';
+			window.location = window.location.pathname + '#hLet' + letter;
+			window.location.href = window.location.pathname + '#panel3';
+
+			// Spinner is removed
+			var spinner = document.getElementById('progressWordsList');
+			if (spinner) {
+				spinner.parentNode.removeChild(spinner);
+			}
+
+			setTimeout(function() {
 				if (gap) {
 					gap.parentElement.removeChild(gap);
 				}
-            }, 2000);
-        } else {
-            listDOM.innerHTML += wordsList;
-            
-            if (letterDOM.className !== 'letterShown') {
-                letterDOM.className = 'letterShown';
-                window.location = window.location.pathname + '#hLet' + letter;
-                window.location.href = window.location.pathname + '#panel3';
-				
-                // Spinner is removed
-                var spinner = document.getElementById('progressWordsList');
-                if (spinner) {
-                    spinner.parentNode.removeChild(spinner);
-                }
-            }
-        }
+			}, 1000);
+		}
     };
-    worker.postMessage({allWords: allWords, letter: letter});
+    worker.postMessage({allWords: allWords, wordsByLetter: wordsByLetter,
+		letter: letter, offset: offset, pageSize: pageSize, inverse: false});
+		
+	
+	// Lazy load of words while scrolling
+	wordsListDOM.onscroll = function() {
+		// only if any letter is open
+		if (document.querySelector('.letterShown')) {
+			var scrolled = wordsListDOM.scrollTop;
+			// total height = height of letterShown
+			var totalHeight = document.querySelector('.letterShown').scrollHeight;
+
+			var inverse = false;
+			var scroll = false;
+			// when scroll is near of the bottom
+			if (totalHeight - scrolled <= (window.innerHeight * 2)) {
+				inverse = false;
+				scroll = true;
+			}
+			// when scroll is near of the top
+			if (scrolled <= (window.innerHeight * 2) && prevOffset > pageSize) {
+				inverse = true;
+				scroll = true;
+			}
+
+			if (scroll && (newScroll || (inverse !== prevInverse && newInverse)))  {
+				newInverse = false;
+				if (inverse !== prevInverse) {
+					if (inverse) {
+						offset = prevOffset - pageSize;
+					} else {
+						offset = prevOffset + pageSize;
+					}
+				}
+
+				newScroll = false;
+				worker.postMessage({allWords: allWords, wordsByLetter: wordsByLetter,
+						letter: letter, offset: offset, pageSize: pageSize, inverse: inverse});
+			}
+		}
+	};
 }
 
 // Go to letter link and return to panel3 link to avoid loosing tab3 selection.
@@ -236,7 +333,7 @@ function clearSearchInWordsList() {
 }
 
 function searchInWordsList() {
-    var progress = document.createElement('progress');
+    var progress = document.createElement('span');
     progress.id = 'progressWordsList';
     progress.style.position = 'fixed';
     document.getElementById('main3Content').insertBefore(progress, document.getElementById('searchInWordsListForm'));
