@@ -444,10 +444,11 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
                     for (var j = 0; j < themes[currentStore].length; j++) {
                         var theme = themes[currentStore][j];
                         themesListHtml += '<tr data-theme-id="themesListTr' + currentStore + j + '">'
-									+ '<td><input type="radio" name="' + currentStore
+									+ '<td><input id="radio' + currentStore + j + '" type="radio" name="' + currentStore
                                     + '" ' + (theme.selected ? 'checked="checked"' : '')
                                     + ' onclick="applyPreview(\'' + currentStore + '\', false, '
-									+ 'this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);"><span></span></td>';
+									+ 'this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);">'
+									+ '<label for="radio' + currentStore + j + '"></label></td>';
                         themesListHtml += '<td class="themeName"><label '
                                 + (theme.shownName ?
                                 ' data-l10n-id="' + theme.shownName + '"'
@@ -727,9 +728,9 @@ function addTheme(themeTypeTable, store) {
 	var form = themeTypeTable.parentNode.parentNode.parentNode;
 	var currentPreviewColors = getCurrentPreviewTheme(store, false, form);
 	var themes = form.querySelectorAll('tr[data-theme-id^="themesListTr' + store + '"]').length;
-	themesListHtml += '<td><input type="radio" name="' + store
+	themesListHtml += '<td><input id="radio' + store + themes + '" type="radio" name="' + store
 				+ '" onclick="applyPreview(\'' + store + '\', false, '
-				+ 'this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);"><span></span></td>';
+				+ 'this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode);"><label for="radio' + store + themes + '"></label></td>';
 	themesListHtml += '<td class="themeName"><label data-l10n-id="newTheme">New theme</label></td>';
 	// edit button
 	themesListHtml += '<td><a href="#" onclick="return editTheme'

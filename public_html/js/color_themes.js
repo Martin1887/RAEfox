@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		preview: {'this': 'background: @background; color: @foreground !important;',
 			'label': 'color: @foreground !important;', 'a': 'color: @links;',
 			'section header': 'color: @listsHeader; border-bottom-color: @listsHeader;',
-			'input:not(.color),.camaLessForm input[type="radio"] ~ span':
-				'color: @foreground; background-color: @background; filter: brightness(0.8); border-color: @foreground;'}});
+			'input:not(.color),.camaLessForm input[type="radio"] ~ label':
+				'color: @foreground !important; background-color: @background; filter: brightness(0.8); border-color: @foreground;'}});
     
 
     var form = [document.getElementById('themes')];

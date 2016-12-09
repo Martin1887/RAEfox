@@ -23,21 +23,20 @@
 .camaLessForm input[type="radio"] {
 	opacity: 0;
 	margin: 0;
-	position: absolute;
-	width: 20px;
-	height: 35px;
+	position: relative;
+	display: inline-block;
+	width: 1px;
 	z-index: 10;
 }
-.camaLessForm input[type="radio"] ~ span {
-	height: 15px;
-	display: inline-block;
+.camaLessForm input[type="radio"] ~ label {
+	display: inline-block !important;
 	cursor: default;
-	font-size: 210%;
+	font-size: 6rem !important;
 	text-align: center;
 	vertical-align: middle;
-	line-height: 23px;
-	width: 19px;
-	height: 19px;
+	line-height: 2.6rem;
+	width: 2rem;
+	height: 2rem;
 	display: inline-block;
 	font-weight: bold;
 	border-radius: 100px;
@@ -46,12 +45,13 @@
 	border-style: solid;
 	color: rgb(0, 0, 0);
 	background-color: rgb(255, 255, 255);
+	margin: 0 !important;
 }
-.camaLessForm input[type="radio"] ~ span:after {
+.camaLessForm input[type="radio"] ~ label:after {
 	content: " ";
 	
 }
-.camaLessForm input[type="radio"]:checked ~ span:after {
+.camaLessForm input[type="radio"]:checked ~ label:after {
 	content: '·';
 	display: inline-block;
     width: 17px;
