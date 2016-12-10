@@ -48,9 +48,9 @@ onmessage = function(e) {
 	right--;
 	
 	// matches are between left and right boundaries, but not all these words matches because the cleaning
-	// send a max of 50 words for better performance (nobody scroll more than 50 words in a suggestions list)
+	// send a max of 15 words for better performance
 	var added = 0;
-	for (var i = left; i <= right && added <= 50; i++) {
+	for (var i = left; i <= right && added <= 15; i++) {
 		if (allWords[i].substr(0, prefixLength) === search) {
 			matches.push(allWords[i]);
 			added++;
