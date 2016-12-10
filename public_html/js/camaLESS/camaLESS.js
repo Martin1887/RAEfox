@@ -592,23 +592,22 @@ function createCamaLessForm(store, form, clas, dataType, callback) {
 									}
 								}
 							});
-
-							// colorPicker in all inputs
-							jsColorPicker('input.color', {
-								customBG: '#222',
-								readOnly: false,
-								init: function (elm, colors) {
-									elm.style.backgroundColor = elm.value;
-									elm.style.color = colors.rgbaMixBGMixCustom.luminance > 0.22 ? '#222' : '#ddd';
-								}
-							});
-							// When write to change background color
-							var inputs = document.querySelectorAll('input.color');
-							for (var i = 0; i < inputs.length; i++) {
-								inputs[i].onkeyup = function() {
-									this.style.backgroundColor = this.value;
-								};
+						}
+						// colorPicker in all inputs
+						jsColorPicker('input.color', {
+							customBG: '#222',
+							readOnly: false,
+							init: function (elm, colors) {
+								elm.style.backgroundColor = elm.value;
+								elm.style.color = colors.rgbaMixBGMixCustom.luminance > 0.22 ? '#222' : '#ddd';
 							}
+						});
+						// When write to change background color
+						var inputs = document.querySelectorAll('input.color');
+						for (var i = 0; i < inputs.length; i++) {
+							inputs[i].onkeyup = function() {
+								this.style.backgroundColor = this.value;
+							};
 						}
 					}
                 }
