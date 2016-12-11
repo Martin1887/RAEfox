@@ -1,14 +1,18 @@
 .camaLessForm {
 	background: #fff;
+	position: absolute;
+	z-index: 2000;
+	width: 100%;
 	height: 100%;
+	box-sizing: border-box;
+	top: 0;
+	left: 0;
 	overflow-x: hidden;
 	overflow-y: hidden;
 	font-family: "Fira Sans" !important;
 }
 .camaLessForm section {
 	background-color: #fff;
-	overflow: auto;
-	height: calc(100% - 50px);
 }
 
 .camaLessForm label {
@@ -35,6 +39,9 @@
 	padding: 0;
 	height: 50px;
 	margin: 0;
+	position: absolute;
+	width: 100%;
+	bottom: 0;
 }
 .camaLessForm menu button {
 	width: calc(50% - 20px);
@@ -88,7 +95,6 @@
 	content: '·';
 	display: inline-block;
 }
-
 .camaLessForm .themeAdd a {
 	width: 100%;
     display: inline-block;
@@ -112,7 +118,6 @@
 }
 .camaLessForm table {
     width: 100%;
-    margin-top: 20px;
 }
 
 .camaLessForm .iconLink {
@@ -156,22 +161,17 @@
 	line-height: 40px;
 }
 .camaLessForm .camaLessFormListPanel {
-	display: block;
+	height: calc(100% - 50px);
+	overflow: auto;
 }
-.camaLessForm .camaLessFormListPanel.editing {
-	display: none;
-	animation-name: goLeftList;
-	animation-duration: 0.25s;
-}
-.camaLessForm .camaLessFormListPanel.backing {
-	display: block;
-	animation-name: goRightList;
-	animation-duration: 0.25s;
-}
+
 .camaLessForm .camaLessFormEditPanel {
 	display: none;
+	position: absolute;
+	top: 0;
 	left: 100%;
 	width: 100%;
+	height: 100%;
 	padding: 0 !important;
 }
 .camaLessForm .camaLessFormEditPanel ul {
@@ -183,9 +183,7 @@
 	animation-name: goRight;
 }
 .camaLessForm .camaLessFormEditPanel.editing {
-	display: flex;
-	align-items: center;
-	opacity: 1;
+	display: inline-block;
 	left: 0%;
 	z-index: 100;
 	animation-duration: 0.25s;
@@ -196,23 +194,27 @@
 	width: 50px;
 	background-color: #2060cc;
 	line-height: 100%;
-	vertical-align: top;
+	vertical-align: middle;
 	text-align: center;
+	position: absolute;
 	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
 }
 .camaLessForm .camaLessFormEditPanel .camaLessFormBackToList img {
+	position: absolute;
 	width: 30px;
 	height: 40px;
-	margin: auto;
+	top: calc(50% - 20px);
+	left: calc(50% - 15px);
 }
 .camaLessForm .camaLessFormEditPanel .camaLessFormFields {
 	width: calc(100% - 50px);
 	max-height: 100%;
 	box-sizing: border-box;
-	display: inline-flex;
-	padding: 20px;
+	margin-left: 50px;
+	padding: 10px;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
 	overflow: auto;
 }
 .camaLessForm .camaLessFormEditPanel .camaLessFormFields tr {
@@ -220,6 +222,7 @@
 }
 .camaLessForm .camaLessFormEditPanel .camaLessFormFields tr.editing {
 	display: block;
+	padding: 30px;
 }
 .camaLessForm .camaLessFormEditPanel .camaLessFormFields td {
 	display: block;
@@ -236,33 +239,17 @@
 }
 @keyframes goLeft {
     from {
-        margin-left: 100%;
+        left: 100%;
     }
     to {
-        margin-left: 0;
+        left: 0;
     }
 }
 @keyframes goRight {
     from {
-        margin-left: 0;
+        left: 0;
     }
     to {
-        margin-left: 100%;
-    }
-}
-@keyframes goLeftList {
-    from {
-        margin-left: 0;
-    }
-    to {
-        margin-left: -100%;
-    }
-}
-@keyframes goRightList {
-    from {
-        margin-left: -100%;
-    }
-    to {
-        margin-left: 0;
+        left: 100%;
     }
 }
