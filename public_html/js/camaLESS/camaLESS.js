@@ -87,14 +87,44 @@ if (navigator.mozL10n) {
  */
 
 /**
+ * Initialize camaLess with a config object. This function is an alternative to openCamaLessDb function.
+ * @param {object} config A config object with the following properties (optional properties are between square brackets):
+ * 		dbName: {string} Database name, it must be unique for your application.
+ *		less: {object} LESS object.
+ *		types: {array} Types of color themes in your application.
+ *		presets: {array} Preset themes in application (to write in database creation in
+ * 					the first time that the app is opened). The format is an array with name and
+ *	 				values attributes where name is the store name and values is its themes.
+ *		[forms]: {array} Forms to be submitted. If null, undefined or empty array camaLess is initialized but without
+ *					color themes forms (useful when you have a number of pages and color themes are editable only in one of them).
+ *		[callbacks]: {array} Callback for every form submission. Can be null.
+ *		[formsStores]: {array} Themes types for every form. Can be null. Useful if you have different style types,
+ *					for instance a form for application themes and another one for menu themes.
+ *		[formsClasses]: {array} CSS class for every form. Can be null. Default value is 'camaLessForm' for every form.
+ *		[formsDataTypes]: {array} data-type property for every form section. Can be null. Default value is 'list' for every form.
+ *		[almostOneThemeCB]: {function} Optional callback for form without themes error.
+ *					Default value is an alert with almostOneTheme l10n localized variable.
+ *		[sameNameThemesCB]: {function} Optional callback for form with a number of themes with the same name.
+ *					Default value is an alert with themeName and themesDifferentName l10n localized variables.
+ *
+ * @returns true		
+ */
+ function initCamaLess(config) {
+ 	return openCamaLessDb(config.dbName, config.less, config.types, config.presets,
+ 		config.forms ? config.forms : [], config.callbacks, config.formsStores, config.formsClasses,
+ 		config.formsDataTypes, config.almostOneThemeCB, config.sameNameThemesCB);
+ }
+
+/**
+ * This function remains working, but is better to use initCamaLess for better readability.
  * Open camaLESS database with given name (this name must be unique for your
  * application in order to not collide with other applications, a good practice
  * is user your application name as appName_camalesscamaLessDb). It's necessary give at
  * least a objectStore name (each objectStore is a different type of color
  * theme).
- * @param {string} name Database name, must be unique for your application
- * @param {object} less LESS object
- * @param {array} types Types of color themes in your application
+ * @param {string} name Database name, it must be unique for your application.
+ * @param {object} less LESS object.
+ * @param {array} types Types of color themes in your application.
  * @param {array} defaults Default themes in application (to write in database creation in
  * the first time that the app is opened). The format is an array with name and
  * values attributes where name is the store name and values is its themes.
